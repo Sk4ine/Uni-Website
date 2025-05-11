@@ -1,0 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Marck+Script&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-default: "Marck Script", cursive;
+}
