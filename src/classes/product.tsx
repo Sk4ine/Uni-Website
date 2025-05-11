@@ -12,6 +12,7 @@ export class Product {
   public countryOfOrigin: string = "";
 
   public customerReviews: Review[] = [];
+  public rating: number = 0;
 
   public constructor(name: string, price: number, productPageURL: string, partNumber: number, imagePaths?: string[], materials?: string[], weightGrams?: number, countryOfOrigin?: string) {
     this.name = name;

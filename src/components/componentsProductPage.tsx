@@ -3,10 +3,11 @@ import type { Product } from "../classes/product"
 import type { Review } from "../classes/review";
 
 import ratingStarImage from "../assets/ratingStarIcon.png";
+import ratingStarLargeImage from "../assets/ratingStarIconLarge.png";
 
 export function ProductPageSection({children, product} : {children: React.ReactNode, product: Product}) {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center mb-48">
       <ProductInfo product={product}></ProductInfo>
       {children}
     </div>
@@ -98,28 +99,35 @@ function DescriptionItem({itemName, itemValue} : {itemName: string, itemValue: s
 
 export function CustomerReviews({children, product} : {children: React.ReactNode, product: Product}) {
   return (
-    <div className="flex justify-between w-[1100px] mt-">
+    <div className="flex justify-between w-[1100px] mt-9">
       <div className="flex flex-col gap-2">
         <p className="font-default text-[#555555] text-5xl">
           Отзывы <span className="text-[#B5ABA1]">{product.customerReviews.length}</span>
         </p>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center mt-4">
           {children}
         </div>
       </div>
+      <Rating product={product}></Rating>
     </div>
   )
 }
 
 export function ReviewCard({review} : {review: Review}) {
   return (
-    <div className="flex justify-between w-2xl rounded-2xl shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)]">
-      <img src={review.user.logoImagePath} className="size-12"></img>
-      <div className="flex flex-col">
-        <p className="font-default text-[#555555] text-3xl">
+    <div className="flex justify-between w-2xl rounded-2xl shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)] p-4">
+      <div className="w-[10%] pl-2">
+        <img src={review.user.logoImagePath} className="size-12 rounded-full"></img>
+      </div>
+      <div className="flex flex-col w-[65%] pl-4 font-default text-[#555555] text-3xl">
+        <p>
           {review.user.firstName}, {review.date.getDate()} {GlobalVariables.reviewDateMonths[review.date.getMonth()]} {review.date.getFullYear()}
         </p>
         <RatingStars rating={review.rating}></RatingStars>
+        <p className="mt-4">{review.comment}</p>
+      </div>
+      <div className="w-[25%]">
+        <img src={review.attachedImagePath} className="size-40 aspect-square rounded-2xl"></img>
       </div>
     </div>
   )
@@ -129,9 +137,38 @@ function RatingStars({rating} : {rating: number}) {
   const fillPercent: string = `w-[${rating/5*100}%]`;
 
   return (
-    <div className="w-[125px] h-[23px]">
+    <div className="w-[125px] h-[23px] mt-1">
       <div style={{maskImage: `url(${ratingStarImage})`}} className="bg-[#B5ABA1] w-full h-full">
         <div className={`bg-[#FFD900] ${fillPercent} h-full mask-repeat-x`}></div>
+      </div>
+    </div>
+  )
+}
+
+function Rating({product} : {product: Product}) {
+  return (
+    <div className="flex flex-col">
+      <div className="flex justify-end items-center">
+        <p className="font-default text-[#555555] text-6xl">{product.rating}</p>
+        <img src={ratingStarLargeImage} className="size-11 ml-2 pb-1"></img>
+      </div>
+      <div className="flex flex-col items-end">
+        <RatingBar ratingValue={5} percent={100}></RatingBar>
+        <RatingBar ratingValue={4} percent={0}></RatingBar>
+        <RatingBar ratingValue={3} percent={0}></RatingBar>
+        <RatingBar ratingValue={2} percent={0}></RatingBar>
+        <RatingBar ratingValue={1} percent={0}></RatingBar>
+      </div>
+    </div>
+  )
+}
+
+function RatingBar({ratingValue, percent} : {ratingValue: number, percent: number}) {
+  return (
+    <div className="flex items-center h-5">
+      <p className="font-default text-[#B5ABA1] text-lg mr-2">{ratingValue}</p>
+      <div className="w-80 h-2 rounded-2xl bg-[#D9D9D9]">
+        <div style={{width: `${percent}%`}} className={`h-full rounded-2xl bg-[#D5778D]`}></div>
       </div>
     </div>
   )

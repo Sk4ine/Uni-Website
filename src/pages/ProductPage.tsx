@@ -6,8 +6,8 @@ import { CustomerReviews, ProductPageSection, ReviewCard } from "../components/c
 import userLogoImage from "../assets/defaultUserLogo.png";
 
 export function ProductPage({product} : {product: Product}) {
-  const user1: User = new User("Полина", "Костина", undefined, undefined, userLogoImage)
-  const review1: Review = new Review(user1, new Date(Date.now()), 4, "Да да");
+  const user1: User = new User("Марина", "Колесникова", undefined, undefined, userLogoImage)
+  const review1: Review = new Review(user1, new Date(Date.now()), 4, "Все понравилось.", product.imagePaths[0]);
   
   return (
     <>
