@@ -1,6 +1,7 @@
 import type { Review } from "./review";
 
 export class Product {
+  public id: number;
   public name: string;
   public price: number;
   public productPageURL: string;
@@ -14,7 +15,8 @@ export class Product {
   public customerReviews: Review[] = [];
   public rating: number = 0;
 
-  public constructor(name: string, price: number, productPageURL: string, partNumber: number, imagePaths?: string[], materials?: string[], weightGrams?: number, countryOfOrigin?: string) {
+  public constructor(id: number, name: string, price: number, productPageURL: string, partNumber: number, imagePaths?: string[], materials?: string[], weightGrams?: number, countryOfOrigin?: string) {
+    this.id = id;
     this.name = name;
     this.price = price;
     this.productPageURL = productPageURL;

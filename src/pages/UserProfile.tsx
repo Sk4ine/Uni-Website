@@ -8,7 +8,7 @@ import userLogoImage from "../assets/defaultUserLogo.png";
 import earringsMetalImage from "../assets/productImages/earringsMetal.png";
 
 export function UserProfile() {
-  const product1: Product = new Product("Серьги металл", 399, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1, [earringsMetalImage]);
+  const product1: Product = new Product(1, "Серьги металл", 399, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1, [earringsMetalImage]);
 
   return (
     <>
