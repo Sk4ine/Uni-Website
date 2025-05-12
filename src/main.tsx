@@ -9,27 +9,30 @@ import { UserProfile } from './pages/UserProfile'
 import { Product } from './classes/product'
 
 import earringsMetalImage from "./assets/productImages/earringsMetal.png";
+import ratingStarLargeImage from "./assets/ratingStarIconLarge.png";
 import { BrowserRouter, Link, Route, Router, Routes } from 'react-router'
-import { ProductRoute } from './pages/ProductRoute'
+import { ProductPage } from './pages/ProductPage'
 
 const productList: Product[] = [];
 
-productList.push(new Product(1, "Серьги металл", 399, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1, [earringsMetalImage, earringsMetalImage, earringsMetalImage], ["металл", "пластик"], 2, "Россия"));
+productList.push(new Product(1, "Серьги металл", 399, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1, [earringsMetalImage, ratingStarLargeImage, earringsMetalImage], ["металл", "пластик"], 2, "Россия"));
 
 const productPageList: React.ReactNode[] = [];
 
 for(let i = 0; i < productList.length; i++) {
-  productPageList.push(<ProductRoute product={productList[i]}/>);
+  productPageList.push(<Route path={productList[i].id.toString()} element={<ProductPage product={productList[i]}/>}></Route>);
 }
+
+console.log(productPageList[0]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route index path="/home" element={<Home />}></Route>
-        <Route index path="/catalog" element={<Catalog />}></Route>
-        <Route index path="/cart" element={<Cart />}></Route>
-        <Route path="/products">
+        <Route path="home" element={<Home />}></Route>
+        <Route path="catalog" element={<Catalog />}></Route>
+        <Route path="cart" element={<Cart />}></Route>
+        <Route path="catalog">
           {productPageList}
         </Route>
       </Routes>

@@ -7,8 +7,10 @@ import type { Product } from '../classes/product';
 import { Link, useLocation } from 'react-router';
 
 export function NavigationBar() {
+  const border: string = location.pathname == "/home" ? "pb-[4px]" : "box-border border-b-4 border-[#EF829A]";
+
   return (
-    <div className="flex items-end gap-5 justify-center h-40 border-b-4 border-[#EF829A]">
+    <div className={`flex items-end gap-5 justify-center h-40 ${border}`}>
       <img src={artezaLogo} className="h-[80%] object-none"></img>
       <NavigationBarButton text="Главная" url="/home"></NavigationBarButton>
       <NavigationBarButton text="Каталог" url="/catalog"></NavigationBarButton>
@@ -58,15 +60,15 @@ function NavigationBarIcon({iconImagePath, url} : {iconImagePath: string, url: s
 
 export function ProductCard({product} : {product : Product}) {
   return (
-    <Link to={`/products/${product.id}`} className='w-80 flex flex-col items-center justify-between bg-white shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)] rounded-2xl'>
+    <Link to={`/catalog/${product.id}`} className='w-80 flex flex-col items-center justify-between bg-white shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)] rounded-2xl'>
       <img src={product.imagePaths[0]} className='mt-[8%] w-[75%] object-cover object-center rounded-2xl'></img>
       <p className='font-default text-4xl text-[#B4A1A6] mt-2'>{product.name}</p>
       <p className='font-default text-4xl text-[#B4A1A6] mt-[-0.3rem] mb-2'>{product.price} руб.</p>
 
-      <a href={product.productPageURL} className='w-[90%] flex justify-center gap-2 items-center bg-[#F5D4D5] mb-[8%] rounded-3xl hover:bg-[#E6C8C9]'>
+      <button className='w-[90%] flex justify-center gap-2 items-center bg-[#F5D4D5] mb-[8%] rounded-3xl hover:bg-[#E6C8C9] cursor-pointer'>
         <p className='font-default text-4xl text-[#D5778D] py-2'>В корзину</p>
         <img src={shoppingCartIconPink} className='object-none'></img>
-      </a>
+      </button>
     </Link>
   )
 }

@@ -27,7 +27,7 @@ function ProductImages({imagePaths} : {imagePaths: string[]}) {
   let altImages: React.ReactNode[] = [];
 
   for(let i = 1; i < imagePaths.length; i++) {
-    altImages.push(<ImageButton imagePath={imagePaths[i]}></ImageButton>)
+    altImages.push(<ImageButton key={i.toString()} imagePath={imagePaths[i]}></ImageButton>)
   }
 
   return (
