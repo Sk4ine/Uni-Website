@@ -5,7 +5,7 @@ export class Review {
   public date: Date;
   public rating: number;
   public comment: string;
-  public attachedImagePath: string = "";
+  public attachedImagePath?: string;
 
   public constructor(user: User, date: Date, rating: number, comment: string, attachedImagePath?: string) {
     this.user = user;

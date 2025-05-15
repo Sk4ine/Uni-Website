@@ -27,7 +27,7 @@ function ProductImages({imagePaths} : {imagePaths: string[]}) {
   let altImages: React.ReactNode[] = [];
 
   for(let i = 1; i < imagePaths.length; i++) {
-    altImages.push(<ImageButton key={i.toString()} imagePath={imagePaths[i]}></ImageButton>)
+    altImages.push(<ImageButton key={i} imagePath={imagePaths[i]}></ImageButton>)
   }
 
   return (
@@ -104,7 +104,7 @@ export function CustomerReviews({children, product} : {children: React.ReactNode
         <p className="font-default text-[#555555] text-5xl">
           Отзывы <span className="text-[#B5ABA1]">{product.customerReviews.length}</span>
         </p>
-        <div className="flex flex-col items-center mt-4">
+        <div className="flex flex-col items-center mt-4 gap-4">
           {children}
         </div>
       </div>
@@ -114,6 +114,8 @@ export function CustomerReviews({children, product} : {children: React.ReactNode
 }
 
 export function ReviewCard({review} : {review: Review}) {
+  const imageVisibility: string = review.attachedImagePath !== undefined ? "" : "hidden";
+
   return (
     <div className="flex justify-between w-2xl rounded-2xl shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)] p-4">
       <div className="w-[10%] pl-2">
@@ -127,37 +129,43 @@ export function ReviewCard({review} : {review: Review}) {
         <p className="mt-4">{review.comment}</p>
       </div>
       <div className="w-[25%]">
-        <img src={review.attachedImagePath} className="size-40 aspect-square rounded-2xl"></img>
+        <img src={review.attachedImagePath} className={`size-40 aspect rounded-2xl ${imageVisibility}`}></img>
       </div>
     </div>
   )
 }
 
 function RatingStars({rating} : {rating: number}) {
-  const fillPercent: string = `w-[${rating/5*100}%]`;
+  const fillPercent: number = rating/5*100;
 
   return (
     <div className="w-[125px] h-[23px] mt-1">
       <div style={{maskImage: `url(${ratingStarImage})`}} className="bg-[#B5ABA1] w-full h-full">
-        <div className={`bg-[#FFD900] ${fillPercent} h-full mask-repeat-x`}></div>
+        <div style={{width: `${fillPercent}%`}} className={`bg-[#FFD900] h-full mask-repeat-x`}></div>
       </div>
     </div>
   )
 }
 
 function Rating({product} : {product: Product}) {
+  const ratingPercents: number[] = [];
+
+  for(let i = 1; i <= 5; i++) {
+    ratingPercents.push(product.customerReviews.filter((review) => review.rating == i).length / product.customerReviews.length * 100);
+  }
+
   return (
     <div className="flex flex-col">
       <div className="flex justify-end items-center">
-        <p className="font-default text-[#555555] text-6xl">{product.rating}</p>
+        <p className="font-default text-[#555555] text-6xl">{product.rating.toFixed(1)}</p>
         <img src={ratingStarLargeImage} className="size-11 ml-2 pb-1"></img>
       </div>
       <div className="flex flex-col items-end">
-        <RatingBar ratingValue={5} percent={100}></RatingBar>
-        <RatingBar ratingValue={4} percent={0}></RatingBar>
-        <RatingBar ratingValue={3} percent={0}></RatingBar>
-        <RatingBar ratingValue={2} percent={0}></RatingBar>
-        <RatingBar ratingValue={1} percent={0}></RatingBar>
+        <RatingBar ratingValue={5} percent={ratingPercents[4]}></RatingBar>
+        <RatingBar ratingValue={4} percent={ratingPercents[3]}></RatingBar>
+        <RatingBar ratingValue={3} percent={ratingPercents[2]}></RatingBar>
+        <RatingBar ratingValue={2} percent={ratingPercents[1]}></RatingBar>
+        <RatingBar ratingValue={1} percent={ratingPercents[0]}></RatingBar>
       </div>
     </div>
   )

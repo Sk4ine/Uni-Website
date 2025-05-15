@@ -12,7 +12,12 @@ export class Product {
   public weightGrams: number = 0;
   public countryOfOrigin: string = "";
 
-  public customerReviews: Review[] = [];
+  private _customerReviews: Review[] = [];
+
+  public get customerReviews(): Review[] {
+    return this._customerReviews;
+  }
+
   public rating: number = 0;
 
   public constructor(id: number, name: string, price: number, productPageURL: string, partNumber: number, imagePaths?: string[], materials?: string[], weightGrams?: number, countryOfOrigin?: string) {
@@ -37,5 +42,22 @@ export class Product {
     if(countryOfOrigin !== undefined) {
       this.countryOfOrigin = countryOfOrigin;
     }
+  }
+
+  public addReview(review: Review): void {
+    this._customerReviews.push(review);
+    this.rating = this.calculateRating();
+  }
+
+  private calculateRating(): number {
+    let rating: number = 0;
+
+    for(let i = 0; i < this.customerReviews.length; i++) {
+      rating += this.customerReviews[i].rating;
+    }
+
+    rating /= this.customerReviews.length;
+
+    return rating;
   }
 }

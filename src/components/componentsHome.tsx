@@ -4,7 +4,7 @@ import { ProductList } from './componentsCommon';
 export function HomePageBanner() {
   return (
     <div className="flex bg-[#F5D4D5] justify-center">
-      <img src={homePageBanner} className='object-none'></img>
+      <img src={homePageBanner} className='object-contain'></img>
     </div>
   )
 }

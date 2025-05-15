@@ -7,7 +7,12 @@ import userLogoImage from "../assets/defaultUserLogo.png";
 
 export function ProductPage({product} : {product: Product}) {
   const user1: User = new User("Марина", "Колесникова", undefined, undefined, userLogoImage)
-  const review1: Review = new Review(user1, new Date(Date.now()), 4, "Все понравилось.", product.imagePaths[0]);
+
+  const reviewCards: React.ReactNode[] = [];
+
+  for(let i = 0; i < product.customerReviews.length; i++) {
+    reviewCards.push(<ReviewCard key={i} review={product.customerReviews[i]}></ReviewCard>);
+  }
   
   return (
     <>
@@ -15,7 +20,7 @@ export function ProductPage({product} : {product: Product}) {
         <NavigationBar></NavigationBar>
         <ProductPageSection product={product}>
           <CustomerReviews product={product}>
-            <ReviewCard review={review1}></ReviewCard>
+            {reviewCards}
           </CustomerReviews>
         </ProductPageSection>
         <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>

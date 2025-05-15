@@ -5,7 +5,7 @@ import { ProductList } from "../components/componentsCommon";
 import earringsMetalImage from "../assets/productImages/earringsMetal.png";
 import { CatalogSection, CategoryButton, CategoryList } from "../components/componentsCatalog";
 
-export function Catalog() {
+export function CatalogPage() {
   const product1: Product = new Product(1, "Серьги металл", 399, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1, [earringsMetalImage]);
 
   return (
