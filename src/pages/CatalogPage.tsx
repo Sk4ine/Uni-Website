@@ -22,14 +22,7 @@ export function CatalogPage() {
             <CategoryButton categoryName="Кольца" active={false}></CategoryButton>
             <CategoryButton categoryName="Кольца" active={false}></CategoryButton>
           </CategoryList>
-          <ProductList>
-            <ProductCard product={product1}></ProductCard>
-            <ProductCard product={product1}></ProductCard>
-            <ProductCard product={product1}></ProductCard>
-            <ProductCard product={product1}></ProductCard>
-            <ProductCard product={product1}></ProductCard>
-            <ProductCard product={product1}></ProductCard>
-          </ProductList>
+          <ProductList></ProductList>
         </CatalogSection>
         <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
       </div>

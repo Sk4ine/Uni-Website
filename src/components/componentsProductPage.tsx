@@ -4,6 +4,8 @@ import type { Review } from "../classes/review";
 
 import ratingStarImage from "../assets/ratingStarIcon.png";
 import ratingStarLargeImage from "../assets/ratingStarIconLarge.png";
+import { useContext } from "react";
+import { CartContext } from "./contexts";
 
 export function ProductPageSection({children, product} : {children: React.ReactNode, product: Product}) {
   return (
@@ -47,13 +49,23 @@ function ImageButton({imagePath} : {imagePath: string}) {
 }
 
 function ProductDescription({product} : {product: Product}) {
+  const context = useContext(CartContext);
+  
+    function handleClick() {
+      if(!context) {
+        return;
+      }
+  
+      context.addProduct(product.id);
+    }
+
   return (
     <div className="flex flex-col items-center w-[55%]">
       <div className="flex flex-col items-center font-default text-[#555555] text-6xl">
         <p>{product.name}</p>
         <p>{product.price} руб.</p>
       </div>
-      <button className="w-fit px-16 py-2.5 mt-8 font-default text-[#D5778D] text-6xl bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-3xl cursor-pointer">В корзину</button>
+      <button onClick={handleClick} className="w-fit px-16 py-2.5 mt-8 font-default text-[#D5778D] text-6xl bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-3xl cursor-pointer">В корзину</button>
       <FullInfo product={product}></FullInfo>
     </div>
   )
@@ -158,7 +170,7 @@ function Rating({product} : {product: Product}) {
     <div className="flex flex-col">
       <div className="flex justify-end items-center">
         <p className="font-default text-[#555555] text-6xl">{product.rating.toFixed(1)}</p>
-        <img src={ratingStarLargeImage} className="size-11 ml-2 pb-1"></img>
+        <img src={ratingStarLargeImage} className="size-11 ml-2 pb-1 select-none pointer-events-none"></img>
       </div>
       <div className="flex flex-col items-end">
         <RatingBar ratingValue={5} percent={ratingPercents[4]}></RatingBar>

@@ -5,14 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 import type { Product } from '../classes/product';
 import { Link, useLocation } from 'react-router';
-import { useContext, useState } from 'react';
-import { CartContext } from '../App';
+import { useContext } from 'react';
+import { CartContext, ProductListContext } from './contexts';
 
 export function NavigationBar() {
   const border: string = location.pathname == "/home" ? "p-[10rem-4px]" : "box-content border-b-4 border-[#EF829A]";
 
   return (
-    <div className={`flex items-end gap-5 justify-center h-40 ${border}`}>
+    <div className={`flex items-end gap-5 justify-center h-40 bg-white ${border}`}>
       <img src={artezaLogo} className="h-[80%] object-none"></img>
       <NavigationBarButton text="Главная" url="/home"></NavigationBarButton>
       <NavigationBarButton text="Каталог" url="/catalog"></NavigationBarButton>
@@ -61,10 +61,14 @@ function NavigationBarIcon({iconImagePath, url} : {iconImagePath: string, url: s
 }
 
 export function ProductCard({product} : {product : Product}) {
-  const {addProduct} = useContext(CartContext);
+  const context = useContext(CartContext);
 
   function handleClick() {
-    addProduct(product.id);
+    if(!context) {
+      return;
+    }
+
+    context.addProduct(product.id);
   }
 
   return (
@@ -95,10 +99,18 @@ export function Footer({phoneNumber, address} : {phoneNumber: string, address: s
   )
 }
 
-export function ProductList({children} : {children: React.ReactNode}) {
+export function ProductList() {
+  const productListContext = useContext(ProductListContext);
+  
+  const productCards: React.ReactNode[] = [];
+
+  for(let i = 0; i < productListContext.length; i++) {
+    productCards.push(<ProductCard key={i} product={productListContext[i]}></ProductCard>);
+  }
+
   return (
     <div className='flex flex-wrap justify-start pl-[11px] w-[1344px] mt-9 gap-x-3.5 gap-y-6'>
-      {children}
+      {productCards}
     </div>
   )
 }
