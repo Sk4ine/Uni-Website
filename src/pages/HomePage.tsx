@@ -4,9 +4,12 @@ import { Product } from "../classes/product";
 
 import earringsMetalImage from "../assets/productImages/earringsMetal.png";
 import { useContext, useState } from "react";
+import { ActiveCategoryContext } from "../components/contexts";
 
 export function HomePage() {
-  const product1: Product = new Product(1, "Серьги металл", 399, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1, [earringsMetalImage]);
+  const context = useContext(ActiveCategoryContext);
+
+  console.log(context?.activeCategory);
 
   return (
     <>

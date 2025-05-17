@@ -12,14 +12,6 @@ export function HomePageBanner() {
 }
 
 export function PopularProductsSection() {
-  const productListContext = useContext(ProductListContext);
-
-  const productCards: React.ReactNode[] = [];
-
-  for(let i = 0; i < productListContext.length; i++) {
-    productCards.push(<ProductCard key={i} product={productListContext[i]}></ProductCard>);
-  }
-
   return (
     <div className='flex flex-col items-center mb-48'>
       <h1 className='font-default text-[#D5778D] text-5xl mt-10 mb-2'>Популярное</h1>

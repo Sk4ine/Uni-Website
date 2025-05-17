@@ -2,9 +2,9 @@ import type { Review } from "./review";
 
 export class Product {
   public id: number;
+  public categoryID: number;
   public name: string;
   public price: number;
-  public productPageURL: string;
   public imagePaths: string[] = [];
   
   public partNumber: number;
@@ -20,11 +20,11 @@ export class Product {
 
   public rating: number = 0;
 
-  public constructor(id: number, name: string, price: number, productPageURL: string, partNumber: number, imagePaths?: string[], materials?: string[], weightGrams?: number, countryOfOrigin?: string) {
+  public constructor(id: number, categoryID: number, name: string, price: number, partNumber: number, imagePaths?: string[], materials?: string[], weightGrams?: number, countryOfOrigin?: string) {
     this.id = id;
+    this.categoryID = categoryID;
     this.name = name;
     this.price = price;
-    this.productPageURL = productPageURL;
     this.partNumber = partNumber;
 
     if(imagePaths !== undefined) {

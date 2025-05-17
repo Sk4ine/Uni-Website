@@ -1,7 +1,13 @@
+import { EmptySpace, HomePageButton, LoginSection } from "../components/componentsLoginPage";
+
 export function LoginPage() {
-  <>
-    <div>
-      
-    </div>
-  </>
+  return (
+    <>
+      <div>
+        <HomePageButton></HomePageButton>
+        <LoginSection></LoginSection>
+        <EmptySpace></EmptySpace>
+      </div>
+    </>
+  )
 }

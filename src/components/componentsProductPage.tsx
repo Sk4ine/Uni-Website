@@ -34,7 +34,7 @@ function ProductImages({imagePaths} : {imagePaths: string[]}) {
 
   return (
     <div className="flex flex-col items-center w-[45%]">
-      <img src={imagePaths[0]} className="size-fit object-contain rounded-3xl"></img>
+      <img src={imagePaths[0]} className="w-full size-contain aspect-square object-contain rounded-3xl"></img>
       <div className="flex justify-center items-center mt-4 gap-3">
         {altImages}
       </div>

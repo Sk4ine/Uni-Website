@@ -5,7 +5,7 @@ import { Footer, NavigationBar } from "../components/componentsCommon";
 import earringsMetalImage from "../assets/productImages/earringsMetal.png";
 
 export function CheckoutPage() {
-  const product1: Product = new Product(1, "Серьги металл", 399, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1, [earringsMetalImage]);
+  const product1: Product = new Product(1, 3, "Серьги металл", 399, 1, [earringsMetalImage]);
 
   return (
     <>
