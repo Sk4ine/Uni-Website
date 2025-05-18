@@ -4,12 +4,12 @@ import { Product } from "../classes/product";
 
 import earringsMetalImage from "../assets/productImages/earringsMetal.png";
 import { useContext, useState } from "react";
-import { ActiveCategoryContext } from "../components/contexts";
+import { ActiveCategoryContext, CurrentUserContext, UserListContext } from "../components/contexts";
 
 export function HomePage() {
-  const context = useContext(ActiveCategoryContext);
+  const context = useContext(UserListContext);
 
-  console.log(context?.activeCategory);
+  const context1 = useContext(CurrentUserContext);
 
   return (
     <>

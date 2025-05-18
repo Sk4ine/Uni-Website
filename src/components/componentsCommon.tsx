@@ -1,14 +1,21 @@
 import artezaLogo from '../assets/Arteza.png';
 import shoppingCartIcon from '../assets/shoppingCartIcon.png';
 import shoppingCartIconPink from '../assets/shoppinCartIconPink.png';
+import defaultUserLogo from '../assets/defaultUserLogo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 import type { Product } from '../classes/product';
 import { Link, useLocation } from 'react-router';
 import { useContext } from 'react';
-import { ActiveCategoryContext, CartContext, ProductListContext } from './contexts';
+import { ActiveCategoryContext, CartContext, CurrentUserContext, ProductListContext } from './contexts';
 
 export function NavigationBar() {
+  const currentUserContext = useContext(CurrentUserContext);
+
+  if(!currentUserContext) {
+    return;
+  }
+
   const border: string = location.pathname == "/home" ? "p-[10rem-4px]" : "box-content border-b-4 border-[#EF829A]";
 
   return (
@@ -18,7 +25,12 @@ export function NavigationBar() {
       <NavigationBarButton text="Каталог" url="/catalog"></NavigationBarButton>
       <SearchBar></SearchBar>
       <NavigationBarIcon iconImagePath={shoppingCartIcon} url="/cart"></NavigationBarIcon>
-      <NavigationBarButton text="Вход" url="/login"></NavigationBarButton>
+      { currentUserContext.currentUser !== undefined ? (
+        <NavigationBarIcon iconImagePath={defaultUserLogo} url="/user-profile"></NavigationBarIcon>
+      ) : (
+        <NavigationBarButton text="Вход" url="/login"></NavigationBarButton>
+      )
+      }
     </div>
   )
 }
@@ -49,14 +61,16 @@ function SearchBar() {
 
 function NavigationBarIcon({iconImagePath, url} : {iconImagePath: string, url: string}) {
   const colors: {[index: string]: string} = {
-    pink: "bg-[#D5778D] hover:bg-[#B36476]",
-    gray: "bg-[#B5ABA1] hover:bg-[#878078]"
+    pink: "bg-[#D5778D] group-hover:bg-[#B36476]",
+    gray: "bg-[#B5ABA1] group-hover:bg-[#878078]"
   };
 
   const activeColor: string = (useLocation().pathname == url) ? colors["pink"] : colors["gray"];
 
   return (
-    <Link to={url} style={{maskImage: `url(${iconImagePath})`}} className={`${activeColor} flex justify-center items-center h-[65%] w-20 mask-no-repeat mask-center`}></Link>
+    <Link to={url} className={`flex justify-center items-center h-[65%] w-20 group`}>
+      <div style={{maskImage: `url(${iconImagePath})`}} className={`${activeColor} size-[50px] mask-contain mask-no-repeat mask-center`}></div>
+    </Link>
   )
 }
 
@@ -124,11 +138,11 @@ export function ProductList() {
   )
 }
 
-export function InputField({fieldName, fieldID, value} : {fieldName: string, fieldID : string, value?: string}) {
+export function InputField({fieldName, fieldID, value, required, fieldType} : {fieldName: string, fieldID : string, value?: string, required?: boolean, fieldType?: string}) {
   return (
     <div className="flex flex-col items-start">
       <label htmlFor={fieldID} className="font-default text-[#555555] text-3xl">{fieldName}</label>
-      <input type="text" name={fieldID} value={value} className="w-80 text-[#555555] text-2xl px-4 py-1.5 rounded-2xl outline-none shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)]"></input>
+      <input type={fieldType ? fieldType : "text"} name={fieldID} defaultValue={value} required={required} className="w-80 text-[#555555] text-2xl px-4 py-1.5 rounded-2xl outline-none shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)]"></input>
     </div>
   )
 }

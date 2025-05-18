@@ -1,20 +1,21 @@
 export class User {
-  public firstName: string;
-  public secondName: string;
+  public id: number;
+  public firstName: string | undefined;
+  public secondName: string | undefined;
   public phoneNumber: string = "";
   public email: string = "";
-  public logoImagePath: string = "";
+  public password: string;
+  public logoImagePath: string | undefined;
 
-  public constructor(firstName: string, secondName: string, phoneNumber?: string, email?: string, logoImagePath?: string) {
+  public constructor(id: number, email: string, password: string, firstName?: string, secondName?: string, phoneNumber?: string, logoImagePath?: string) {
+    this.id = id;
+    this.email = email;
+    this.password = password;
     this.firstName = firstName;
     this.secondName = secondName;
 
     if(phoneNumber !== undefined) {
       this.phoneNumber = phoneNumber;
-    }
-
-    if(email !== undefined) {
-      this.email = email;
     }
 
     if(logoImagePath !== undefined) {

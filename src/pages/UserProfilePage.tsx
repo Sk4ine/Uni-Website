@@ -1,24 +1,27 @@
-import { User } from "../classes/user";
 import { Footer, NavigationBar } from "../components/componentsCommon";
-import { OrderCard, OrdersList, UserInfo, UserProfileSection } from "../components/componentsUserProfile";
-import { Order } from "../classes/order";
-import { Product } from "../classes/product";
-
-import userLogoImage from "../assets/defaultUserLogo.png";
-import earringsMetalImage from "../assets/productImages/earringsMetal.png";
+import { OrdersList, UserInfo, UserProfileSection } from "../components/componentsUserProfile";
+import { useContext } from "react";
+import { CurrentUserContext } from "../components/contexts";
+import { Navigate } from "react-router";
 
 export function UserProfilePage() {
-  const product1: Product = new Product(1, "Серьги металл", 399, "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 1, [earringsMetalImage]);
+  const currentUserContext = useContext(CurrentUserContext);
+  
+  if(!currentUserContext) {
+    return;
+  }
+
+  if(!currentUserContext.currentUser) {
+    return <Navigate to="/home"></Navigate>
+  }
 
   return (
     <>
       <div>
         <NavigationBar></NavigationBar>
         <UserProfileSection>
-          <UserInfo user={new User("Полина", "Костина", undefined, undefined, userLogoImage)}></UserInfo>
-          <OrdersList>
-            <OrderCard order={new Order(product1, product1.price, "В пути")}></OrderCard>
-          </OrdersList>
+          <UserInfo></UserInfo>
+          <OrdersList></OrdersList>
         </UserProfileSection>
         <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
       </div>
