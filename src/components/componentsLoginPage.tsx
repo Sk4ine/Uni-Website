@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router';
 import artezaLogo from '../assets/Arteza.png';
 import { InputField } from './componentsCommon';
-import { useContext, useState } from 'react';
-import { CurrentUserContext, useCurrentUserContext, UserListContext, useUserListContext } from './contexts';
+import { useState } from 'react';
+import { useCurrentUserContext, useUserListContext } from './contexts';
 import type { User } from '../classes/user';
 
 export function HomePageButton() {

@@ -1,8 +1,7 @@
 import { Link, useNavigate } from "react-router";
 import { InputField } from "./componentsCommon";
-import { HomePageButton } from "./componentsLoginPage";
-import { useContext, useState } from "react";
-import { CurrentUserContext, useCurrentUserContext, UserListContext, useUserListContext } from "./contexts";
+import { useState } from "react";
+import { useUserListContext } from "./contexts";
 import { User } from "../classes/user";
 
 export function RegistrationSection() {
@@ -27,6 +26,11 @@ export function RegistrationForm() {
 
     if(formData.get("password") !== formData.get("passwordConfirmation")) {
       setRegistrationFailMessage("Пароль и подтверждение не совпадают");
+      return;
+    }
+
+    if(userListContext.userList.find((p) => p.email == formData.get("email"))) {
+      setRegistrationFailMessage("Пользователь с таким email уже существует");
       return;
     }
 

@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import type { Product } from "../classes/product"
-import { CartContext, ProductListContext, useCartContext } from "./contexts"
+import { ProductListContext, useCartContext, useCheckoutProductContext } from "./contexts"
+import { Link, useNavigate } from "react-router";
 
 export function CartSection() {
   return (
@@ -37,10 +38,12 @@ function CartProductList() {
 export function CartProduct({product, quantity} : {product: Product, quantity: number}) {
   return (
     <div className="w-full h-64 flex justify-between items-center rounded-2xl shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)]">
-      <img src={product.imagePaths[0]} className='h-[88%] ml-4 object-contain rounded-2xl basis-1/4'></img>
-      <div className="flex justify-between items-start pl-8 pr-6 basis-3/4 self-start mt-10">
+      <Link to={`/catalog/${product.id}`} className="h-[88%] ml-4 rounded-2xl w-1/4">
+        <img src={product.imagePaths[0]} className='h-full aspect-square rounded-2xl object-contain'></img>
+      </Link>
+      <div className="flex justify-between items-start pl-8 pr-6 w-3/4 self-start mt-10">
         <ProductInfo productName={product.name} quantity={quantity} productID={product.id}></ProductInfo>
-        <OrderActions productPrice={product.price} productID={product.id}></OrderActions>
+        <OrderActions productPrice={product.price} quantity={quantity} productID={product.id}></OrderActions>
       </div>
     </div>
   )
@@ -75,18 +78,26 @@ function QuantityCounter({quantity, productID} : {quantity: number, productID: n
   )
 }
 
-function OrderActions({productPrice, productID} : {productPrice: number, productID: number}) {
+function OrderActions({productPrice, productID, quantity} : {productPrice: number, productID: number, quantity: number}) {
   const cartContext = useCartContext();
+  const checkoutProductContext = useCheckoutProductContext();
+  const productListContext = useContext(ProductListContext);
+  const navigate = useNavigate();
 
-  function handleClick() {
+  function handleRemoveProduct() {
     cartContext.removeProduct(productID);
+  }
+
+  function handleMakeOrder() {
+    checkoutProductContext.setCheckoutProduct(cartContext.cartProductList.find((p) => p.productID == productID));
+    navigate("/checkout");
   }
 
   return (
     <div className="flex flex-col items-center font-default">
-      <p className="text-[#B4A1A6] text-5xl">{productPrice} руб.</p>
-      <button className="bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-4xl text-[#D5778D] text-4xl cursor-pointer mt-5 py-1.5 px-4">Оформить заказ</button>
-      <button onClick={handleClick} className="text-3xl text-[#B5ABA1] hover:text-[#BC4241] mt-1 cursor-pointer">Удалить товар</button>
+      <p className="text-[#B4A1A6] text-5xl">{productPrice * quantity} руб.</p>
+      <button onClick={handleMakeOrder} className="bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-4xl text-[#D5778D] text-4xl cursor-pointer mt-5 py-1.5 px-4">Оформить заказ</button>
+      <button onClick={handleRemoveProduct} className="text-3xl text-[#B5ABA1] hover:text-[#BC4241] mt-1 cursor-pointer">Удалить товар</button>
     </div>
   )
 }

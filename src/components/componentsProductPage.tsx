@@ -4,8 +4,8 @@ import type { Review } from "../classes/review";
 
 import ratingStarImage from "../assets/ratingStarIcon.png";
 import ratingStarLargeImage from "../assets/ratingStarIconLarge.png";
-import { useContext } from "react";
-import { CartContext, useCartContext } from "./contexts";
+import { useCartContext } from "./contexts";
+import { Link } from "react-router";
 
 export function ProductPageSection({children, product} : {children: React.ReactNode, product: Product}) {
   return (
@@ -49,10 +49,10 @@ function ImageButton({imagePath} : {imagePath: string}) {
 }
 
 function ProductDescription({product} : {product: Product}) {
-  const context = useCartContext();
+  const cartContext = useCartContext();
   
     function handleClick() {
-      context.addProduct(product.id);
+      cartContext.addProduct(product.id);
     }
 
   return (
@@ -61,7 +61,12 @@ function ProductDescription({product} : {product: Product}) {
         <p>{product.name}</p>
         <p>{product.price} руб.</p>
       </div>
-      <button onClick={handleClick} className="w-fit px-16 py-2.5 mt-8 font-default text-[#D5778D] text-6xl bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-3xl cursor-pointer">В корзину</button>
+      { cartContext.cartProductList.find((p) => p.productID == product.id) ? (
+        <Link to="/cart" className="w-fit px-16 py-2.5 mt-8 font-default text-[#D5778D] text-4xl bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-3xl cursor-pointer">Перейти в корзину</Link>
+      ) : (
+        <button onClick={handleClick} className="w-fit px-16 py-2.5 mt-8 font-default text-[#D5778D] text-4xl bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-3xl cursor-pointer">Добавить в корзину</button>
+      )
+      }
       <FullInfo product={product}></FullInfo>
     </div>
   )

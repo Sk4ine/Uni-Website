@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { ActiveCategoryContext, CategoryListContext, useActiveCategoryContext } from "./contexts";
+import { useContext } from "react";
+import { CategoryListContext, useActiveCategoryContext } from "./contexts";
 
 export function CategoryList() {
   const categoryListContext = useContext(CategoryListContext);

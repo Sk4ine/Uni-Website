@@ -1,7 +1,5 @@
-import { useContext } from 'react';
 import homePageBanner from '../assets/homePageBanner.png';
-import { ProductCard, ProductList } from './componentsCommon';
-import { ProductListContext } from './contexts';
+import { ProductList } from './componentsCommon';
 
 export function HomePageBanner() {
   return (

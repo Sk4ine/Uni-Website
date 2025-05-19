@@ -2,7 +2,7 @@ import { useContext } from "react";
 import type { Order } from "../classes/order";
 import type { User } from "../classes/user";
 import { InputField } from "./componentsCommon";
-import { CurrentUserContext, OrderListContext, ProductListContext, useCurrentUserContext, useOrderListContext, UserListContext, useUserListContext } from "./contexts";
+import { ProductListContext, useCurrentUserContext, useOrderListContext, useUserListContext } from "./contexts";
 import type { Product } from "../classes/product";
 
 import defaultUserLogo from '../assets/defaultUserLogo.png';
@@ -26,7 +26,7 @@ export function UserInfo() {
   const user: User = currentUserContext.currentUser;
 
   return (
-    <div className="flex gap-24 w-[1030px] mt-12">
+    <div className="flex justify-between w-[1100px] mt-12">
       <UserLogo user={user}></UserLogo>
       <UserInfoForm user={user}></UserInfoForm>
     </div>
@@ -35,9 +35,11 @@ export function UserInfo() {
 
 function UserLogo({user} : {user: User}) {
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center w-[30%] gap-4">
       <img src={user.logoImagePath ? user.logoImagePath : defaultUserLogo} className="w-32 h-32 object-cover rounded-full"></img>
-      <p className="font-default text-[#D5778D] text-4xl text-nowrap">{user.firstName} {user.secondName}</p>
+      <p className="font-default text-[#D5778D] text-4xl text-wrap text-center">
+        {user.firstName || user.secondName ? `${user.firstName} ${user.secondName}` : `user${user.id}`}
+      </p>
     </div>
   )
 }
@@ -52,20 +54,35 @@ function UserInfoForm({user} : {user: User}) {
     navigate("/home");
   }
 
-  function saveUserInfo() {
-    
+  function saveUserInfo(formData: FormData) {
+    if(!currentUserContext.currentUser) {
+      return;
+    }
+
+    const changedUser: User = {
+      ...currentUserContext.currentUser, 
+      email: formData.get("email") as string,
+      firstName: formData.get("firstName") as string,
+      secondName: formData.get("secondName") as string,
+      phoneNumber: formData.get("phoneNumber") as string
+    };
+
+    const filteredUserList: User[] = userListContext.userList.filter((u) => u.id != currentUserContext.currentUser?.id);
+
+    userListContext.setUserList([...filteredUserList, changedUser]);
+    currentUserContext.setCurrentUser(changedUser);
   }
 
   return (
-    <form action={saveUserInfo} className="flex flex-col gap-6">
+    <form action={saveUserInfo} className="flex flex-col gap-6 w-[70%] pl-24">
       <div className="flex flex-col flex-wrap h-48 gap-x-5 gap-y-6">
         <InputField fieldName="Имя" fieldID="firstName" value={user.firstName}></InputField>
         <InputField fieldName="Фамилия" fieldID="secondName" value={user.secondName}></InputField>
         <InputField fieldName="Номер телефона" fieldID="phoneNumber" value={user.phoneNumber}></InputField>
-        <InputField fieldName="Электронная почта" fieldID="email" value={user.email}></InputField>
+        <InputField fieldName="Электронная почта" fieldID="email" value={user.email} required></InputField>
       </div>
       <div className="flex justify-between items-center font-default text-[#D5778D] text-4xl">
-        <button className="w-fit px-6 bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-2xl py-1 cursor-pointer">Сохранить</button>
+        <button type="submit" className="w-fit px-6 bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-2xl py-1 cursor-pointer">Сохранить</button>
         <button onClick={handleSignOutClick} className="w-fit px-6 bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-2xl py-1 cursor-pointer">Выйти</button>
       </div>
     </form>

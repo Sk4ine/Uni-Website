@@ -11,7 +11,7 @@ import earringsMetalImage from "./assets/productImages/earringsMetal.png";
 import ringHeartsImage from "./assets/productImages/ringHearts.png";
 import defaultUserLogo from './assets/defaultUserLogo.png';
 import { CartProvider } from "./components/cartProvider";
-import { ActiveCategoryContext, CategoryListContext, CurrentUserContext, OrderListContext, ProductListContext, UserListContext } from "./components/contexts";
+import { ActiveCategoryContext, CategoryListContext, CheckoutProductContext, CurrentUserContext, OrderListContext, ProductListContext, UserListContext } from "./components/contexts";
 import { ProductCategory } from "./classes/productCategory";
 import { useEffect, useState } from "react";
 import { LoginPage } from "./pages/LoginPage";
@@ -19,6 +19,7 @@ import { RegistrationPage } from "./pages/RegistrationPage";
 import { Order } from "./classes/order";
 import { CartProduct } from "./classes/cartProduct";
 import { UserProfilePage } from "./pages/UserProfilePage";
+import { CheckoutPage } from "./pages/CheckoutPage";
 
 export function App() {
   //localStorage.clear();
@@ -70,6 +71,8 @@ export function App() {
 
   const [orderList, setOrderList] = useState(orderListField);
 
+  const [checkoutProduct, setCheckoutProduct] = useState<CartProduct | undefined>(undefined);
+
   const productPageList: React.ReactNode[] = [];
 
   for(let i = 0; i < productList.length; i++) {
@@ -85,18 +88,21 @@ export function App() {
               <ActiveCategoryContext.Provider value={{activeCategory, setActiveCategory}}>
                 <CategoryListContext.Provider value={categoryList}>
                   <ProductListContext.Provider value={productList}>
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/home" replace />} />
-                      <Route path="home" element={<HomePage />}></Route>
-                      <Route path="catalog" element={<CatalogPage />}></Route>
-                      <Route path="cart" element={<CartPage />}></Route>
-                      <Route path="catalog">
-                        {productPageList}
-                      </Route>
-                      <Route path="login" element={<LoginPage />}></Route>
-                      <Route path="registration" element={<RegistrationPage />}></Route>
-                      <Route path="user-profile" element={<UserProfilePage />}></Route>
-                    </Routes>
+                    <CheckoutProductContext.Provider value={{checkoutProduct, setCheckoutProduct}}>
+                      <Routes>
+                        <Route path="/" element={<Navigate to="/home" replace />} />
+                        <Route path="home" element={<HomePage />}></Route>
+                        <Route path="catalog" element={<CatalogPage />}></Route>
+                        <Route path="cart" element={<CartPage />}></Route>
+                        <Route path="catalog">
+                          {productPageList}
+                        </Route>
+                        <Route path="login" element={<LoginPage />}></Route>
+                        <Route path="registration" element={<RegistrationPage />}></Route>
+                        <Route path="user-profile" element={<UserProfilePage />}></Route>
+                        <Route path="checkout" element={<CheckoutPage />}></Route>
+                      </Routes>
+                    </CheckoutProductContext.Provider>
                   </ProductListContext.Provider>
                 </CategoryListContext.Provider>
               </ActiveCategoryContext.Provider>
