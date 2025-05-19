@@ -45,7 +45,7 @@ export function App() {
 
   const userListField: User[] = [];
 
-  userListField.push(new User(1, "Никита", "Аминов", "kitamin@gmail.com", "TeykovskiySharm52"));
+  userListField.push(new User(1, "kitamin@gmail.com", "TeykovskiySharm52", "Никита", "Аминов"));
 
   const [userList, setUserList] = useState(userListField);
 

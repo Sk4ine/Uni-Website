@@ -5,7 +5,7 @@ import type { Review } from "../classes/review";
 import ratingStarImage from "../assets/ratingStarIcon.png";
 import ratingStarLargeImage from "../assets/ratingStarIconLarge.png";
 import { useContext } from "react";
-import { CartContext } from "./contexts";
+import { CartContext, useCartContext } from "./contexts";
 
 export function ProductPageSection({children, product} : {children: React.ReactNode, product: Product}) {
   return (
@@ -49,13 +49,9 @@ function ImageButton({imagePath} : {imagePath: string}) {
 }
 
 function ProductDescription({product} : {product: Product}) {
-  const context = useContext(CartContext);
+  const context = useCartContext();
   
     function handleClick() {
-      if(!context) {
-        return;
-      }
-  
       context.addProduct(product.id);
     }
 

@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router";
 import { InputField } from "./componentsCommon";
 import { HomePageButton } from "./componentsLoginPage";
 import { useContext, useState } from "react";
-import { CurrentUserContext, UserListContext } from "./contexts";
+import { CurrentUserContext, useCurrentUserContext, UserListContext, useUserListContext } from "./contexts";
 import { User } from "../classes/user";
 
 export function RegistrationSection() {
@@ -16,17 +16,11 @@ export function RegistrationSection() {
 
 export function RegistrationForm() {
   const navigate = useNavigate();
-  const userListContext = useContext(UserListContext);
-
-  const currentUserContext = useContext(CurrentUserContext);
+  const userListContext = useUserListContext();
 
   const [registrationFailMessage, setRegistrationFailMessage] = useState("");
 
-  function registration(formData: FormData) {
-    if(!userListContext || !currentUserContext) {
-      return;
-    }
-    
+  function registration(formData: FormData) {    
     if(formData.get("email") === null) {
       return;
     }

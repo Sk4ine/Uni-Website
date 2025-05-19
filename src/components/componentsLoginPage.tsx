@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router';
 import artezaLogo from '../assets/Arteza.png';
 import { InputField } from './componentsCommon';
 import { useContext, useState } from 'react';
-import { CurrentUserContext, UserListContext } from './contexts';
+import { CurrentUserContext, useCurrentUserContext, UserListContext, useUserListContext } from './contexts';
 import type { User } from '../classes/user';
 
 export function HomePageButton() {
@@ -25,24 +25,22 @@ export function LoginSection() {
 }
 
 function LoginForm() {
-  const userListContext = useContext(UserListContext);
-  const currentUserContext = useContext(CurrentUserContext);
+  const userListContext = useUserListContext();
+  const currentUserContext = useCurrentUserContext();
   const [loginFailed, setLoginFailed] = useState(false);
   const navigate = useNavigate();
 
+  console.log(userListContext?.userList);
+
   function login(formData: FormData) {
-    if(!userListContext) {
-      return;
-    }
+    const filteredUserList: User[] = userListContext.userList.filter((user) => user.email == formData.get("email") && user.password == formData.get("password"));
 
-    const filteredUserList: User[] = userListContext.userList?.filter((user) => user.email == formData.get("email") && user.password == formData.get("password"));
-
-    if(filteredUserList?.length == 0) {
+    if(filteredUserList.length == 0) {
       setLoginFailed(true);
       return;
     }
 
-    currentUserContext?.setCurrentUser(filteredUserList[0]);
+    currentUserContext.setCurrentUser(filteredUserList[0]);
     navigate("/home");
   }
 

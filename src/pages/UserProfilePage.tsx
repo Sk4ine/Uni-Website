@@ -1,15 +1,10 @@
 import { Footer, NavigationBar } from "../components/componentsCommon";
 import { OrdersList, UserInfo, UserProfileSection } from "../components/componentsUserProfile";
-import { useContext } from "react";
-import { CurrentUserContext } from "../components/contexts";
+import { useCurrentUserContext } from "../components/contexts";
 import { Navigate } from "react-router";
 
 export function UserProfilePage() {
-  const currentUserContext = useContext(CurrentUserContext);
-  
-  if(!currentUserContext) {
-    return;
-  }
+  const currentUserContext = useCurrentUserContext();
 
   if(!currentUserContext.currentUser) {
     return <Navigate to="/home"></Navigate>

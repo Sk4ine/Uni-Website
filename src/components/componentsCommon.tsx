@@ -7,14 +7,10 @@ import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 import type { Product } from '../classes/product';
 import { Link, useLocation } from 'react-router';
 import { useContext } from 'react';
-import { ActiveCategoryContext, CartContext, CurrentUserContext, ProductListContext } from './contexts';
+import { ActiveCategoryContext, CartContext, ProductListContext, useActiveCategoryContext, useCartContext, useCurrentUserContext } from './contexts';
 
 export function NavigationBar() {
-  const currentUserContext = useContext(CurrentUserContext);
-
-  if(!currentUserContext) {
-    return;
-  }
+  const currentUserContext = useCurrentUserContext();
 
   const border: string = location.pathname == "/home" ? "p-[10rem-4px]" : "box-content border-b-4 border-[#EF829A]";
 
@@ -24,7 +20,7 @@ export function NavigationBar() {
       <NavigationBarButton text="Главная" url="/home"></NavigationBarButton>
       <NavigationBarButton text="Каталог" url="/catalog"></NavigationBarButton>
       <SearchBar></SearchBar>
-      <NavigationBarIcon iconImagePath={shoppingCartIcon} url="/cart"></NavigationBarIcon>
+      <CartIcon></CartIcon>
       { currentUserContext.currentUser !== undefined ? (
         <NavigationBarIcon iconImagePath={defaultUserLogo} url="/user-profile"></NavigationBarIcon>
       ) : (
@@ -74,14 +70,33 @@ function NavigationBarIcon({iconImagePath, url} : {iconImagePath: string, url: s
   )
 }
 
+function CartIcon() {
+  const cartContext = useCartContext();
+
+  const colors: {[index: string]: string} = {
+    pink: "bg-[#D5778D] group-hover:bg-[#B36476]",
+    gray: "bg-[#B5ABA1] group-hover:bg-[#878078]"
+  };
+
+  const activeColor: string = (useLocation().pathname == "/cart") ? colors["pink"] : colors["gray"];
+
+  return (
+    <Link to={"/cart"} className={`flex justify-center items-center h-[65%] w-20 group`}>
+      <div className='relative size-[50px]'>
+        <div style={{maskImage: `url(${shoppingCartIcon})`}} className={`${activeColor} size-full mask-contain mask-no-repeat mask-center`}></div>
+        <div style={{visibility: cartContext.cartProductList.length > 0 ? "visible" : "hidden"}} className='size-[20px] flex justify-center items-center absolute right-[-8px] top-0 rounded-full bg-[#D5778D]'>
+          <p className='font-default text-[16px] text-white pt-[0.115rem]'>{cartContext.cartProductList.length}</p>
+        </div>
+      </div>
+      
+    </Link>
+  )
+}
+
 export function ProductCard({product} : {product : Product}) {
-  const context = useContext(CartContext);
+  const context = useCartContext();
 
   function handleClick() {
-    if(!context) {
-      return;
-    }
-
     context.addProduct(product.id);
   }
 
@@ -115,12 +130,7 @@ export function Footer({phoneNumber, address} : {phoneNumber: string, address: s
 
 export function ProductList() {
   const productListContext = useContext(ProductListContext);
-
-  const activeCategoryContext = useContext(ActiveCategoryContext);
-
-  if(!activeCategoryContext) {
-    return;
-  }
+  const activeCategoryContext = useActiveCategoryContext();
   
   const productCards: React.ReactNode[] = [];
   

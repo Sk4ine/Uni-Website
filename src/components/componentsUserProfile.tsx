@@ -2,7 +2,7 @@ import { useContext } from "react";
 import type { Order } from "../classes/order";
 import type { User } from "../classes/user";
 import { InputField } from "./componentsCommon";
-import { CurrentUserContext, OrderListContext, ProductListContext } from "./contexts";
+import { CurrentUserContext, OrderListContext, ProductListContext, useCurrentUserContext, useOrderListContext, UserListContext, useUserListContext } from "./contexts";
 import type { Product } from "../classes/product";
 
 import defaultUserLogo from '../assets/defaultUserLogo.png';
@@ -17,9 +17,9 @@ export function UserProfileSection({children} : {children: React.ReactNode}) {
 }
 
 export function UserInfo() {
-  const currentUserContext = useContext(CurrentUserContext);
+  const currentUserContext = useCurrentUserContext();
 
-  if(!currentUserContext || !currentUserContext.currentUser) {
+  if(!currentUserContext.currentUser) {
     return;
   }
 
@@ -44,19 +44,20 @@ function UserLogo({user} : {user: User}) {
 
 function UserInfoForm({user} : {user: User}) {
   const navigate = useNavigate();
-  const currentUserContext = useContext(CurrentUserContext);
+  const currentUserContext = useCurrentUserContext();
+  const userListContext = useUserListContext();
 
   function handleSignOutClick() {
-    if(!currentUserContext) {
-      return;
-    }
-
     currentUserContext.setCurrentUser(undefined);
     navigate("/home");
   }
 
+  function saveUserInfo() {
+    
+  }
+
   return (
-    <form className="flex flex-col gap-6">
+    <form action={saveUserInfo} className="flex flex-col gap-6">
       <div className="flex flex-col flex-wrap h-48 gap-x-5 gap-y-6">
         <InputField fieldName="Имя" fieldID="firstName" value={user.firstName}></InputField>
         <InputField fieldName="Фамилия" fieldID="secondName" value={user.secondName}></InputField>
@@ -72,15 +73,10 @@ function UserInfoForm({user} : {user: User}) {
 }
 
 export function OrdersList() {
-  const orderListContext = useContext(OrderListContext);
+  const orderListContext = useOrderListContext();
+  const currentUserContext = useCurrentUserContext();
 
-  if(!orderListContext) {
-    return;
-  }
-
-  const currentUserContext = useContext(CurrentUserContext);
-
-  if(!currentUserContext || !currentUserContext.currentUser) {
+  if(!currentUserContext.currentUser) {
     return;
   }
 
@@ -113,6 +109,7 @@ export function OrderCard({order} : {order: Order}) {
     <div className="flex flex-col items-center w-96 rounded-2xl py-4 shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)] font-default text-[#B4A1A6] text-4xl">
       <img src={product.imagePaths[0]} className="w-[80%] aspect-square mt-2 object-cover rounded-2xl"></img>
       <p className="mt-3">{product.name}</p>
+      <p className="">{order.product.quantity} шт.</p>
       <p>{order.cost} руб.</p>
       <p className="text-[#D5778D] mt-3">{order.status}</p>
     </div>

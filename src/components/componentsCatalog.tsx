@@ -1,18 +1,9 @@
 import { useContext, useState } from "react";
-import { ActiveCategoryContext, CategoryListContext } from "./contexts";
+import { ActiveCategoryContext, CategoryListContext, useActiveCategoryContext } from "./contexts";
 
 export function CategoryList() {
   const categoryListContext = useContext(CategoryListContext);
-
-  if(!categoryListContext) {
-    return;
-  }
-
-  const activeCategoryContext = useContext(ActiveCategoryContext);
-
-  if(!activeCategoryContext) {
-    return;
-  }
+  const activeCategoryContext = useActiveCategoryContext();
 
   const categoryButtonList: React.ReactNode[] = [];
 
@@ -32,13 +23,9 @@ export function CategoryButton({categoryID, categoryName, active} : {categoryID:
   const textColor: string = active ? "text-[#EF829A]" : "text-[#979797]";
   const backgroundHoverColor: string = active ? "hover:bg-[#E6C8C9]" : "hover:bg-[#D1D1D1]";
 
-  const activeCategoryContext = useContext(ActiveCategoryContext);
+  const activeCategoryContext = useActiveCategoryContext();
 
   function handleClick() {
-    if(!activeCategoryContext) {
-      return;
-    }
-
     activeCategoryContext.setActiveCategory(categoryID - 1);
   }
   

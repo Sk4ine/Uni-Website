@@ -1,10 +1,5 @@
-import { Product } from "../classes/product";
-import { CartProduct, CartSection } from "../components/componentsCart";
+import { CartSection } from "../components/componentsCart";
 import { Footer, NavigationBar } from "../components/componentsCommon";
-
-import earringsMetalImage from "../assets/productImages/earringsMetal.png";
-import { useContext } from "react";
-import { CartContext } from "../components/contexts";
 
 export function CartPage() {
   return (

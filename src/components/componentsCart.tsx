@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import type { Product } from "../classes/product"
-import { CartContext, ProductListContext } from "./contexts"
+import { CartContext, ProductListContext, useCartContext } from "./contexts"
 
 export function CartSection() {
   return (
@@ -14,13 +14,8 @@ export function CartSection() {
 function CartProductList() {
   let cartProductNodeList: React.ReactNode[] = [];
 
-  const cartContext = useContext(CartContext);
-
+  const cartContext = useCartContext();
   const productListContext = useContext(ProductListContext);
-
-  if(cartContext === undefined) {
-    return;
-  }
 
   const {cartProductList} = cartContext;
 
@@ -61,21 +56,13 @@ function ProductInfo({productName, quantity, productID} : {productName: string, 
 }
 
 function QuantityCounter({quantity, productID} : {quantity: number, productID: number}) {
-  const cartContext = useContext(CartContext);
+  const cartContext = useCartContext();
   
   function handleClickRemove() {
-    if(!cartContext) {
-      return;
-    }
-
     cartContext.decreaseProductQuantity(productID);
   }
 
   function handleClickAdd() {
-    if(!cartContext) {
-      return;
-    }
-
     cartContext.addProduct(productID);
   }
 
@@ -89,13 +76,9 @@ function QuantityCounter({quantity, productID} : {quantity: number, productID: n
 }
 
 function OrderActions({productPrice, productID} : {productPrice: number, productID: number}) {
-  const cartContext = useContext(CartContext);
+  const cartContext = useCartContext();
 
   function handleClick() {
-    if(!cartContext) {
-      return;
-    }
-
     cartContext.removeProduct(productID);
   }
 
