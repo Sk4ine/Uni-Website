@@ -3,6 +3,7 @@ import { InputField } from "./componentsCommon";
 import { useState } from "react";
 import { useUserListContext } from "./contexts";
 import { User } from "../classes/user";
+import axios from "axios";
 
 export function RegistrationSection() {
   return (
@@ -20,25 +21,27 @@ export function RegistrationForm() {
   const [registrationFailMessage, setRegistrationFailMessage] = useState("");
 
   function registration(formData: FormData) {    
-    if(formData.get("email") === null) {
-      return;
-    }
-
     if(formData.get("password") !== formData.get("passwordConfirmation")) {
       setRegistrationFailMessage("Пароль и подтверждение не совпадают");
       return;
     }
 
-    if(userListContext.userList.find((p) => p.email == formData.get("email"))) {
-      setRegistrationFailMessage("Пользователь с таким email уже существует");
-      return;
-    }
-
-    const newUser: User = new User(userListContext.userList.length + 1, formData.get("email") as string, formData.get("password") as string)
-
-    userListContext.setUserList((userList) => [...userList, newUser]);
-    
-    navigate("/login")
+    axios.post("http://localhost:8080/api/users", {email: formData.get("email") as string, password: formData.get("password") as string})
+      .then(() => {
+        navigate("/login");
+      })
+      .catch(err => {
+        if(axios.isAxiosError(err)) {
+          switch (err.response?.status) {
+            case 409:
+              setRegistrationFailMessage("Пользователь с таким email уже существует");
+              break;
+            default:
+              setRegistrationFailMessage("Неизвестная ошибка");
+              console.log(err);
+          }
+        }
+      });
   }
 
   return (

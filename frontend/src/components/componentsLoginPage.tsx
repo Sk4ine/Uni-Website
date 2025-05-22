@@ -3,7 +3,9 @@ import artezaLogo from '../assets/Arteza.png';
 import { InputField } from './componentsCommon';
 import { useState } from 'react';
 import { useCurrentUserContext, useUserListContext } from './contexts';
-import type { User } from '../classes/user';
+import { User } from '../classes/user';
+import axios from 'axios';
+import type { UserResponse } from '../classes/apiResponses';
 
 export function HomePageButton() {
   return (
@@ -25,23 +27,31 @@ export function LoginSection() {
 }
 
 function LoginForm() {
-  const userListContext = useUserListContext();
   const currentUserContext = useCurrentUserContext();
-  const [loginFailed, setLoginFailed] = useState(false);
+  const [loginFailMessage, setLoginFailMessage] = useState<string>("");
   const navigate = useNavigate();
 
-  console.log(userListContext?.userList);
-
   function login(formData: FormData) {
-    const filteredUserList: User[] = userListContext.userList.filter((user) => user.email == formData.get("email") && user.password == formData.get("password"));
+    axios.post<UserResponse>("http://localhost:8080/api/auth/login", {email: formData.get("email") as string, password: formData.get("password") as string})
+      .then(res => {
+        const userName: string[] = res.data.name.split(" ");
 
-    if(filteredUserList.length == 0) {
-      setLoginFailed(true);
-      return;
-    }
+        currentUserContext.setCurrentUser(new User(res.data.id, res.data.email, "", userName[0], userName[1], res.data.phoneNumber));
 
-    currentUserContext.setCurrentUser(filteredUserList[0]);
-    navigate("/home");
+        navigate("/home");
+      })
+      .catch(err => {
+        if(axios.isAxiosError(err)) {
+          switch (err.response?.status) {
+            case 401:
+              setLoginFailMessage("Неверный email или пароль");
+              break;
+            default:
+              setLoginFailMessage("Неизвестная ошибка");
+              console.log(err);
+          }
+        }
+      }); 
   }
 
   return (
@@ -49,8 +59,8 @@ function LoginForm() {
       <InputField fieldName='Email' fieldID='email' required={true}></InputField>
       <PasswordInputField fieldName='Пароль' fieldID='password'></PasswordInputField>
       <div className='w-full flex flex-col items-center gap-2 mt-4'>
-        {loginFailed ?
-          <p className='font-default text-[#BC4241] text-2xl'>Неверный email или пароль</p>
+        {loginFailMessage.length > 0 ?
+          <p className='font-default text-[#BC4241] text-2xl'>{loginFailMessage}</p>
         :
           null
         }

@@ -8,7 +8,7 @@ export function CategoryList() {
   const categoryButtonList: React.ReactNode[] = [];
 
   for(let i = 0; i < categoryListContext.length; i++) {
-    categoryButtonList.push(<CategoryButton key={i} categoryID={categoryListContext[i].id} categoryName={categoryListContext[i].name} active={categoryListContext[i].id - 1 == activeCategoryContext.activeCategory ? true : false}></CategoryButton>);
+    categoryButtonList.push(<CategoryButton key={i} categoryID={categoryListContext[i].id} categoryName={categoryListContext[i].name} active={categoryListContext[i].id == activeCategoryContext.activeCategory ? true : false}></CategoryButton>);
   }
 
   return (
@@ -26,7 +26,7 @@ export function CategoryButton({categoryID, categoryName, active} : {categoryID:
   const activeCategoryContext = useActiveCategoryContext();
 
   function handleClick() {
-    activeCategoryContext.setActiveCategory(categoryID - 1);
+    activeCategoryContext.setActiveCategory(categoryID);
   }
   
   return (

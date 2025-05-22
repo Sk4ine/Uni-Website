@@ -7,9 +7,9 @@ export class Product {
   public price: number;
   public imagePaths: string[] = [];
   
-  public partNumber: number;
   public materials: string[] = [];
   public weightGrams: number = 0;
+  public quantityInStock: number = 0;
   public countryOfOrigin: string = "";
 
   private _customerReviews: Review[] = [];
@@ -20,27 +20,18 @@ export class Product {
 
   public rating: number = 0;
 
-  public constructor(id: number, categoryID: number, name: string, price: number, partNumber: number, imagePaths?: string[], materials?: string[], weightGrams?: number, countryOfOrigin?: string) {
+  public constructor(id: number, categoryID: number, name: string, price: number, materials: string[], weightGrams: number, quantityInStock: number, countryOfOrigin: string, imagePaths?: string[]) {
     this.id = id;
     this.categoryID = categoryID;
     this.name = name;
     this.price = price;
-    this.partNumber = partNumber;
+    this.materials = materials;
+    this.weightGrams = weightGrams;
+    this.quantityInStock = quantityInStock;
+    this.countryOfOrigin = countryOfOrigin;
 
     if(imagePaths !== undefined) {
       this.imagePaths = imagePaths;
-    }
-
-    if(materials !== undefined) {
-      this.materials = materials;
-    }
-
-    if(weightGrams !== undefined) {
-      this.weightGrams = weightGrams;
-    }
-
-    if(countryOfOrigin !== undefined) {
-      this.countryOfOrigin = countryOfOrigin;
     }
   }
 

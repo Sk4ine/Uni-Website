@@ -90,7 +90,7 @@ function FullInfo({product} : {product: Product}) {
     <div className="flex flex-col w-full px-9 mt-6 font-default text-[#B4A1A6] text-4xl">
       <p className="text-[#555555]">Описание</p>
       <div className="flex flex-col gap-1 mt-3">
-        <DescriptionItem itemName="Артикул" itemValue={product.partNumber}></DescriptionItem>
+        <DescriptionItem itemName="Артикул" itemValue={product.id}></DescriptionItem>
         <DescriptionItem itemName="Материал" itemValue={materials}></DescriptionItem>
         <DescriptionItem itemName="Вес" itemValue={product.weightGrams + " г"}></DescriptionItem>
         <DescriptionItem itemName="Производство" itemValue={product.countryOfOrigin}></DescriptionItem>

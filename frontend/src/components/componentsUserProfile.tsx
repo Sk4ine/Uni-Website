@@ -1,12 +1,14 @@
 import { useContext } from "react";
 import type { Order } from "../classes/order";
-import type { User } from "../classes/user";
+import { User } from "../classes/user";
 import { InputField } from "./componentsCommon";
 import { ProductListContext, useCurrentUserContext, useOrderListContext, useUserListContext } from "./contexts";
 import type { Product } from "../classes/product";
 
 import defaultUserLogo from '../assets/defaultUserLogo.png';
 import { useNavigate } from "react-router";
+import axios from "axios";
+import type { UserResponse } from "../classes/apiResponses";
 
 export function UserProfileSection({children} : {children: React.ReactNode}) {
   return (
@@ -47,7 +49,6 @@ function UserLogo({user} : {user: User}) {
 function UserInfoForm({user} : {user: User}) {
   const navigate = useNavigate();
   const currentUserContext = useCurrentUserContext();
-  const userListContext = useUserListContext();
 
   function handleSignOutClick() {
     currentUserContext.setCurrentUser(undefined);
@@ -59,18 +60,26 @@ function UserInfoForm({user} : {user: User}) {
       return;
     }
 
-    const changedUser: User = {
-      ...currentUserContext.currentUser, 
-      email: formData.get("email") as string,
-      firstName: formData.get("firstName") as string,
-      secondName: formData.get("secondName") as string,
-      phoneNumber: formData.get("phoneNumber") as string
-    };
+    const id: number = currentUserContext.currentUser.id;
 
-    const filteredUserList: User[] = userListContext.userList.filter((u) => u.id != currentUserContext.currentUser?.id);
+    const changedUser: User = new User(
+      id,
+      formData.get("email") as string,
+      "",
+      formData.get("firstName") as string,
+      formData.get("secondName") as string,
+      formData.get("phoneNumber") as string
+    );
 
-    userListContext.setUserList([...filteredUserList, changedUser]);
-    currentUserContext.setCurrentUser(changedUser);
+    axios.put(`http://localhost:8080/api/users/${id}`, {firstName: changedUser.firstName, secondName: changedUser.secondName, email: changedUser.email, phoneNumber: changedUser.phoneNumber})
+      .then(res => {
+        const user: UserResponse = res.data;
+
+        const userName: string[] = user.name.split(" ");
+
+        currentUserContext.setCurrentUser(new User(user.id, user.email, "", userName[0], userName[1], user.phoneNumber));
+      })
+      .catch(err => console.error(err));
   }
 
   return (
