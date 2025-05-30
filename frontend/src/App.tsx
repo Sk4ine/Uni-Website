@@ -24,11 +24,6 @@ import axios from "axios";
 
 export function App() {
   //localStorage.clear();
-  const categoryList: ProductCategory[] = [];
-
-  categoryList.push(new ProductCategory(0, "Всё"));
-  categoryList.push(new ProductCategory(1, "Кольца"));
-  categoryList.push(new ProductCategory(2, "Серьги"));
   
   const [activeCategory, setActiveCategory] = useState<number>(0);
 
@@ -57,36 +52,27 @@ export function App() {
     localStorage.setItem('user', JSON.stringify(currentUser));
   }, [currentUser]);
 
-  const orderListField: Order[] = [];
-
-  //orderListField.push(new Order(new CartProduct(1, 2), productList.filter((p) => p.id == 1)[0].price * 2, "Обрабатывается", 1));
-
-  const [orderList, setOrderList] = useState(orderListField);
-
   const [checkoutProduct, setCheckoutProduct] = useState<CartProduct | undefined>(undefined);
   
   return (
     <BrowserRouter>
       <UserListContext.Provider value={{userList, setUserList}}>
         <CurrentUserContext.Provider value={{currentUser, setCurrentUser}}>
-          <OrderListContext.Provider value={{orderList, setOrderList}}>
             <CartProvider>
               <ActiveCategoryContext.Provider value={{activeCategory, setActiveCategory}}>
-                <CategoryListContext.Provider value={categoryList}>
-                  <CheckoutProductContext.Provider value={{checkoutProduct, setCheckoutProduct}}>
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/home" replace />} />
-                      <Route path="home" element={<HomePage />}></Route>
-                      <Route path="catalog" element={<CatalogPage />}></Route>
-                      <Route path="cart" element={<CartPage />}></Route>
-                      <Route path="catalog/:id" element={<ProductPage />}></Route>
-                      <Route path="login" element={<LoginPage />}></Route>
-                      <Route path="registration" element={<RegistrationPage />}></Route>
-                      <Route path="user-profile" element={<UserProfilePage />}></Route>
-                      <Route path="checkout" element={<CheckoutPage />}></Route>
-                    </Routes>
-                  </CheckoutProductContext.Provider>
-                </CategoryListContext.Provider>
+                <CheckoutProductContext.Provider value={{checkoutProduct, setCheckoutProduct}}>
+                  <Routes>
+                    <Route path="/" element={<Navigate to="/home" replace />} />
+                    <Route path="home" element={<HomePage />}></Route>
+                    <Route path="catalog" element={<CatalogPage />}></Route>
+                    <Route path="cart" element={<CartPage />}></Route>
+                    <Route path="catalog/:id" element={<ProductPage />}></Route>
+                    <Route path="login" element={<LoginPage />}></Route>
+                    <Route path="registration" element={<RegistrationPage />}></Route>
+                    <Route path="user-profile" element={<UserProfilePage />}></Route>
+                    <Route path="checkout" element={<CheckoutPage />}></Route>
+                  </Routes>
+                </CheckoutProductContext.Provider>
               </ActiveCategoryContext.Provider>
             </CartProvider>
           </OrderListContext.Provider>

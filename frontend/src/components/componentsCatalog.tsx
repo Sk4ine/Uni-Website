@@ -7,8 +7,10 @@ export function CategoryList() {
 
   const categoryButtonList: React.ReactNode[] = [];
 
+  categoryButtonList.push(<CategoryButton key={0} categoryID={0} categoryName="Всё" active={activeCategoryContext.activeCategory == 0 ? true : false}></CategoryButton>)
+
   for(let i = 0; i < categoryListContext.length; i++) {
-    categoryButtonList.push(<CategoryButton key={i} categoryID={categoryListContext[i].id} categoryName={categoryListContext[i].name} active={categoryListContext[i].id == activeCategoryContext.activeCategory ? true : false}></CategoryButton>);
+    categoryButtonList.push(<CategoryButton key={i + 1} categoryID={categoryListContext[i].id} categoryName={categoryListContext[i].name} active={categoryListContext[i].id == activeCategoryContext.activeCategory ? true : false}></CategoryButton>);
   }
 
   return (

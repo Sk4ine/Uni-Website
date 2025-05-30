@@ -71,20 +71,7 @@ export const useUserListContext = (): UserListContextType => {
   return context;
 };
 
-type OrderListContextType = {
-  orderList: Order[];
-  setOrderList: React.Dispatch<React.SetStateAction<Order[]>>;
-}
-
-export const OrderListContext: React.Context<OrderListContextType | undefined> = createContext<OrderListContextType | undefined>(undefined);
-
-export const useOrderListContext = (): OrderListContextType => {
-  const context = useContext(OrderListContext);
-  if (context === undefined) {
-    throw new Error('useOrderListContext must be used within a CartProvider');
-  }
-  return context;
-};
+export const OrderListContext: React.Context<Order[]> = createContext<Order[]>([]);
 
 type CheckoutProductContextType = {
   checkoutProduct: CartProduct | undefined;

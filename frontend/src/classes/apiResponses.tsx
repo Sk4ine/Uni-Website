@@ -15,3 +15,16 @@ export interface ProductResponse {
   quantityInStock: number,
   countryOfOrigin: string
 }
+
+export interface CategoryResponse {
+  id: number,
+  name: string
+}
+
+export interface OrderResponse {
+  id: number,
+  clientID: number,
+  dateMade: string,
+  shippingAddress: string,
+  cost: number
+}

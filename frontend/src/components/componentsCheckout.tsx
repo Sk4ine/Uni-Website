@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router";
 import type { CartProduct } from "../classes/cartProduct";
 import { User } from "../classes/user";
 import { Order } from "../classes/order";
+import axios from "axios";
 
 export function CheckoutSection() {
   const checkoutProductContext = useCheckoutProductContext();
@@ -36,30 +37,20 @@ function OrderInfo({product} : {product: Product}) {
   const orderListContext = useOrderListContext();
   const checkoutProductContext = useCheckoutProductContext();
   const userListContext = useUserListContext();
+  const currentUserContext = useCurrentUserContext();
   const navigate = useNavigate();
 
   function makeOrder(formData: FormData) {
-    if(!userListContext.userList.find((u) => u.email == formData.get("email")) && !userListContext.userList.find((u) => u.phoneNumber == formData.get("phoneNumber"))) {
-      const newUser: User = new User(
-        userListContext.userList.length + 1,
-        formData.get("email") as string, "password",
-        formData.get("firstName") as string,
-        formData.get("secondName") as string,
-        formData.get("phoneNumber") as string
-      )
-      
-      userListContext.setUserList((userList) => [...userList, newUser]);
-    }
-
-    const user: User | undefined = userListContext.userList.find((u) => u.email == formData.get("email"));
-
-    if(!user) return;
-
     const cartProduct: CartProduct | undefined = cartContext.cartProductList.find((p) => p.productID == checkoutProductContext.checkoutProduct?.productID);
 
     if(!cartProduct) return;
 
     cartContext.removeProduct(cartProduct.productID);
+
+    axios.post(`http://localhost:8080/api/users/${currentUserContext.currentUser?.id}/orders`, {
+      shippingAddress: formData.get("shippingAddress") as string,
+      orderProducts: [{ productID: cartProduct.productID, quantity: cartProduct.quantity }]
+    } )
     
     orderListContext.setOrderList([...orderListContext.orderList, new Order(cartProduct, cartProduct.quantity * product.price, "Обрабатывается", user.id)]);
 

@@ -2,10 +2,16 @@ import { CheckoutSection } from "../components/componentsCheckout";
 import { Footer, NavigationBar } from "../components/componentsCommon";
 
 import { Navigate } from "react-router";
-import { useCheckoutProductContext } from "../components/contexts";
+import { useCheckoutProductContext, useCurrentUserContext } from "../components/contexts";
 
 export function CheckoutPage() {
   const checkoutProductContext = useCheckoutProductContext();
+
+  const currentUserContext = useCurrentUserContext();
+
+  if(!currentUserContext.currentUser) {
+    return <Navigate to="/login"></Navigate>
+  }
 
   if(!checkoutProductContext.checkoutProduct) {
     return <Navigate to="/home"></Navigate>

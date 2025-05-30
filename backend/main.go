@@ -2,12 +2,10 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/Sk4ine/Uni-Website/handlers"
-	"github.com/Sk4ine/Uni-Website/models"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
@@ -20,18 +18,20 @@ func main() {
 
 	defer db.Close()
 
-	fmt.Println(models.GetProductImagePaths(db, 1))
-
 	r := mux.NewRouter()
 
 	r.HandleFunc("/api/users/{id}", handlers.GetUser(db)).Methods("GET")
 	r.HandleFunc("/api/users", handlers.AddUser(db)).Methods("POST", "OPTIONS")
 	r.HandleFunc("/api/users/{id}", handlers.UpdateUser(db)).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/api/users/{id}/orders", handlers.GetUserOrderList(db)).Methods("GET")
+	r.HandleFunc("/api/users/{id}/orders", handlers.HandleCheckout(db)).Methods("POST", "OPTIONS")
 
 	r.HandleFunc("/api/auth/login", handlers.CheckUserAuth(db)).Methods("POST", "OPTIONS")
 
 	r.HandleFunc("/api/products", handlers.GetProductList(db)).Methods("GET")
 	r.HandleFunc("/api/products/{id}", handlers.GetProductByID(db)).Methods("GET")
+
+	r.HandleFunc("/api/categories", handlers.GetCategoryList(db)).Methods("GET")
 
 	r.HandleFunc("/static/productImages/{product-id}", handlers.ServeProductImages(db)).Methods("GET")
 

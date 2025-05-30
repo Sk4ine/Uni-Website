@@ -2,13 +2,17 @@ import { Footer, NavigationBar } from "../components/componentsCommon";
 import { ProductList } from "../components/componentsCommon";
 
 import { CatalogSection, CategoryList } from "../components/componentsCatalog";
-import { ProductListContext, useActiveCategoryContext } from "../components/contexts";
+import { CategoryListContext, ProductListContext, useActiveCategoryContext } from "../components/contexts";
 import { useState, useEffect } from "react";
 import { getProductList } from "../classes/apiRequests";
 import type { Product } from "../classes/product";
+import axios from "axios";
+import type { CategoryResponse, ProductResponse } from "../classes/apiResponses";
+import { ProductCategory } from "../classes/productCategory";
 
 export function CatalogPage() {
   const [productList, setProductList] = useState<Product[]>([]);
+  const [categoryList, setCategoryList] = useState<ProductCategory[]>([]);
   
   useEffect(() => {
     async function getProducts(): Promise<void> {
@@ -20,18 +24,36 @@ export function CatalogPage() {
     }
 
     getProducts();
+
+    axios.get<CategoryResponse[]>("http://localhost:8080/api/categories")
+      .then(res => {
+        let categoryList: ProductCategory[] = [];
+
+        for(let i = 0; i < res.data.length; i++) {
+          const currentCategory: CategoryResponse = res.data[i];
+
+          categoryList.push(new ProductCategory(currentCategory.id, currentCategory.name))
+        }
+
+        setCategoryList(categoryList);
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }, []);
 
   return (
     <>
       <div>
         <ProductListContext.Provider value={productList}>
-          <NavigationBar></NavigationBar>
-            <CatalogSection>
-              <CategoryList></CategoryList>
-              <ProductList></ProductList>
-            </CatalogSection>
-          <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
+          <CategoryListContext.Provider value={categoryList}>
+            <NavigationBar></NavigationBar>
+              <CatalogSection>
+                <CategoryList></CategoryList>
+                <ProductList></ProductList>
+              </CatalogSection>
+            <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
+          </CategoryListContext.Provider>
         </ProductListContext.Provider>
       </div>
     </>
