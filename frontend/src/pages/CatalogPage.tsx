@@ -1,7 +1,7 @@
-import { Footer, NavigationBar } from "../components/componentsCommon";
+import { Footer, LoadingText, NavigationBar } from "../components/componentsCommon";
 import { ProductList } from "../components/componentsCommon";
 
-import { CatalogSection, CategoryList } from "../components/componentsCatalog";
+import { CatalogSection } from "../components/componentsCatalog";
 import { CategoryListContext, ProductListContext, useActiveCategoryContext } from "../components/contexts";
 import { useState, useEffect } from "react";
 import { getProductList } from "../classes/apiRequests";
@@ -9,10 +9,12 @@ import type { Product } from "../classes/product";
 import axios from "axios";
 import type { CategoryResponse, ProductResponse } from "../classes/apiResponses";
 import { ProductCategory } from "../classes/productCategory";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 export function CatalogPage() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [categoryList, setCategoryList] = useState<ProductCategory[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   
   useEffect(() => {
     async function getProducts(): Promise<void> {
@@ -40,6 +42,7 @@ export function CatalogPage() {
       .catch(err => {
         console.log(err);
       })
+      .finally(() => setIsLoading(false));
   }, []);
 
   return (
@@ -48,10 +51,13 @@ export function CatalogPage() {
         <ProductListContext.Provider value={productList}>
           <CategoryListContext.Provider value={categoryList}>
             <NavigationBar></NavigationBar>
-              <CatalogSection>
-                <CategoryList></CategoryList>
-                <ProductList></ProductList>
-              </CatalogSection>
+
+            {isLoading ? (
+              <LoadingText></LoadingText>
+            ) : (
+              <CatalogSection></CatalogSection>
+            )}
+
             <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
           </CategoryListContext.Provider>
         </ProductListContext.Provider>

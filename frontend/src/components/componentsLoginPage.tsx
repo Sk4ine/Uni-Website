@@ -20,7 +20,7 @@ export function HomePageButton() {
 export function LoginSection() {
   return (
     <div className='flex flex-col items-center'>
-      <p className='font-default text-[#D5778D] text-5xl mt-10'>Вход</p>
+      <p className='font-default text-[#D5778D] text-4xl mt-10'>Вход</p>
       <LoginForm></LoginForm>
     </div>
   )
@@ -60,13 +60,13 @@ function LoginForm() {
       <PasswordInputField fieldName='Пароль' fieldID='password'></PasswordInputField>
       <div className='w-full flex flex-col items-center gap-2 mt-4'>
         {loginFailMessage.length > 0 ?
-          <p className='font-default text-[#BC4241] text-2xl'>{loginFailMessage}</p>
+          <p className='font-default text-[#BC4241] text-xl'>{loginFailMessage}</p>
         :
           null
         }
-        <button type='submit' className='w-[90%] font-default text-[#D5778D] text-4xl py-2 rounded-2xl bg-[#F5D4D5] hover:bg-[#E6C8C9] cursor-pointer'>Войти</button>
+        <button type='submit' className='w-[90%] font-default text-[#D5778D] text-3xl py-2 rounded-2xl bg-[#F5D4D5] hover:bg-[#E6C8C9] cursor-pointer'>Войти</button>
       </div>
-      <div className='flex flex-col items-center font-default text-[#555555] text-2xl'>
+      <div className='flex flex-col items-center font-default text-[#555555] text-xl'>
         <p>Нет учетной записи?</p>
         <Link to={"/registration"} className='text-[#D5778D]'> Создать</Link>
       </div>
@@ -78,10 +78,10 @@ function PasswordInputField({fieldName, fieldID} : {fieldName: string, fieldID :
   return (
     <div className="flex flex-col items-start">
       <div className='w-full flex justify-between items-end mb-1'>
-        <p className="font-default text-[#555555] text-3xl">{fieldName}</p>
+        <p className="font-default text-[#555555] text-2xl">{fieldName}</p>
         <Link to={"/home"} className='font-default text-[#D5778D] text-xl'>Забыли пароль?</Link>
       </div>
-      <input type="password" name={fieldID} required className="w-80 text-[#555555] text-2xl px-4 py-1.5 rounded-2xl outline-none shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)]"></input>
+      <input type="password" name={fieldID} required className="w-80 text-[#555555] text-xl px-4 py-1.5 rounded-2xl outline-none shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)]"></input>
     </div>
   )
 }

@@ -2,10 +2,12 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/Sk4ine/Uni-Website/handlers"
+	"github.com/Sk4ine/Uni-Website/models"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
@@ -15,6 +17,8 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to connect to MySQL:", err)
 	}
+
+	fmt.Println(models.GetUserOrderList(db, 1))
 
 	defer db.Close()
 

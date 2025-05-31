@@ -12,7 +12,7 @@ export function HomePageBanner() {
 export function PopularProductsSection() {
   return (
     <div className='flex flex-col items-center mb-48'>
-      <h1 className='font-default text-[#D5778D] text-5xl mt-10 mb-2'>Популярное</h1>
+      <h1 className='font-default text-[#D5778D] text-4xl mt-10 mb-2'>Популярное</h1>
       <ProductList></ProductList>
     </div>
   )

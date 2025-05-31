@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router";
 export function CartSection() {
   return (
     <div className="flex flex-col items-center mb-48">
-      <h1 className="font-default text-[#D5778D] text-6xl mt-7">Корзина</h1>
+      <h1 className="font-default text-[#D5778D] text-4xl mt-7">Корзина</h1>
       <CartProductList></CartProductList>
     </div>
   )
@@ -16,18 +16,22 @@ function CartProductList() {
   let cartProductNodeList: React.ReactNode[] = [];
 
   const cartContext = useCartContext();
-  const productListContext = useContext(ProductListContext);
+  const productListContext: Product[] = useContext(ProductListContext);
+
+  console.log(productListContext);
 
   const {cartProductList} = cartContext;
 
   for(let i = 0; i < cartProductList.length; i++) {
+    console.log("Da");
+    if (productListContext.length == 0) break;
     const curProd: Product = productListContext[cartProductList[i].productID - 1];
     cartProductNodeList.push(<CartProduct key={i} product={curProd} quantity={cartProductList[i].quantity}></CartProduct>);
   }
 
   return (
     <div className="w-[960px]">
-      <p className="font-default text-[#B5ABA1] text-2xl ml-5 mb-5">Выбрать</p>
+      <p className="font-default text-[#B5ABA1] text-xl ml-5 mb-5">Выбрать</p>
       <div className="flex flex-col items-center gap-5">
         {cartProductNodeList}
       </div>
@@ -52,7 +56,7 @@ export function CartProduct({product, quantity} : {product: Product, quantity: n
 function ProductInfo({productName, quantity, productID} : {productName: string, quantity: number, productID: number}) {
   return (
     <div className="flex flex-col items-center">
-      <p className="font-default text-[#B4A1A6] text-5xl">{productName}</p>
+      <p className="font-default text-[#B4A1A6] text-4xl">{productName}</p>
       <QuantityCounter quantity={quantity} productID={productID}></QuantityCounter>
     </div>
   )
@@ -70,7 +74,7 @@ function QuantityCounter({quantity, productID} : {quantity: number, productID: n
   }
 
   return (
-    <div className="w-42 mt-4 flex justify-between items-center px-4 rounded-4xl shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)] font-default text-5xl">
+    <div className="w-42 mt-4 flex justify-between items-center px-4 rounded-4xl shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)] font-default text-4xl">
       <button disabled={quantity == 1 ? true : false} style={quantity == 1 ? {cursor: "default"} : {cursor: "pointer"}} onClick={handleClickRemove} className="w-8 text-[#B4A1A6]">-</button>
       <p className="text-[#B4A1A6]">{quantity}</p>
       <button onClick={handleClickAdd} className="w-8 text-[#D5778D] cursor-pointer">+</button>
@@ -95,9 +99,9 @@ function OrderActions({productPrice, productID, quantity} : {productPrice: numbe
 
   return (
     <div className="flex flex-col items-center font-default">
-      <p className="text-[#B4A1A6] text-5xl">{productPrice * quantity} руб.</p>
-      <button onClick={handleMakeOrder} className="bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-4xl text-[#D5778D] text-4xl cursor-pointer mt-5 py-1.5 px-4">Оформить заказ</button>
-      <button onClick={handleRemoveProduct} className="text-3xl text-[#B5ABA1] hover:text-[#BC4241] mt-1 cursor-pointer">Удалить товар</button>
+      <p className="text-[#B4A1A6] text-4xl">{productPrice * quantity} руб.</p>
+      <button onClick={handleMakeOrder} className="bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-4xl text-[#D5778D] text-3xl cursor-pointer mt-5 py-1.5 px-4">Оформить заказ</button>
+      <button onClick={handleRemoveProduct} className="text-2xl text-[#B5ABA1] hover:text-[#BC4241] mt-1 cursor-pointer">Удалить товар</button>
     </div>
   )
 }

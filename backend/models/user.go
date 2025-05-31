@@ -18,7 +18,7 @@ type UserAuth struct {
 }
 
 func GetUserByID(db *sql.DB, id int) (User, error) {
-	rows, err := db.Query("SELECT id, client_name, email, phone_number FROM clients WHERE id = ?", id)
+	rows, err := db.Query("SELECT id, client_name, email, phone_number FROM clients_general WHERE id = ?", id)
 	if err != nil {
 		return User{}, err
 	}
@@ -35,7 +35,7 @@ func GetUserByID(db *sql.DB, id int) (User, error) {
 }
 
 func GetUserByEmail(db *sql.DB, email string) (User, error) {
-	rows, err := db.Query("SELECT id, client_name, email, phone_number FROM clients WHERE email = ?", email)
+	rows, err := db.Query("SELECT id, client_name, email, phone_number FROM clients_general WHERE email = ?", email)
 	if err != nil {
 		return User{}, err
 	}
@@ -53,8 +53,8 @@ func GetUserByEmail(db *sql.DB, email string) (User, error) {
 
 func CheckUserAuth(db *sql.DB, email, password string) (User, error) {
 	rows, err := db.Query(`
-	SELECT id, client_name, email, phone_number FROM clients
-	INNER JOIN clients_auth ON clients.id = clients_auth.client_id
+	SELECT clients_general.id, client_name, email, phone_number FROM clients_general
+	INNER JOIN clients_auth ON clients_general.id = clients_auth.id
 	WHERE email = ? AND client_password = ?`, email, password)
 	if err != nil {
 		return User{}, err
@@ -80,7 +80,7 @@ func CheckUserAuth(db *sql.DB, email, password string) (User, error) {
 }
 
 func GetUserAuth(db *sql.DB, id int) (UserAuth, error) {
-	rows, err := db.Query("SELECT client_id, client_password FROM clients_auth WHERE client_id = ?", id)
+	rows, err := db.Query("SELECT id, client_password FROM clients_auth WHERE id = ?", id)
 	if err != nil {
 		return UserAuth{}, err
 	}
@@ -131,7 +131,7 @@ func UpdateUser(db *sql.DB, id int, changedUser User) (User, error) {
 		phoneNumber = previousUser.PhoneNumber
 	}
 
-	_, err = db.Exec("UPDATE clients SET client_name = ?, email = ?, phone_number = ? WHERE id = ?", name, email, phoneNumber, id)
+	_, err = db.Exec("UPDATE clients_general SET client_name = ?, email = ?, phone_number = ? WHERE id = ?", name, email, phoneNumber, id)
 	if err != nil {
 		return User{}, err
 	}
@@ -156,7 +156,7 @@ func AddUser(db *sql.DB, email, password string) (int64, error) {
 
 	defer transaction.Rollback()
 
-	result, err := db.Exec("INSERT INTO clients (email) VALUES (?)", email)
+	result, err := db.Exec("INSERT INTO clients_general (email) VALUES (?)", email)
 	if err != nil {
 		return 0, err
 	}
@@ -166,7 +166,7 @@ func AddUser(db *sql.DB, email, password string) (int64, error) {
 		return 0, err
 	}
 
-	_, err = db.Exec("INSERT INTO clients_auth (client_id, client_password) VALUES (?, ?)", id, password)
+	_, err = db.Exec("INSERT INTO clients_auth (id, client_password) VALUES (?, ?)", id, password)
 	if err != nil {
 		return 0, err
 	}

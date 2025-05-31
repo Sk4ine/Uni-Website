@@ -8,7 +8,7 @@ import axios from "axios";
 export function RegistrationSection() {
   return (
     <div className='flex flex-col items-center'>
-      <p className='font-default text-[#D5778D] text-5xl mt-10'>Регистрация</p>
+      <p className='font-default text-[#D5778D] text-4xl mt-10'>Регистрация</p>
       <RegistrationForm></RegistrationForm>
     </div>
   )
@@ -51,13 +51,13 @@ export function RegistrationForm() {
       <InputField fieldName='Подтверждение пароля' fieldID='passwordConfirmation' fieldType="password" required={true}></InputField>
       <div className='w-full flex flex-col items-center gap-2 mt-4 flex-wrap'>
         {registrationFailMessage.length != 0 ?
-          <p className='font-default text-[#BC4241] text-2xl text-center'>{registrationFailMessage}</p>
+          <p className='font-default text-[#BC4241] text-xl text-center'>{registrationFailMessage}</p>
         :
           null
         }
-        <button type='submit' className='w-full font-default text-[#D5778D] text-3xl py-2 rounded-2xl bg-[#F5D4D5] hover:bg-[#E6C8C9] cursor-pointer'>Зарегистрироваться</button>
+        <button type='submit' className='w-full font-default text-[#D5778D] text-2xl py-2 rounded-2xl bg-[#F5D4D5] hover:bg-[#E6C8C9] cursor-pointer'>Зарегистрироваться</button>
       </div>
-      <div className='flex flex-col items-center font-default text-[#555555] text-2xl'>
+      <div className='flex flex-col items-center font-default text-[#555555] text-xl'>
         <p>Уже есть учетная запись?</p>
         <Link to={"/login"} className='text-[#D5778D]'> Войти</Link>
       </div>

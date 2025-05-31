@@ -35,3 +35,30 @@ export async function getProductList(): Promise<Product[]> {
     throw error as AxiosError;
   }
 }
+
+export async function getProductByID(id: number): Promise<Product> {
+  try {
+    const response: AxiosResponse<ProductResponse> = await axios.get<ProductResponse>(`http://localhost:8080/api/products/${id}`);
+
+    const product: Product = new Product(
+      response.data.id, 
+      response.data.categoryID, 
+      response.data.name,
+      response.data.price,
+      response.data.materials.split(","),
+      response.data.weightInGrams,
+      response.data.quantityInStock,
+      response.data.countryOfOrigin
+    );
+
+    const imageResponse: AxiosResponse<Blob> = await axios.get<Blob>(`http://localhost:8080/static/productImages/${id}`, {
+      responseType: 'blob'
+    });
+
+    product.imagePaths = [URL.createObjectURL(imageResponse.data)];
+
+    return product;
+  } catch (error) {
+    throw error as AxiosError;
+  }
+}

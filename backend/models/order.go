@@ -8,17 +8,11 @@ import (
 type Order struct {
 	ID              int    `json:"id"`
 	ClientID        int    `json:"clientID"`
+	ProductID       int    `json:"productID"`
+	ProductQuantity int    `json:"productQuantity"`
 	DateMade        string `json:"dateMade"`
 	ShippingAddress string `json:"shippingAddress"`
 	Cost            int    `json:"cost"`
-}
-
-type OrderProduct struct {
-	ID        int `json:"id"`
-	ProductID int `json:"clientID"`
-	OrderID   int `json:"orderID"`
-	Price     int `json:"price"`
-	Quantity  int `json:"quantity"`
 }
 
 func GetUserOrderList(db *sql.DB, userID int) ([]Order, error) {
@@ -32,7 +26,7 @@ func GetUserOrderList(db *sql.DB, userID int) ([]Order, error) {
 	for rows.Next() {
 		var order Order
 
-		if err := rows.Scan(&order.ID, &order.ClientID, &order.DateMade, &order.ShippingAddress, &order.Cost); err != nil {
+		if err := rows.Scan(&order.ID, &order.ClientID, &order.ProductID, &order.ProductQuantity, &order.DateMade, &order.ShippingAddress, &order.Cost); err != nil {
 			return nil, err
 		}
 
@@ -42,8 +36,8 @@ func GetUserOrderList(db *sql.DB, userID int) ([]Order, error) {
 	return orders, nil
 }
 
-func addOrder(db *sql.DB, clientID int, dateMade time.Time, shippingAddress string) (int64, error) {
-	result, err := db.Exec("INSERT INTO orders (client_id, date_made, shipping_address) VALUES (?, ?, ?)", clientID, dateMade, shippingAddress)
+func addOrder(db *sql.DB, clientID int, productID int, productQuantity int, dateMade time.Time, shippingAddress string, cost int) (int64, error) {
+	result, err := db.Exec("INSERT INTO orders (client_id, product_id, product_quantity, date_made, shipping_address, cost) VALUES (?, ?, ?, ?, ?, ?)", clientID, productID, productQuantity, dateMade, shippingAddress, cost)
 	if err != nil {
 		return 0, err
 	}
@@ -51,18 +45,7 @@ func addOrder(db *sql.DB, clientID int, dateMade time.Time, shippingAddress stri
 	return result.LastInsertId()
 }
 
-func
-
-func addOrderProduct(db *sql.DB, productID, orderID, price, quantity int) (int64, error) {
-	result, err := db.Exec("INSERT INTO order_products (product_id, order_id, price, quantity) VALUES (?, ?, ?, ?)", productID, orderID, price, quantity)
-	if err != nil {
-		return 0, err
-	}
-
-	return result.LastInsertId()
-}
-
-func HandleCheckout(db *sql.DB, clientID int, dateMade time.Time, shippingAddress string, orderProducts []OrderProduct) (int64, error) {
+func HandleCheckout(db *sql.DB, clientID int, dateMade time.Time, shippingAddress string, productID int, productQuantity int) (int64, error) {
 	transaction, err := db.Begin()
 	if err != nil {
 		return 0, err
@@ -70,18 +53,14 @@ func HandleCheckout(db *sql.DB, clientID int, dateMade time.Time, shippingAddres
 
 	defer transaction.Rollback()
 
-	orderID, err := addOrder(db, clientID, dateMade, shippingAddress)
+	product, err := GetProductByID(db, productID)
 	if err != nil {
 		return 0, err
 	}
 
-	for i := 0; i < len(orderProducts); i++ {
-		var currentOrderProduct OrderProduct = orderProducts[i]
-
-		_, err := addOrderProduct(db, currentOrderProduct.ProductID, int(orderID), currentOrderProduct.Price, currentOrderProduct.Quantity)
-		if err != nil {
-			return 0, err
-		}
+	orderID, err := addOrder(db, clientID, productID, productQuantity, dateMade, shippingAddress, product.Price*productQuantity)
+	if err != nil {
+		return 0, err
 	}
 
 	if err := transaction.Commit(); err != nil {

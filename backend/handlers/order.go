@@ -12,8 +12,9 @@ import (
 )
 
 type CheckoutData struct {
-	ShippingAddress string                `json:"shippingAddress"`
-	OrderProducts   []models.OrderProduct `json:"orderProducts"`
+	ShippingAddress string `json:"shippingAddress"`
+	ProductID       int    `json:"productID"`
+	ProductQuantity int    `json:"productQuantity"`
 }
 
 func GetUserOrderList(db *sql.DB) http.HandlerFunc {
@@ -57,7 +58,7 @@ func HandleCheckout(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		_, err = models.HandleCheckout(db, clientID, time.Now(), checkoutData.ShippingAddress, checkoutData.OrderProducts)
+		_, err = models.HandleCheckout(db, clientID, time.Now(), checkoutData.ShippingAddress, checkoutData.ProductID, checkoutData.ProductQuantity)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

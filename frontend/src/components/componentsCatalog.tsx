@@ -1,7 +1,8 @@
 import { useContext } from "react";
 import { CategoryListContext, useActiveCategoryContext } from "./contexts";
+import { ProductList } from "./componentsCommon";
 
-export function CategoryList() {
+function CategoryList() {
   const categoryListContext = useContext(CategoryListContext);
   const activeCategoryContext = useActiveCategoryContext();
 
@@ -20,7 +21,7 @@ export function CategoryList() {
   )
 }
 
-export function CategoryButton({categoryID, categoryName, active} : {categoryID: number, categoryName: string, active: boolean}) {
+function CategoryButton({categoryID, categoryName, active} : {categoryID: number, categoryName: string, active: boolean}) {
   const backgroundColor: string = active ? "bg-[#F5D4D5]" : "bg-[#E2E2E2]";
   const textColor: string = active ? "text-[#EF829A]" : "text-[#979797]";
   const backgroundHoverColor: string = active ? "hover:bg-[#E6C8C9]" : "hover:bg-[#D1D1D1]";
@@ -32,14 +33,15 @@ export function CategoryButton({categoryID, categoryName, active} : {categoryID:
   }
   
   return (
-    <button onClick={handleClick} className={`${backgroundColor} ${textColor} ${backgroundHoverColor} font-default text-4xl w-64 py-1 flex justify-center items-center rounded-2xl cursor-pointer`}>{categoryName}</button>
+    <button onClick={handleClick} className={`${backgroundColor} ${textColor} ${backgroundHoverColor} font-default text-3xl w-64 py-1 flex justify-center items-center rounded-2xl cursor-pointer`}>{categoryName}</button>
   )
 }
 
-export function CatalogSection({children} : {children : React.ReactNode}) {
+export function CatalogSection() {
   return(
     <div className="flex flex-col items-center">
-      {children}
+      <CategoryList></CategoryList>
+      <ProductList></ProductList>
       <ShowMoreButtonCatalog></ShowMoreButtonCatalog>
     </div>
   )
@@ -47,6 +49,6 @@ export function CatalogSection({children} : {children : React.ReactNode}) {
 
 function ShowMoreButtonCatalog() {
   return (
-    <button className="font-default text-4xl text-[#EF829A] hover:text-[#D9758B] flex justify-center items-center mt-10 cursor-pointer">Показать ещё</button>
+    <button className="font-default text-3xl text-[#EF829A] hover:text-[#D9758B] flex justify-center items-center mt-10 cursor-pointer">Показать ещё</button>
   )
 }

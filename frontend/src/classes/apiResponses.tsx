@@ -23,6 +23,8 @@ export interface CategoryResponse {
 
 export interface OrderResponse {
   id: number,
+  productID: number,
+  productQuantity: number,
   clientID: number,
   dateMade: string,
   shippingAddress: string,

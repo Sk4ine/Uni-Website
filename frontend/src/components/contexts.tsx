@@ -87,3 +87,13 @@ export const useCheckoutProductContext = (): CheckoutProductContextType => {
   }
   return context;
 };
+
+export const CheckoutProductDataContext: React.Context<Product | undefined> = createContext<Product | undefined>(undefined);
+
+export const useCheckoutProductDataContext = (): Product => {
+  const context = useContext(CheckoutProductDataContext);
+  if (context === undefined) {
+    throw new Error('useCheckoutProductDataContext must be used within a provider');
+  }
+  return context;
+};

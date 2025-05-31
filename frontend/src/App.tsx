@@ -58,24 +58,23 @@ export function App() {
     <BrowserRouter>
       <UserListContext.Provider value={{userList, setUserList}}>
         <CurrentUserContext.Provider value={{currentUser, setCurrentUser}}>
-            <CartProvider>
-              <ActiveCategoryContext.Provider value={{activeCategory, setActiveCategory}}>
-                <CheckoutProductContext.Provider value={{checkoutProduct, setCheckoutProduct}}>
-                  <Routes>
-                    <Route path="/" element={<Navigate to="/home" replace />} />
-                    <Route path="home" element={<HomePage />}></Route>
-                    <Route path="catalog" element={<CatalogPage />}></Route>
-                    <Route path="cart" element={<CartPage />}></Route>
-                    <Route path="catalog/:id" element={<ProductPage />}></Route>
-                    <Route path="login" element={<LoginPage />}></Route>
-                    <Route path="registration" element={<RegistrationPage />}></Route>
-                    <Route path="user-profile" element={<UserProfilePage />}></Route>
-                    <Route path="checkout" element={<CheckoutPage />}></Route>
-                  </Routes>
-                </CheckoutProductContext.Provider>
-              </ActiveCategoryContext.Provider>
-            </CartProvider>
-          </OrderListContext.Provider>
+          <CartProvider>
+            <ActiveCategoryContext.Provider value={{activeCategory, setActiveCategory}}>
+              <CheckoutProductContext.Provider value={{checkoutProduct, setCheckoutProduct}}>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/home" replace />} />
+                  <Route path="home" element={<HomePage />}></Route>
+                  <Route path="catalog" element={<CatalogPage />}></Route>
+                  <Route path="cart" element={<CartPage />}></Route>
+                  <Route path="catalog/:id" element={<ProductPage />}></Route>
+                  <Route path="login" element={<LoginPage />}></Route>
+                  <Route path="registration" element={<RegistrationPage />}></Route>
+                  <Route path="user-profile" element={<UserProfilePage />}></Route>
+                  <Route path="checkout" element={<CheckoutPage />}></Route>
+                </Routes>
+              </CheckoutProductContext.Provider>
+            </ActiveCategoryContext.Provider>
+          </CartProvider>
         </CurrentUserContext.Provider>
       </UserListContext.Provider>
     </BrowserRouter>
