@@ -1,8 +1,3 @@
-import { useContext } from "react";
-import type { CartProduct } from "./cartProduct";
-import type { Product } from "./product";
-import { ProductListContext } from "../components/contexts";
-
 export class Order {
   public productID: number;
   public productQuantity: number;

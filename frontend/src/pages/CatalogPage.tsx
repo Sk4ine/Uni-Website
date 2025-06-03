@@ -1,15 +1,13 @@
-import { Footer, LoadingText, NavigationBar } from "../components/componentsCommon";
-import { ProductList } from "../components/componentsCommon";
+import { Footer, LoadingText, NavigationBar } from "../components/Common";
 
-import { CatalogSection } from "../components/componentsCatalog";
-import { CategoryListContext, ProductListContext, useActiveCategoryContext } from "../components/contexts";
+import { CatalogSection } from "../components/Catalog";
+import { CategoryListContext, ProductListContext } from "../contexts/otherContexts";
 import { useState, useEffect } from "react";
-import { getProductList } from "../classes/apiRequests";
+import { getProductList } from "../api/requests/products";
 import type { Product } from "../classes/product";
 import axios from "axios";
-import type { CategoryResponse, ProductResponse } from "../classes/apiResponses";
+import type { CategoryResponse } from "../api/responses/apiResponses";
 import { ProductCategory } from "../classes/productCategory";
-import { faL } from "@fortawesome/free-solid-svg-icons";
 
 export function CatalogPage() {
   const [productList, setProductList] = useState<Product[]>([]);

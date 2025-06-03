@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { Footer, LoadingText, NavigationBar } from "../components/componentsCommon";
-import { UserProfileSection } from "../components/componentsUserProfile";
-import { OrderListContext, ProductListContext, useCurrentUserContext } from "../components/contexts";
+import { Footer, LoadingText, NavigationBar } from "../components/Common";
+import { UserProfileSection } from "../components/UserProfile";
+import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import { Navigate } from "react-router";
 import { Order } from "../classes/order";
 import axios from "axios";
-import type { OrderResponse } from "../classes/apiResponses";
+import type { OrderResponse } from "../api/responses/apiResponses";
 import type { Product } from "../classes/product";
-import { getProductList } from "../classes/apiRequests";
+import { getProductList } from "../api/requests/products";
+import { useCurrentUserContext } from "../contexts/currentUserContext";
 
 export function UserProfilePage() {
   const currentUserContext = useCurrentUserContext();

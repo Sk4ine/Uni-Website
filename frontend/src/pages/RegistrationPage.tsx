@@ -1,5 +1,5 @@
-import { EmptySpace, HomePageButton } from "../components/componentsLoginPage";
-import { RegistrationSection } from "../components/componentsRegistrationPage";
+import { EmptySpace, HomePageButton } from "../components/LoginForm";
+import { RegistrationSection } from "../components/RegistrationForm";
 
 export function RegistrationPage() {
   return (

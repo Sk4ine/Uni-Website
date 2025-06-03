@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import { Footer, LoadingText, NavigationBar } from "../components/componentsCommon";
-import { HomePageBanner, PopularProductsSection } from "../components/componentsHome";
-import { ProductListContext } from "../components/contexts";
-import axios from "axios";
-import type { ProductResponse } from "../classes/apiResponses";
+import { Footer, LoadingText, NavigationBar } from "../components/Common";
+import { HomePageBanner, PopularProductsSection } from "../components/Home";
+import { ProductListContext } from "../contexts/otherContexts";
 import { Product } from "../classes/product";
-import { getProductList } from "../classes/apiRequests";
-import { faL } from "@fortawesome/free-solid-svg-icons";
+import { getProductList } from "../api/requests/products";
 
 export function HomePage() {
   const [productList, setProductList] = useState<Product[]>([]);

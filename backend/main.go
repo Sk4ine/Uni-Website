@@ -2,13 +2,14 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/Sk4ine/Uni-Website/handlers"
-	"github.com/Sk4ine/Uni-Website/models"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/gorilla/mux"
 )
 
@@ -18,9 +19,27 @@ func main() {
 		log.Fatal("Failed to connect to MySQL:", err)
 	}
 
-	fmt.Println(models.GetUserOrderList(db, 1))
-
 	defer db.Close()
+
+	driver, err := mysql.WithInstance(db, &mysql.Config{})
+	if err != nil {
+		log.Fatalf("failed to create migrate driver: %v", err)
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://./migrations",
+		"mysql",
+		driver,
+	)
+	if err != nil {
+		log.Fatalf("failed to create migrate instance: %v", err)
+	}
+
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatalf("migration failed: %v", err)
+	}
+
+	log.Println("Migrations applied successfully!")
 
 	r := mux.NewRouter()
 

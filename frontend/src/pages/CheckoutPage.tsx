@@ -1,14 +1,14 @@
-import { CheckoutSection } from "../components/componentsCheckout";
-import { Footer, LoadingText, NavigationBar } from "../components/componentsCommon";
+import { CheckoutSection } from "../components/Checkout";
+import { Footer, LoadingText, NavigationBar } from "../components/Common";
 
 import { Navigate } from "react-router";
-import { CheckoutProductContext, CheckoutProductDataContext, useCheckoutProductContext, useCurrentUserContext } from "../components/contexts";
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Product } from "../classes/product";
-import axios from "axios";
-import type { ProductResponse } from "../classes/apiResponses";
 import type { CartProduct } from "../classes/cartProduct";
-import { getProductByID } from "../classes/apiRequests";
+import { getProductByID } from "../api/requests/products";
+import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
+import { useCurrentUserContext } from "../contexts/currentUserContext";
+import { CheckoutProductDataContext } from "../contexts/checkoutProductDataContext";
 
 export function CheckoutPage() {
   const checkoutProductContext = useCheckoutProductContext();

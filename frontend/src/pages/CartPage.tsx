@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { CartSection } from "../components/componentsCart";
-import { Footer, LoadingText, NavigationBar } from "../components/componentsCommon";
+import { CartSection } from "../components/Cart";
+import { Footer, LoadingText, NavigationBar } from "../components/Common";
 import type { Product } from "../classes/product";
-import { getProductList } from "../classes/apiRequests";
-import { ProductListContext } from "../components/contexts";
+import { getProductList } from "../api/requests/products";
+import { ProductListContext } from "../contexts/otherContexts";
 
 export function CartPage() {
   const [productList, setProductList] = useState<Product[]>([]);

@@ -1,0 +1,7 @@
+DROP VIEW IF EXISTS clients_auth;
+DROP VIEW IF EXISTS clients_general;
+
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS clients;
