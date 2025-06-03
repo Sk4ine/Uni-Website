@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Footer, LoadingText, NavigationBar } from "../components/Common";
+import { Footer, LoadingText } from "../components/Common";
 import { HomePageBanner, PopularProductsSection } from "../components/Home";
 import { ProductListContext } from "../contexts/otherContexts";
 import { Product } from "../classes/product";
 import { getProductList } from "../api/requests/products";
+import { NavigationBar } from "../components/NavigationBar";
 
 export function HomePage() {
   const [productList, setProductList] = useState<Product[]>([]);

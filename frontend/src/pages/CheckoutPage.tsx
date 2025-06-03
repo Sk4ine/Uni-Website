@@ -1,5 +1,5 @@
 import { CheckoutSection } from "../components/Checkout";
-import { Footer, LoadingText, NavigationBar } from "../components/Common";
+import { Footer, LoadingText } from "../components/Common";
 
 import { Navigate } from "react-router";
 import { useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import { getProductByID } from "../api/requests/products";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
 import { useCurrentUserContext } from "../contexts/currentUserContext";
 import { CheckoutProductDataContext } from "../contexts/checkoutProductDataContext";
+import { NavigationBar } from "../components/NavigationBar";
 
 export function CheckoutPage() {
   const checkoutProductContext = useCheckoutProductContext();

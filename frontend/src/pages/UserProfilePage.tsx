@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Footer, LoadingText, NavigationBar } from "../components/Common";
+import { Footer, LoadingText } from "../components/Common";
 import { UserProfileSection } from "../components/UserProfile";
 import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import { Navigate } from "react-router";
@@ -9,6 +9,7 @@ import type { OrderResponse } from "../api/responses/apiResponses";
 import type { Product } from "../classes/product";
 import { getProductList } from "../api/requests/products";
 import { useCurrentUserContext } from "../contexts/currentUserContext";
+import { NavigationBar } from "../components/NavigationBar";
 
 export function UserProfilePage() {
   const currentUserContext = useCurrentUserContext();

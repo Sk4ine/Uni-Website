@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Product } from "../classes/product";
-import { Footer, NavigationBar } from "../components/Common";
+import { Footer } from "../components/Common";
 import { CustomerReviews, ProductPageSection, ReviewCard } from "../components/ProductDetails";
 import axios from "axios";
 import type { ProductResponse } from "../api/responses/apiResponses";
 import { useParams } from "react-router";
+import { NavigationBar } from "../components/NavigationBar";
 
 export function ProductDetailsPage() {
   const [product, setProduct] = useState<Product>();

@@ -1,4 +1,4 @@
-import { Footer, LoadingText, NavigationBar } from "../components/Common";
+import { Footer, LoadingText } from "../components/Common";
 
 import { CatalogSection } from "../components/Catalog";
 import { CategoryListContext, ProductListContext } from "../contexts/otherContexts";
@@ -8,6 +8,7 @@ import type { Product } from "../classes/product";
 import axios from "axios";
 import type { CategoryResponse } from "../api/responses/apiResponses";
 import { ProductCategory } from "../classes/productCategory";
+import { NavigationBar } from "../components/NavigationBar";
 
 export function CatalogPage() {
   const [productList, setProductList] = useState<Product[]>([]);
