@@ -42,6 +42,13 @@ CREATE TABLE products
     FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
+CREATE OR REPLACE VIEW clients_general AS
+SELECT id, client_name, email, phone_number
+FROM unidb.clients;
+
+CREATE OR REPLACE VIEW clients_auth AS
+SELECT id, client_password, is_admin
+FROM unidb.clients;
 
 INSERT INTO clients (id, client_name, email, client_password) VALUES
 (1, 'Никита Аминов', 'kitamin@gmail.com', "TeykovskiySharm52"),
@@ -67,11 +74,3 @@ INSERT INTO products (category_id, product_name, price, materials, weight_in_gra
 
 INSERT INTO orders (id, client_id, product_id, product_quantity, date_made, shipping_address, cost) VALUES
 (1, 1, 2, 2, "2025-05-29", "Take-ово", 798);
-
-CREATE OR REPLACE VIEW clients_general AS
-SELECT id, client_name, email, phone_number
-FROM unidb.clients;
-
-CREATE OR REPLACE VIEW clients_auth AS
-SELECT id, client_password, is_admin
-FROM unidb.clients;
