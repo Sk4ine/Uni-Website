@@ -27,6 +27,29 @@ type LoginFormData struct {
 	Password string `json:"password"`
 }
 
+func CheckUserIsAdmin(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		idStr := vars["id"]
+
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "ID must be a number", http.StatusBadRequest)
+			return
+		}
+
+		user, err := models.GetUserAuth(db, id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+
+		json.NewEncoder(w).Encode(user.IsAdmin)
+	}
+}
+
 func CheckUserAuth(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var loginForm LoginFormData

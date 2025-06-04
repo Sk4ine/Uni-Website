@@ -16,11 +16,6 @@ export function UserProfilePage() {
 
   const [productList, setProductList] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  if(!currentUserContext.currentUser) {
-    return <Navigate to="/home"></Navigate>
-  }
-
   const [orderList, setOrderList] = useState<Order[]>([]);
 
   useEffect(() => {
@@ -50,6 +45,10 @@ export function UserProfilePage() {
     
     getProducts();
   }, []);
+
+  if(!currentUserContext.currentUser) {
+    return <Navigate to="/home"></Navigate>
+  }
 
   return (
     <>

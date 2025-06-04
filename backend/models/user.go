@@ -15,6 +15,7 @@ type User struct {
 type UserAuth struct {
 	ID       int    `json:"id"`
 	Password string `json:"password"`
+	IsAdmin  bool   `json:"isAdmin"`
 }
 
 func GetUserByID(db *sql.DB, id int) (User, error) {
@@ -80,7 +81,7 @@ func CheckUserAuth(db *sql.DB, email, password string) (User, error) {
 }
 
 func GetUserAuth(db *sql.DB, id int) (UserAuth, error) {
-	rows, err := db.Query("SELECT id, client_password FROM clients_auth WHERE id = ?", id)
+	rows, err := db.Query("SELECT id, client_password, is_admin FROM clients_auth WHERE id = ?", id)
 	if err != nil {
 		return UserAuth{}, err
 	}
@@ -88,7 +89,7 @@ func GetUserAuth(db *sql.DB, id int) (UserAuth, error) {
 	var userAuth UserAuth
 
 	for rows.Next() {
-		if err := rows.Scan(&userAuth.ID, &userAuth.Password); err != nil {
+		if err := rows.Scan(&userAuth.ID, &userAuth.Password, &userAuth.IsAdmin); err != nil {
 			return UserAuth{}, err
 		}
 	}

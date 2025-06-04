@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "root:sql-password@tcp(localhost:3306)/unidb")
+	db, err := sql.Open("mysql", "root:sql-password@tcp(localhost:3306)/unidb?multiStatements=true")
 	if err != nil {
 		log.Fatal("Failed to connect to MySQL:", err)
 	}
@@ -48,6 +48,7 @@ func main() {
 	r.HandleFunc("/api/users/{id}", handlers.UpdateUser(db)).Methods("PUT", "OPTIONS")
 	r.HandleFunc("/api/users/{id}/orders", handlers.GetUserOrderList(db)).Methods("GET")
 	r.HandleFunc("/api/users/{id}/orders", handlers.HandleCheckout(db)).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/users/{id}/is-admin", handlers.CheckUserIsAdmin(db)).Methods("GET")
 
 	r.HandleFunc("/api/auth/login", handlers.CheckUserAuth(db)).Methods("POST", "OPTIONS")
 

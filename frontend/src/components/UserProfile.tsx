@@ -49,13 +49,8 @@ function UserLogo({user} : {user: User}) {
 }
 
 function UserInfoForm({user} : {user: User}) {
-  const navigate = useNavigate();
   const currentUserContext = useCurrentUserContext();
-
-  function handleSignOutClick() {
-    currentUserContext.setCurrentUser(undefined);
-    navigate("/home");
-  }
+  const navigate = useNavigate();
 
   function saveUserInfo(formData: FormData) {
     if(!currentUserContext.currentUser) {
@@ -92,9 +87,8 @@ function UserInfoForm({user} : {user: User}) {
         <InputField fieldName="Номер телефона" fieldID="phoneNumber" value={user.phoneNumber}></InputField>
         <InputField fieldName="Электронная почта" fieldID="email" value={user.email} required></InputField>
       </div>
-      <div className="flex justify-between items-center font-default text-[#D5778D] text-3xl">
+      <div className="flex justify-start items-center font-default text-[#D5778D] text-3xl">
         <button type="submit" className="w-fit px-6 bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-2xl py-1 cursor-pointer">Сохранить</button>
-        <button onClick={handleSignOutClick} className="w-fit px-6 bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-2xl py-1 cursor-pointer">Выйти</button>
       </div>
     </form>
   )
