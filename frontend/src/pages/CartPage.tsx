@@ -28,14 +28,15 @@ export function CartPage() {
   return (
     <>
       <ProductListContext.Provider value={productList}>
-        <div>
+        <div className="flex flex-col min-h-[100vh]">
           <NavigationBar></NavigationBar>
-
-          {isLoading ? (
-            <LoadingText></LoadingText>
-          ) : (
-            <CartSection></CartSection>
-          )}
+          <div className="grow">
+            {isLoading ? (
+              <LoadingText></LoadingText>
+            ) : (
+              <CartSection></CartSection>
+            )}
+          </div>
 
           <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
         </div>

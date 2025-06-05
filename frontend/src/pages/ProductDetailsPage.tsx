@@ -51,7 +51,7 @@ export function ProductDetailsPage() {
   
   return (
     <>
-      <div>
+      <div className="flex flex-col">
         <NavigationBar></NavigationBar>
         <ProductPageSection product={product}>
           <CustomerReviews product={product}>

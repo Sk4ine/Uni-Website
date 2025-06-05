@@ -25,7 +25,6 @@ function CartProductList() {
   const {cartProductList} = cartContext;
 
   for(let i = 0; i < cartProductList.length; i++) {
-    console.log("Da");
     if (productListContext.length == 0) break;
     const curProd: Product = productListContext[cartProductList[i].productID - 1];
     cartProductNodeList.push(<CartProduct key={i} product={curProd} quantity={cartProductList[i].quantity}></CartProduct>);
