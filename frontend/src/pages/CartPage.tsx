@@ -28,17 +28,17 @@ export function CartPage() {
   return (
     <ProductListContext.Provider value={productList}>
       <PageWrapper>
-          <NavigationBar></NavigationBar>
-          
-          <ContentWrapper>
-            {isLoading ? (
-              <LoadingText></LoadingText>
-            ) : (
-              <CartSection></CartSection>
-            )}
-          </ContentWrapper>
+        <NavigationBar></NavigationBar>
+        
+        <ContentWrapper>
+          {isLoading ? (
+            <LoadingText></LoadingText>
+          ) : (
+            <CartSection></CartSection>
+          )}
+        </ContentWrapper>
 
-          <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
+        <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
       </PageWrapper>
     </ProductListContext.Provider>
   )

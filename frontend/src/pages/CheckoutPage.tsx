@@ -1,5 +1,5 @@
 import { CheckoutSection } from "../components/Checkout";
-import { Footer, LoadingText } from "../components/Common";
+import { ContentWrapper, Footer, LoadingText, PageWrapper } from "../components/Common";
 
 import { Navigate } from "react-router";
 import { useEffect, useState } from "react";
@@ -45,20 +45,20 @@ export function CheckoutPage() {
   }, []);
 
   return (
-    <>
+    <PageWrapper>
       <CheckoutProductDataContext.Provider value={checkoutProductData}>
-        <div>
-          <NavigationBar></NavigationBar>
+        <NavigationBar></NavigationBar>
 
+        <ContentWrapper>
           {isLoading ? (
             <LoadingText></LoadingText>
           ) : (
             <CheckoutSection></CheckoutSection>
           )}
-          
-          <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-        </div>
+        </ContentWrapper>
+        
+        <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
       </CheckoutProductDataContext.Provider>
-    </>
+    </PageWrapper>
   )
 }

@@ -27,13 +27,11 @@ export function AdminPanelPage() {
   }
 
   return (
-    <PageWrapper>
-      <ActiveTableContext value={{activeTable, setActiveTable}}>
-        <div>
-          <AdminNavigationBar></AdminNavigationBar>
-          <DatabaseEditSection></DatabaseEditSection>
-        </div>
-      </ActiveTableContext>
-    </PageWrapper>
+    <ActiveTableContext value={{activeTable, setActiveTable}}>
+      <PageWrapper>
+        <AdminNavigationBar></AdminNavigationBar>
+        <DatabaseEditSection></DatabaseEditSection>
+      </PageWrapper>
+    </ActiveTableContext>
   )
 }

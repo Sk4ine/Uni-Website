@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Footer, LoadingText } from "../components/Common";
+import { ContentWrapper, Footer, LoadingText, PageWrapper } from "../components/Common";
 import { HomePageBanner, PopularProductsSection } from "../components/Home";
 import { ProductListContext } from "../contexts/otherContexts";
 import { Product } from "../classes/product";
@@ -26,10 +26,11 @@ export function HomePage() {
   
 
   return (
-    <>
+    <PageWrapper>
       <ProductListContext.Provider value={productList}>
-        <div>
-          <NavigationBar></NavigationBar>
+        <NavigationBar></NavigationBar>
+        
+        <ContentWrapper>
           <HomePageBanner></HomePageBanner>
 
           {isLoading ? (
@@ -37,10 +38,10 @@ export function HomePage() {
           ) : (
             <PopularProductsSection></PopularProductsSection>
           )}
+        </ContentWrapper>
 
-          <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-        </div>
+        <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
       </ProductListContext.Provider>
-    </>
+    </PageWrapper>
   )
 }

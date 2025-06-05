@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Product } from "../classes/product";
-import { Footer } from "../components/Common";
+import { ContentWrapper, Footer, PageWrapper } from "../components/Common";
 import { CustomerReviews, ProductPageSection, ReviewCard } from "../components/ProductDetails";
 import axios from "axios";
 import type { ProductResponse } from "../api/responses/apiResponses";
@@ -50,16 +50,18 @@ export function ProductDetailsPage() {
   }
   
   return (
-    <>
-      <div className="flex flex-col">
-        <NavigationBar></NavigationBar>
+    <PageWrapper>
+      <NavigationBar></NavigationBar>
+
+      <ContentWrapper>
         <ProductPageSection product={product}>
           <CustomerReviews product={product}>
             {reviewCards}
           </CustomerReviews>
         </ProductPageSection>
-        <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-      </div>
-    </>
+      </ContentWrapper>
+
+      <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
+    </PageWrapper>
   )
 }

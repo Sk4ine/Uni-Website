@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/Sk4ine/Uni-Website/handlers"
-	"github.com/Sk4ine/Uni-Website/models"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/golang-migrate/migrate/v4"
@@ -52,8 +51,6 @@ func main() {
 	}
 
 	defer db.Close()
-
-	fmt.Println(models.GetTableColumnNamesExclude(db, "categories", []string{"id"}))
 
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {

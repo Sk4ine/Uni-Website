@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Footer, LoadingText } from "../components/Common";
+import { ContentWrapper, Footer, LoadingText, PageWrapper } from "../components/Common";
 import { UserProfileSection } from "../components/UserProfile";
 import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import { Navigate } from "react-router";
@@ -51,22 +51,22 @@ export function UserProfilePage() {
   }
 
   return (
-    <>
-      <ProductListContext.Provider value={productList}>
-        <OrderListContext.Provider value={orderList}>
-          <div>
-            <NavigationBar></NavigationBar>
+    <ProductListContext.Provider value={productList}>
+      <OrderListContext.Provider value={orderList}>
+        <PageWrapper>
+          <NavigationBar></NavigationBar>
 
+          <ContentWrapper>
             {isLoading ? (
               <LoadingText></LoadingText>
             ) : (
               <UserProfileSection></UserProfileSection>
             )}
-            
-            <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-          </div>
-        </OrderListContext.Provider>
-      </ProductListContext.Provider>
-    </>
+          </ContentWrapper>
+          
+          <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
+        </PageWrapper>
+      </OrderListContext.Provider>
+    </ProductListContext.Provider>
   )
 }
