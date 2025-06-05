@@ -6,7 +6,7 @@ CREATE TABLE clients
     client_name NVARCHAR(20) NOT NULL DEFAULT "",
     email NVARCHAR(50) NOT NULL DEFAULT "",
     phone_number NVARCHAR(15) NOT NULL DEFAULT "",
-    client_password NVARCHAR(50) NOT NULL,
+    client_hashed_password NVARCHAR(100) NOT NULL,
     is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -47,11 +47,11 @@ SELECT id, client_name, email, phone_number
 FROM unidb.clients;
 
 CREATE OR REPLACE VIEW clients_auth AS
-SELECT id, client_password, is_admin
+SELECT id, client_hashed_password, is_admin
 FROM unidb.clients;
 
-INSERT INTO clients (id, client_name, email, client_password) VALUES
-(1, 'Никита Аминов', 'kitamin@gmail.com', "TeykovskiySharm52");
+INSERT INTO clients (id, client_name, email, client_hashed_password) VALUES
+(1, 'Никита Аминов', 'kitamin@gmail.com', "$2a$10$lvCfe48WaBzpqTNluHaWBugG/uDbMqYdKi4mwXKfgpgRBTZN1X0fK");
 
 UPDATE clients_auth SET is_admin=TRUE WHERE clients_auth.id=1;
 

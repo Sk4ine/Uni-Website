@@ -3,11 +3,13 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/Sk4ine/Uni-Website/models"
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type RegistrationData struct {
@@ -150,7 +152,12 @@ func AddUser(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		_, err = models.AddUser(db, registrationData.Email, registrationData.Password)
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(registrationData.Password), bcrypt.DefaultCost)
+		if err != nil {
+			log.Fatal("Error hashing password:", err)
+		}
+
+		_, err = models.AddUser(db, registrationData.Email, hashedPassword)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

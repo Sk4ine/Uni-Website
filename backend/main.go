@@ -19,13 +19,24 @@ import (
 
 type Claims struct {
 	Username string `json:"username"`
+	IsAdmin  bool   `json:"isAdmin"`
 	jwt.RegisteredClaims
 }
+
+var jwtKey []byte
 
 func init() {
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found, using system env variables")
 	}
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environment variable not set")
+	}
+
+	jwtKey = []byte(jwtSecret)
 }
 
 func main() {

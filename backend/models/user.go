@@ -149,7 +149,7 @@ func UpdateUser(db *sql.DB, id int, changedUser User) (User, error) {
 	return user, nil
 }
 
-func AddUser(db *sql.DB, email, password string) (int64, error) {
+func AddUser(db *sql.DB, email string, password []byte) (int64, error) {
 	transaction, err := db.Begin()
 	if err != nil {
 		return 0, err
