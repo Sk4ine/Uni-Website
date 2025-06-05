@@ -22,3 +22,17 @@ func GetCategoryList(db *sql.DB) http.HandlerFunc {
 		json.NewEncoder(w).Encode(categoryList)
 	}
 }
+
+func GetCategoryColumnNames(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		columnData, err := models.GetTableColumnNames(db, "categories")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+
+		json.NewEncoder(w).Encode(columnData)
+	}
+}

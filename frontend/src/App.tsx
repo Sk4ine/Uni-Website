@@ -16,6 +16,7 @@ import { UserListContext } from "./contexts/userListContext";
 import { CurrentUserContext } from "./contexts/currentUserContext";
 import { ActiveCategoryContext } from "./contexts/activeCategoryContext";
 import { CheckoutProductContext } from "./contexts/checkoutProductContext";
+import { AdminPanelPage } from "./pages/AdminPanelPage";
 
 export function App() {
   const [activeCategory, setActiveCategory] = useState<number>(0);
@@ -60,6 +61,7 @@ export function App() {
                   <Route path="registration" element={<RegistrationPage />}></Route>
                   <Route path="user-profile" element={<UserProfilePage />}></Route>
                   <Route path="checkout" element={<CheckoutPage />}></Route>
+                  <Route path="admin-panel" element={<AdminPanelPage />}></Route>
                 </Routes>
               </CheckoutProductContext.Provider>
             </ActiveCategoryContext.Provider>

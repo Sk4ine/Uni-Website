@@ -1,5 +1,3 @@
-#CREATE DATABASE UniDB;
-
 CREATE TABLE clients
 (
 	id INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,16 +49,7 @@ SELECT id, client_password, is_admin
 FROM unidb.clients;
 
 INSERT INTO clients (id, client_name, email, client_password) VALUES
-(1, 'Никита Аминов', 'kitamin@gmail.com', "TeykovskiySharm52"),
-(2, 'Петр Петров', 'petr@example.com', ""),
-(3, 'Мария Смирнова', 'maria@example.com', ""),
-(4, 'Сергей Сидоров', 'sergey@example.com', ""),
-(5, 'Анна Козлова', 'anna@example.com', ""),
-(6, 'Алексей Морозов', 'alexey@example.com', ""),
-(7, 'Елена Васильева', 'elena@example.com', ""),
-(8, 'Дмитрий Павлов', 'dmitry@example.com', ""),
-(9, 'Татьяна Орлова', 'tatiana@example.com', ""),
-(10, 'Владимир Федоров', 'vladimir@example.com', "");
+(1, 'Никита Аминов', 'kitamin@gmail.com', "TeykovskiySharm52");
 
 UPDATE clients_auth SET is_admin=TRUE WHERE clients_auth.id=1;
 

@@ -9,10 +9,16 @@ import { useCurrentUserContext } from '../contexts/currentUserContext';
 
 export function HomePageButton() {
   return (
+    <Link to={"/home"} className='h-[80%] flex justify-center items-center'>
+      <img src={artezaLogo} className="h-full object-none"></img>
+    </Link>
+  )
+}
+
+export function NavigationSection() {
+  return (
     <div className="flex justify-center h-40 items-end box-content border-b-4 border-[#EF829A]">
-      <Link to={"/home"} className='h-[80%] flex justify-center items-center'>
-        <img src={artezaLogo} className="h-full object-none"></img>
-      </Link>
+      <HomePageButton></HomePageButton>
     </div>
   )
 }
