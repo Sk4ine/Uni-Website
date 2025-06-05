@@ -31,12 +31,12 @@ export function CartSection() {
       cartProductNodeList.push(<CartProduct key={i} product={curProd} quantity={cartProductList[i].quantity}></CartProduct>);
     }
 
-    return (
-      <div className="w-[960px] mt-7">
-        <div className="flex flex-col items-center gap-5">
-          {cartProductNodeList}
-        </div>
+  return (
+    <div className="w-[960px] mt-7">
+      <div className="flex flex-col items-center gap-5">
+        {cartProductNodeList}
       </div>
+    </div>
     )
   }
 

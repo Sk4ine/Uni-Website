@@ -58,7 +58,7 @@ function ProductDescription({product} : {product: Product}) {
 
   return (
     <div className="flex flex-col items-center w-[55%]">
-      <div className="flex flex-col items-center gap-4 font-default text-[#555555] text-5xl">
+      <div className="flex flex-col items-center font-default text-[#555555] text-5xl gap-4">
         <p>{product.name}</p>
         <p>{product.price} руб.</p>
       </div>
