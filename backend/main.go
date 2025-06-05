@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "root:sql-password@tcp(localhost:3306)/unidb?multiStatements=true")
+	db, err := sql.Open("mysql", "root:narancia34@tcp(localhost:3306)/unidb?multiStatements=true")
 	if err != nil {
 		log.Fatal("Failed to connect to MySQL:", err)
 	}
