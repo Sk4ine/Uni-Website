@@ -1,9 +1,18 @@
 export class ProductCategory {
-  public id: number;
-  public name: string;
+  private _id: number;
+
+  public get id(): number {
+    return this._id;
+  }
+
+  private _name: string;
+
+  public get name(): string {
+    return this._name;
+  }
 
   public constructor(id: number, name: string) {
-    this.id = id;
-    this.name = name;
+    this._id = id;
+    this._name = name;
   }
 }

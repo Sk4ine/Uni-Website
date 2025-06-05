@@ -136,21 +136,6 @@ function SearchBar() {
   )
 }
 
-function NavigationBarIcon({iconImagePath, url} : {iconImagePath: string, url: string}) {
-  const colors: {[index: string]: string} = {
-    pink: "bg-[#D5778D] group-hover:bg-[#B36476]",
-    gray: "bg-[#B5ABA1] group-hover:bg-[#878078]"
-  };
-
-  const activeColor: string = (useLocation().pathname == url) ? colors["pink"] : colors["gray"];
-
-  return (
-    <Link to={url} className={`flex justify-center items-center h-[65%] w-20 group`}>
-      <div style={{maskImage: `url(${iconImagePath})`}} className={`${activeColor} size-[50px] mask-contain mask-no-repeat mask-center`}></div>
-    </Link>
-  )
-}
-
 function CartIcon() {
   const cartContext = useCartContext();
 

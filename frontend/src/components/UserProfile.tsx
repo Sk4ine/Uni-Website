@@ -40,7 +40,7 @@ function UserInfo() {
 function UserLogo({user} : {user: User}) {
   return (
     <div className="flex flex-col items-center w-[30%] gap-4">
-      <img src={user.logoImagePath ? user.logoImagePath : defaultUserLogo} className="w-32 h-32 object-cover rounded-full"></img>
+      <img src={user.logoImagePath} className="w-32 h-32 object-cover rounded-full"></img>
       <p className="font-default text-[#D5778D] text-3xl text-wrap text-center">
         {user.firstName || user.secondName ? `${user.firstName} ${user.secondName}` : `user${user.id}`}
       </p>

@@ -1,16 +1,55 @@
 import type { Review } from "./review";
 
 export class Product {
-  public id: number;
-  public categoryID: number;
-  public name: string;
-  public price: number;
+  private _id: number;
+
+  public get id(): number {
+    return this._id;
+  }
+
+  private _categoryID: number;
+
+  public get categoryID(): number {
+    return this._categoryID;
+  }
+
+  private _name: string;
+
+  public get name(): string {
+    return this._name;
+  }
+
+  private _price: number;
+
+  public get price(): number {
+    return this._price;
+  }
+
   public imagePaths: string[] = [];
   
-  public materials: string[] = [];
-  public weightGrams: number = 0;
-  public quantityInStock: number = 0;
-  public countryOfOrigin: string = "";
+  private _materials: string[];
+
+  public get materials(): string[] {
+    return this._materials;
+  }
+
+  private _weightGrams: number;
+
+  public get weightGrams(): number {
+    return this._weightGrams;
+  }
+
+  private _quantityInStock: number;
+
+  public get quantityInStock(): number {
+    return this._quantityInStock;
+  } 
+
+  private _countryOfOrigin: string;
+
+  public get countryOfOrigin(): string {
+    return this._countryOfOrigin;
+  }
 
   private _customerReviews: Review[] = [];
 
@@ -18,17 +57,21 @@ export class Product {
     return this._customerReviews;
   }
 
-  public rating: number = 0;
+  private _rating: number = 0;
+
+  public get rating(): number {
+    return this._rating;
+  }
 
   public constructor(id: number, categoryID: number, name: string, price: number, materials: string[], weightGrams: number, quantityInStock: number, countryOfOrigin: string, imagePaths?: string[]) {
-    this.id = id;
-    this.categoryID = categoryID;
-    this.name = name;
-    this.price = price;
-    this.materials = materials;
-    this.weightGrams = weightGrams;
-    this.quantityInStock = quantityInStock;
-    this.countryOfOrigin = countryOfOrigin;
+    this._id = id;
+    this._categoryID = categoryID;
+    this._name = name;
+    this._price = price;
+    this._materials = materials;
+    this._weightGrams = weightGrams;
+    this._quantityInStock = quantityInStock;
+    this._countryOfOrigin = countryOfOrigin;
 
     if(imagePaths !== undefined) {
       this.imagePaths = imagePaths;
@@ -37,7 +80,7 @@ export class Product {
 
   public addReview(review: Review): void {
     this._customerReviews.push(review);
-    this.rating = this.calculateRating();
+    this._rating = this.calculateRating();
   }
 
   private calculateRating(): number {

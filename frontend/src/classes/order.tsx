@@ -1,15 +1,39 @@
 export class Order {
-  public productID: number;
-  public productQuantity: number;
-  public cost: number;
-  public status: string; 
-  public userID: number;
+  private _productID: number;
+
+  public get productID(): number {
+    return this._productID;
+  }
+
+  private _productQuantity: number;
+
+  public get productQuantity(): number {
+    return this._productQuantity;
+  }
+
+  private _cost: number;
+
+  public get cost(): number {
+    return this._cost;
+  }
+
+  private _status: string;
+
+  public get status(): string {
+    return this._status;
+  }
+
+  private _userID: number;
+
+  public get userID(): number {
+    return this._userID;
+  }
 
   public constructor(productID: number, productQuantity: number, cost: number, status: string, userID: number) {
-    this.productQuantity = productQuantity;
-    this.productID = productID;
-    this.cost = cost;
-    this.status = status;
-    this.userID = userID;
+    this._productQuantity = productQuantity;
+    this._productID = productID;
+    this._cost = cost;
+    this._status = status;
+    this._userID = userID;
   }
 }

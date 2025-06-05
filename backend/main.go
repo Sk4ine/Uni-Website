@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/Sk4ine/Uni-Website/handlers"
 	"github.com/Sk4ine/Uni-Website/models"
@@ -13,10 +14,33 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 )
 
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found, using system env variables")
+	}
+}
+
 func main() {
-	db, err := sql.Open("mysql", "root:sql-password@tcp(localhost:3306)/unidb?multiStatements=true")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbPort := os.Getenv("DB_PORT")
+
+	if dbUser == "" {
+		dbUser = "root"
+	}
+
+	if dbPassword == "" {
+		log.Fatal("DB_PASSWORD environment variable not set")
+	}
+
+	if dbPort == "" {
+		dbPort = "3306"
+	}
+
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(localhost:%s)/unidb?multiStatements=true", dbUser, dbPassword, dbPort))
 	if err != nil {
 		log.Fatal("Failed to connect to MySQL:", err)
 	}
