@@ -1,4 +1,4 @@
-import { faL, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import {faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useCartContext } from "../contexts/cartContext";
@@ -69,7 +69,6 @@ function UserLogoButton() {
     axios.get<boolean>(`http://localhost:8080/api/users/${currentUserContext.currentUser?.id}/is-admin`)
       .then(res => {
         setIsAdmin(res.data);
-        console.log("Got it");
       })
       .catch(err => console.log(err));
 
@@ -128,9 +127,9 @@ export function AccountButton() {
 function SearchBar() {
   return (
     <div className='ml-2 h-[65%] content-center'>
-      <form className='flex justify-between w-72 border-3 border-[#555555] rounded-4xl p-2'>
-        <input type='text' placeholder='Найти' className='inline font-default text-xl text-[##555555] ml-3 w-[80%] placeholder:text-[#B5ABA1] outline-none indent-1'></input>
-        <FontAwesomeIcon className='w-[20%] mt-1 text-[#555555]' icon={faMagnifyingGlass} size='xl' />
+      <form className='flex justify-between w-72 border-2 border-[#878078] rounded-4xl p-2'>
+        <input type='text' placeholder='Найти' className='inline font-default text-xl text-[#878078] ml-3 w-[80%] placeholder:text-[#878078] outline-none indent-1'></input>
+        <FontAwesomeIcon className='w-[20%] mt-1 text-[#878078]' icon={faMagnifyingGlass} size='xl' />
       </form>
     </div>
   )
