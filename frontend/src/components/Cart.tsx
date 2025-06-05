@@ -32,8 +32,7 @@ function CartProductList() {
   }
 
   return (
-    <div className="w-[960px]">
-      <p className="font-default text-[#B5ABA1] text-xl ml-5 mb-5">Выбрать</p>
+    <div className="w-[960px] mt-7">
       <div className="flex flex-col items-center gap-5">
         {cartProductNodeList}
       </div>
