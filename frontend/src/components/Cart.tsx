@@ -25,14 +25,14 @@ function CartProductList() {
   const {cartProductList} = cartContext;
 
   for(let i = 0; i < cartProductList.length; i++) {
+    console.log("Da");
     if (productListContext.length == 0) break;
     const curProd: Product = productListContext[cartProductList[i].productID - 1];
     cartProductNodeList.push(<CartProduct key={i} product={curProd} quantity={cartProductList[i].quantity}></CartProduct>);
   }
 
   return (
-    <div className="w-[960px]">
-      <p className="font-default text-[#B5ABA1] text-xl ml-5 mb-5">Выбрать</p>
+    <div className="w-[960px] mt-7">
       <div className="flex flex-col items-center gap-5">
         {cartProductNodeList}
       </div>
