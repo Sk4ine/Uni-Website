@@ -48,3 +48,17 @@ func GetProductByID(db *sql.DB) http.HandlerFunc {
 		json.NewEncoder(w).Encode(product)
 	}
 }
+
+func GetProductColumnNames(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		columnData, err := models.GetTableColumnNamesExclude(db, "products", []string{"image_paths"})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+
+		json.NewEncoder(w).Encode(columnData)
+	}
+}

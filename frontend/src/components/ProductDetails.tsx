@@ -105,7 +105,7 @@ function DescriptionItem({itemName, itemValue} : {itemName: string, itemValue: s
   return (
     <div className="flex justify-between">
       <span className="w-fit whitespace-nowrap">{itemName}</span>
-      <span className="w-full h-[68%] select-none border-b-3 border-dotted mx-0.5"></span>
+      <span className="w-full h-[80%] select-none border-b-3 border-dotted mx-0.5"></span>
       <span className="w-fit text-nowrap">{itemValue}</span>
     </div>
   )
@@ -115,7 +115,7 @@ export function CustomerReviews({children, product} : {children: React.ReactNode
   return (
     <div className="flex justify-between w-[1100px] mt-9">
       <div className="flex flex-col gap-2">
-        <p className="font-default text-[#555555] text-5xl">
+        <p className="font-default text-[#555555] text-4xl">
           Отзывы <span className="text-[#B5ABA1]">{product.customerReviews.length}</span>
         </p>
         <div className="flex flex-col items-center mt-4 gap-4">
@@ -171,7 +171,7 @@ function Rating({product} : {product: Product}) {
   return (
     <div className="flex flex-col">
       <div className="flex justify-end items-center">
-        <p className="font-default text-[#555555] text-6xl">{product.rating.toFixed(1)}</p>
+        <p className="font-default text-[#555555] text-5xl">{product.rating.toFixed(1)}</p>
         <img src={ratingStarLargeImage} className="size-11 ml-2 pb-1 select-none pointer-events-none"></img>
       </div>
       <div className="flex flex-col items-end">

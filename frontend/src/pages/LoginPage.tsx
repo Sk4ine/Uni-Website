@@ -1,10 +1,10 @@
-import { EmptySpace, HomePageButton, LoginSection } from "../components/LoginForm";
+import { EmptySpace, HomePageButton, LoginSection, NavigationSection } from "../components/LoginForm";
 
 export function LoginPage() {
   return (
     <>
       <div>
-        <HomePageButton></HomePageButton>
+        <NavigationSection></NavigationSection>
         <LoginSection></LoginSection>
         <EmptySpace></EmptySpace>
       </div>
