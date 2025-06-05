@@ -2,10 +2,12 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/Sk4ine/Uni-Website/handlers"
+	"github.com/Sk4ine/Uni-Website/models"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
@@ -14,12 +16,14 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "root:sql-password@tcp(localhost:3306)/unidb?multiStatements=true")
+	db, err := sql.Open("mysql", "root:narancia34@tcp(localhost:3306)/unidb?multiStatements=true")
 	if err != nil {
 		log.Fatal("Failed to connect to MySQL:", err)
 	}
 
 	defer db.Close()
+
+	fmt.Println(models.GetTableColumnNamesExclude(db, "categories", []string{"id"}))
 
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {

@@ -96,7 +96,7 @@ function UserLogoButton() {
             </Link>
 
             {isAdmin && (
-              <Link to="/home" className="text-nowrap pl-4 pr-10 py-2 text-[#555555] hover:bg-gray-100">
+              <Link to="/admin-panel" className="text-nowrap pl-4 pr-10 py-2 text-[#555555] hover:bg-gray-100">
                 Админ панель
               </Link>
             )}
@@ -111,7 +111,7 @@ function UserLogoButton() {
   )
 }
 
-function AccountButton() {
+export function AccountButton() {
   const currentUserContext = useCurrentUserContext();
 
   return (

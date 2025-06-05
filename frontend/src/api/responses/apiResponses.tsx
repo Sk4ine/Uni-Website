@@ -30,3 +30,7 @@ export interface OrderResponse {
   shippingAddress: string,
   cost: number
 }
+
+export interface TableColumnsResponse {
+  columns: string[];
+}
