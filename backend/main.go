@@ -10,12 +10,18 @@ import (
 	"github.com/Sk4ine/Uni-Website/handlers"
 	"github.com/Sk4ine/Uni-Website/models"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
+
+type Claims struct {
+	Username string `json:"username"`
+	jwt.RegisteredClaims
+}
 
 func init() {
 	if err := godotenv.Load(); err != nil {

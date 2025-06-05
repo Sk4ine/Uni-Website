@@ -4,6 +4,7 @@ import { useCurrentUserContext } from "../contexts/currentUserContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ActiveTableContext } from "../contexts/activeTableContext";
+import { PageWrapper } from "../components/Common";
 
 export function AdminPanelPage() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -26,13 +27,13 @@ export function AdminPanelPage() {
   }
 
   return (
-    <>
+    <PageWrapper>
       <ActiveTableContext value={{activeTable, setActiveTable}}>
         <div>
           <AdminNavigationBar></AdminNavigationBar>
           <DatabaseEditSection></DatabaseEditSection>
         </div>
       </ActiveTableContext>
-    </>
+    </PageWrapper>
   )
 }

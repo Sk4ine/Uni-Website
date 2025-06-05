@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CartSection } from "../components/Cart";
-import { Footer, LoadingText } from "../components/Common";
+import { ContentWrapper, Footer, LoadingText, PageWrapper } from "../components/Common";
 import type { Product } from "../classes/product";
 import { getProductList } from "../api/requests/products";
 import { ProductListContext } from "../contexts/otherContexts";
@@ -26,21 +26,20 @@ export function CartPage() {
   }, []);
 
   return (
-    <>
-      <ProductListContext.Provider value={productList}>
-        <div className="flex flex-col min-h-[100vh]">
+    <ProductListContext.Provider value={productList}>
+      <PageWrapper>
           <NavigationBar></NavigationBar>
-          <div className="grow">
+          
+          <ContentWrapper>
             {isLoading ? (
               <LoadingText></LoadingText>
             ) : (
               <CartSection></CartSection>
             )}
-          </div>
+          </ContentWrapper>
 
           <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-        </div>
-      </ProductListContext.Provider>
-    </>
+      </PageWrapper>
+    </ProductListContext.Provider>
   )
 }

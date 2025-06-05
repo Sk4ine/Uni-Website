@@ -68,6 +68,6 @@ function TableSelectButton({buttonText, tableName} : {buttonText: string, tableN
   }
 
   return (
-    <button onClick={handleClick} className={`${backgroundColor} ${textColor} ${backgroundHoverColor} font-default text-3xl w-64 py-1 flex justify-center items-center rounded-2xl cursor-pointer`}>{buttonText}</button>
+    <button onClick={handleClick} className={`${backgroundColor} ${textColor} ${backgroundHoverColor} min-h-[100vh] font-default text-3xl w-64 py-1 flex justify-center items-center rounded-2xl cursor-pointer`}>{buttonText}</button>
   )
 }

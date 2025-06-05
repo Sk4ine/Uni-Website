@@ -1,4 +1,4 @@
-import { Footer, LoadingText } from "../components/Common";
+import { ContentWrapper, Footer, LoadingText, PageWrapper } from "../components/Common";
 
 import { CatalogSection } from "../components/Catalog";
 import { CategoryListContext, ProductListContext } from "../contexts/otherContexts";
@@ -45,22 +45,22 @@ export function CatalogPage() {
   }, []);
 
   return (
-    <>
-      <div>
-        <ProductListContext.Provider value={productList}>
-          <CategoryListContext.Provider value={categoryList}>
-            <NavigationBar></NavigationBar>
+    <PageWrapper>
+      <ProductListContext.Provider value={productList}>
+        <CategoryListContext.Provider value={categoryList}>
+          <NavigationBar></NavigationBar>
 
+          <ContentWrapper>
             {isLoading ? (
               <LoadingText></LoadingText>
             ) : (
               <CatalogSection></CatalogSection>
             )}
+          </ContentWrapper>
 
-            <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-          </CategoryListContext.Provider>
-        </ProductListContext.Provider>
-      </div>
-    </>
+          <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
+        </CategoryListContext.Provider>
+      </ProductListContext.Provider>
+    </PageWrapper>
   )
 }

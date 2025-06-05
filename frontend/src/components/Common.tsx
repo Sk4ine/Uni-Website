@@ -85,3 +85,19 @@ export function LoadingText() {
     </div>
   )
 }
+
+export function PageWrapper({children} : {children: React.ReactNode}) {
+  return (
+    <div className='flex flex-col min-h-[100vh]'>
+      {children}
+    </div>
+  )
+}
+
+export function ContentWrapper({children} : {children: React.ReactNode}) {
+  return (
+    <div className='grow'>
+      {children}
+    </div>
+  )
+}
