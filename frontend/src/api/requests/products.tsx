@@ -3,30 +3,26 @@ import type { ProductResponse } from "../responses/apiResponses";
 import { Product } from "../../classes/product";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export async function getProductList(): Promise<Product[]> {
   try {
-    const response: AxiosResponse<ProductResponse[]> = await axios.get<ProductResponse[]>("http://localhost:8080/api/products");
+    const response: AxiosResponse<ProductResponse[]> = await axios.get<ProductResponse[]>(`${API_BASE_URL}/api/products`);
+    const productResponses: ProductResponse[] = response.data;
 
-    let productList: Product[] = [];
-
-    for(let i = 0; i < response.data.length; i++) {
-      const curProduct: ProductResponse = response.data[i];
-      productList.push(new Product(
-        curProduct.id, 
-        curProduct.categoryID, 
-        curProduct.name,
-        curProduct.price,
-        curProduct.materials.split(","),
-        curProduct.weightInGrams,
-        curProduct.quantityInStock,
-        curProduct.countryOfOrigin
-      ));
-    }
+    const productList: Product[] = productResponses.map(product => new Product(
+        product.id, 
+        product.categoryID, 
+        product.name,
+        product.price,
+        product.materials.split(","),
+        product.weightInGrams,
+        product.quantityInStock,
+        product.countryOfOrigin
+    ));
 
     for(let i = 0; i < productList.length; i++) {
-      const imageResponse: AxiosResponse<Blob> = await axios.get<Blob>(`http://localhost:8080/static/productImages/${productList[i].id}`, {
-          responseType: 'blob'
-        });
+      const imageResponse: AxiosResponse<Blob> = await axios.get<Blob>(`${API_BASE_URL}/static/productImages/${productList[i].id}`, { responseType: 'blob' });
 
       productList[i].imagePaths = [URL.createObjectURL(imageResponse.data)];
     }
@@ -39,7 +35,7 @@ export async function getProductList(): Promise<Product[]> {
 
 export async function getProductByID(id: number): Promise<Product> {
   try {
-    const response: AxiosResponse<ProductResponse> = await axios.get<ProductResponse>(`http://localhost:8080/api/products/${id}`);
+    const response: AxiosResponse<ProductResponse> = await axios.get<ProductResponse>(`${API_BASE_URL}/api/products/${id}`);
 
     const product: Product = new Product(
       response.data.id, 
@@ -52,9 +48,7 @@ export async function getProductByID(id: number): Promise<Product> {
       response.data.countryOfOrigin
     );
 
-    const imageResponse: AxiosResponse<Blob> = await axios.get<Blob>(`http://localhost:8080/static/productImages/${id}`, {
-      responseType: 'blob'
-    });
+    const imageResponse: AxiosResponse<Blob> = await axios.get<Blob>(`${API_BASE_URL}/static/productImages/${id}`, { responseType: 'blob' });
 
     product.imagePaths = [URL.createObjectURL(imageResponse.data)];
 

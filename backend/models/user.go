@@ -3,23 +3,23 @@ package models
 import (
 	"database/sql"
 	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type User struct {
-	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phoneNumber"`
 }
 
 type UserAuth struct {
-	ID       int    `json:"id"`
-	Password string `json:"password"`
-	IsAdmin  bool   `json:"isAdmin"`
+	ID      int  `json:"id"`
+	IsAdmin bool `json:"isAdmin"`
 }
 
 func GetUserByID(db *sql.DB, id int) (User, error) {
-	rows, err := db.Query("SELECT id, client_name, email, phone_number FROM clients_general WHERE id = ?", id)
+	rows, err := db.Query("SELECT client_name, email, phone_number FROM clients_general WHERE id = ?", id)
 	if err != nil {
 		return User{}, err
 	}
@@ -27,7 +27,7 @@ func GetUserByID(db *sql.DB, id int) (User, error) {
 	var user User
 
 	for rows.Next() {
-		if err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.PhoneNumber); err != nil {
+		if err := rows.Scan(&user.Name, &user.Email, &user.PhoneNumber); err != nil {
 			return User{}, err
 		}
 	}
@@ -36,7 +36,7 @@ func GetUserByID(db *sql.DB, id int) (User, error) {
 }
 
 func GetUserByEmail(db *sql.DB, email string) (User, error) {
-	rows, err := db.Query("SELECT id, client_name, email, phone_number FROM clients_general WHERE email = ?", email)
+	rows, err := db.Query("SELECT client_name, email, phone_number FROM clients_general WHERE email = ?", email)
 	if err != nil {
 		return User{}, err
 	}
@@ -44,7 +44,7 @@ func GetUserByEmail(db *sql.DB, email string) (User, error) {
 	var user User
 
 	for rows.Next() {
-		if err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.PhoneNumber); err != nil {
+		if err := rows.Scan(&user.Name, &user.Email, &user.PhoneNumber); err != nil {
 			return User{}, err
 		}
 	}
@@ -52,46 +52,48 @@ func GetUserByEmail(db *sql.DB, email string) (User, error) {
 	return user, nil
 }
 
-func CheckUserAuth(db *sql.DB, email, password string) (User, error) {
-	rows, err := db.Query(`
-	SELECT clients_general.id, client_name, email, phone_number FROM clients_general
-	INNER JOIN clients_auth ON clients_general.id = clients_auth.id
-	WHERE email = ? AND client_password = ?`, email, password)
+func CheckIfUserIsAdmin(db *sql.DB, id int) (bool, error) {
+	rows, err := db.Query("SELECT is_admin FROM clients_auth WHERE id=?", id)
 	if err != nil {
-		return User{}, err
+		return false, err
 	}
 
-	var users []User
+	var isAdmin bool
 
 	for rows.Next() {
-		var u User
-
-		if err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.PhoneNumber); err != nil {
-			return User{}, err
+		if err := rows.Scan(&isAdmin); err != nil {
+			return false, err
 		}
-
-		users = append(users, u)
 	}
 
-	if len(users) == 0 {
-		return User{}, sql.ErrNoRows
-	}
-
-	return users[0], nil
+	return isAdmin, nil
 }
 
-func GetUserAuth(db *sql.DB, id int) (UserAuth, error) {
-	rows, err := db.Query("SELECT id, client_password, is_admin FROM clients_auth WHERE id = ?", id)
+func CheckUserAuth(db *sql.DB, email, password string) (UserAuth, error) {
+	rows, err := db.Query(`
+	SELECT clients_general.id, client_hashed_password, is_admin FROM clients_general
+	INNER JOIN clients_auth ON clients_general.id = clients_auth.id
+	WHERE email = ?`, email)
 	if err != nil {
 		return UserAuth{}, err
 	}
 
 	var userAuth UserAuth
+	var hashedPassword []byte
 
 	for rows.Next() {
-		if err := rows.Scan(&userAuth.ID, &userAuth.Password, &userAuth.IsAdmin); err != nil {
+		if err := rows.Scan(&userAuth.ID, &hashedPassword, &userAuth.IsAdmin); err != nil {
 			return UserAuth{}, err
 		}
+	}
+
+	if userAuth.ID == 0 {
+		return UserAuth{}, sql.ErrNoRows
+	}
+
+	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(password))
+	if err != nil {
+		return UserAuth{}, sql.ErrNoRows
 	}
 
 	return userAuth, nil
@@ -177,4 +179,21 @@ func AddUser(db *sql.DB, email string, password []byte) (int64, error) {
 	}
 
 	return id, nil
+}
+
+func CheckUserExistance(db *sql.DB, email string) (bool, error) {
+	rows, err := db.Query("SELECT EXISTS(SELECT * FROM clients_general WHERE email=?)", email)
+	if err != nil {
+		return false, err
+	}
+
+	var exists bool
+
+	for rows.Next() {
+		if err := rows.Scan(&exists); err != nil {
+			return false, err
+		}
+	}
+
+	return exists, nil
 }

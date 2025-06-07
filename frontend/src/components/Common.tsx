@@ -78,10 +78,21 @@ export function InputField({fieldName, fieldID, value, required, fieldType, disa
   )
 }
 
-export function LoadingText() {
+export function LoadingMessage({text, heightVH} : {text: string, heightVH: number}) {
+
   return (
-    <div className="flex flex-col items-center mt-24 mb-48">
-      <h1 className="font-default text-[#B4A1A6] text-4xl mt-7">Загрузка...</h1>
+    <div style={{height: `${heightVH}vh`}} className="flex justify-center items-center">
+      <div className="mr-5 size-12 animate-spin rounded-full border- border-t-[#D5778D] border-x-[#B5ABA1]/50 border-b-[#B5ABA1]/50 border-5"></div>
+      <p className="font-default text-[#B4A1A6] text-4xl">{text}</p>
+    </div>
+  )
+}
+
+export function ErrorMessage({text, heightVH} : {text: string, heightVH: number}) {
+
+  return (
+    <div style={{height: `${heightVH}vh`}} className="flex justify-center items-center">
+      <p className="font-default text-[#B4A1A6] text-4xl">{text}</p>
     </div>
   )
 }

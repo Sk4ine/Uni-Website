@@ -1,5 +1,4 @@
 export interface UserResponse {
-  id: number,
   name: string,
   email: string,
   phoneNumber: string
@@ -33,4 +32,8 @@ export interface OrderResponse {
 
 export interface TableColumnsResponse {
   columns: string[];
+}
+
+export interface LoginResponse {
+  token: string
 }

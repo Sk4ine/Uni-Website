@@ -1,7 +1,7 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import type { Order } from "../classes/order";
 import { User } from "../classes/user";
-import { InputField } from "./Common";
+import { InputField, LoadingMessage } from "./Common";
 import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import type { Product } from "../classes/product";
 
@@ -9,30 +9,36 @@ import defaultUserLogo from '../assets/defaultUserLogo.png';
 import { useNavigate } from "react-router";
 import axios from "axios";
 import type { UserResponse } from "../api/responses/apiResponses";
-import { useCurrentUserContext } from "../contexts/currentUserContext";
+import { useAuthContext } from "../contexts/authContext";
+import { useUserInfoContext } from "../contexts/userInfoContext";
 
-export function UserProfileSection() {
+export function UserProfileSection({ordersLoading} : {ordersLoading: boolean}) {
+  const userInfoContext = useUserInfoContext();
+
   return (
     <div className="flex flex-col items-center mb-48">
-      <UserInfo></UserInfo>
-      <OrdersList></OrdersList>
+      {userInfoContext.userLoading ? (
+        <LoadingMessage text="Загрузка профиля..." heightVH={50}></LoadingMessage>
+      ) : (
+        <UserInfo></UserInfo>
+      )}
+
+      {ordersLoading ? (
+        <LoadingMessage text="Загрузка заказов..." heightVH={50}></LoadingMessage>
+      ) : (
+        <OrdersList></OrdersList>
+      )}
     </div>
   )
 }
 
 function UserInfo() {
-  const currentUserContext = useCurrentUserContext();
-
-  if(!currentUserContext.currentUser) {
-    return;
-  }
-
-  const user: User = currentUserContext.currentUser;
+  const userInfoContext = useUserInfoContext();
 
   return (
     <div className="flex justify-between w-[1100px] mt-12">
-      <UserLogo user={user}></UserLogo>
-      <UserInfoForm user={user}></UserInfoForm>
+      <UserLogo user={userInfoContext.useUserInfo()}></UserLogo>
+      <UserInfoForm user={userInfoContext.useUserInfo()}></UserInfoForm>
     </div>
   )
 }
@@ -40,43 +46,25 @@ function UserInfo() {
 function UserLogo({user} : {user: User}) {
   return (
     <div className="flex flex-col items-center w-[30%] gap-4">
-      <img src={user.logoImagePath} className="w-32 h-32 object-cover rounded-full"></img>
+      <img src={defaultUserLogo} className="size-32 object-cover "></img>
       <p className="font-default text-[#D5778D] text-3xl text-wrap text-center">
-        {user.firstName || user.secondName ? `${user.firstName} ${user.secondName}` : `user${user.id}`}
+        {user.firstName || user.secondName ? `${user.firstName} ${user.secondName}` : "user"}
       </p>
     </div>
   )
 }
 
 function UserInfoForm({user} : {user: User}) {
-  const currentUserContext = useCurrentUserContext();
-  const navigate = useNavigate();
+  const userInfoContext = useUserInfoContext();
 
   function saveUserInfo(formData: FormData) {
-    if(!currentUserContext.currentUser) {
-      return;
-    }
-
-    const id: number = currentUserContext.currentUser.id;
-
-    const changedUser: User = new User(
-      id,
-      formData.get("email") as string,
-      "",
+    userInfoContext.updateUser(
+      localStorage.getItem("jwtToken"),
       formData.get("firstName") as string,
       formData.get("secondName") as string,
-      formData.get("phoneNumber") as string
+      formData.get("email") as string,
+      formData.get("phonenumber") as string,
     );
-
-    axios.put(`http://localhost:8080/api/users/${id}`, {firstName: changedUser.firstName, secondName: changedUser.secondName, email: changedUser.email, phoneNumber: changedUser.phoneNumber})
-      .then(res => {
-        const user: UserResponse = res.data;
-
-        const userName: string[] = user.name.split(" ");
-
-        currentUserContext.setCurrentUser(new User(user.id, user.email, "", userName[0], userName[1], user.phoneNumber));
-      })
-      .catch(err => console.error(err));
   }
 
   return (
@@ -95,12 +83,6 @@ function UserInfoForm({user} : {user: User}) {
 }
 
 function OrdersList() {
-  const currentUserContext = useCurrentUserContext();
-
-  if(!currentUserContext.currentUser) {
-    return;
-  }
-
   const userOrders: Order[] = useContext(OrderListContext);
 
   const orderCards: React.ReactNode[] = [];

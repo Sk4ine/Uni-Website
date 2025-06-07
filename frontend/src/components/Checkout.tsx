@@ -8,7 +8,7 @@ import axios from "axios";
 import { useCheckoutProductDataContext } from "../contexts/checkoutProductDataContext";
 import { useCartContext } from "../contexts/cartContext";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
-import { useCurrentUserContext } from "../contexts/currentUserContext";
+import { useAuthContext } from "../contexts/authContext";
 
 export function CheckoutSection() {
   const checkoutProductDataContext = useCheckoutProductDataContext();
@@ -30,7 +30,7 @@ export function CheckoutSection() {
 function OrderInfo({product} : {product: Product}) {
   const cartContext = useCartContext();
   const checkoutProductContext = useCheckoutProductContext();
-  const currentUserContext = useCurrentUserContext();
+  const authContext = useAuthContext();
   const navigate = useNavigate();
 
   function makeOrder(formData: FormData) {
@@ -40,7 +40,7 @@ function OrderInfo({product} : {product: Product}) {
 
     cartContext.removeProduct(cartProduct.productID);
 
-    axios.post(`http://localhost:8080/api/users/${currentUserContext.currentUser?.id}/orders`, {
+    axios.post(`http://localhost:8080/api/users/me/orders`, {
       shippingAddress: formData.get("shippingAddress") as string,
       productID: cartProduct.productID,
       productQuantity: cartProduct.quantity
@@ -64,18 +64,16 @@ function OrderInfo({product} : {product: Product}) {
 }
 
 function CustomerInfo() {
-  const currentUserContext = useCurrentUserContext();
-
-  const fieldDisabled: boolean = currentUserContext.currentUser ? true : false;
+  const authContext = useAuthContext();
 
   return (
     <div className="flex flex-col">
       <p className="font-default text-[#D5778D] text-3xl">Покупатель</p>
       <div className="flex flex-col mt-4 gap-6">
-        <InputField fieldName="Имя" fieldID="firstName" disabled={fieldDisabled} value={currentUserContext.currentUser?.firstName}></InputField>
-        <InputField fieldName="Фамилия" fieldID="secondName" disabled={fieldDisabled} value={currentUserContext.currentUser?.secondName}></InputField>
-        <InputField fieldName="Номер телефона" fieldID="phoneNumber" disabled={fieldDisabled} value={currentUserContext.currentUser?.phoneNumber}></InputField>
-        <InputField fieldName="Электронная почта" fieldID="email" disabled={fieldDisabled} value={currentUserContext.currentUser?.email} required></InputField>
+        <InputField fieldName="Имя" fieldID="firstName" disabled={true} value={currentUserContext.currentUser?.firstName}></InputField>
+        <InputField fieldName="Фамилия" fieldID="secondName" disabled={true} value={currentUserContext.currentUser?.secondName}></InputField>
+        <InputField fieldName="Номер телефона" fieldID="phoneNumber" disabled={true} value={currentUserContext.currentUser?.phoneNumber}></InputField>
+        <InputField fieldName="Электронная почта" fieldID="email" disabled={true} value={currentUserContext.currentUser?.email} required></InputField>
         <InputField fieldName="Адрес пункта выдачи" fieldID="shippingAddress" required></InputField>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { ProductListContext } from "../contexts/otherContexts"
 import { Link, useNavigate } from "react-router";
 import { useCartContext } from "../contexts/cartContext";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
+import { ErrorMessage } from "./Common";
 
 export function CartSection() {
   return (
@@ -15,20 +16,23 @@ export function CartSection() {
 }
 
 function CartProductList() {
-  let cartProductNodeList: React.ReactNode[] = [];
-
   const cartContext = useCartContext();
   const productListContext: Product[] = useContext(ProductListContext);
 
-  console.log(productListContext);
+  const cartProductList = cartContext.cartProductList;
+  console.log(cartProductList)
 
-  const {cartProductList} = cartContext;
-
-  for(let i = 0; i < cartProductList.length; i++) {
-    if (productListContext.length == 0) break;
-    const curProd: Product = productListContext[cartProductList[i].productID - 1];
-    cartProductNodeList.push(<CartProduct key={i} product={curProd} quantity={cartProductList[i].quantity}></CartProduct>);
+  if(cartProductList.length == 0) {
+    return (
+      <div className="flex justify-center items-center mt-16">
+        <p className="font-default text-[#B4A1A6] text-3xl">Корзина пуста</p>
+      </div>
+    )
   }
+
+  const cartProductNodeList = productListContext.map((product, index) => {
+    return (<CartProduct key={index} product={product} quantity={cartProductList[index].quantity}></CartProduct>);
+  });
 
   return (
     <div className="w-[960px] mt-7">

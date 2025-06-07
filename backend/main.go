@@ -8,36 +8,13 @@ import (
 	"os"
 
 	"github.com/Sk4ine/Uni-Website/handlers"
+	"github.com/Sk4ine/Uni-Website/models"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 )
-
-type Claims struct {
-	Username string `json:"username"`
-	IsAdmin  bool   `json:"isAdmin"`
-	jwt.RegisteredClaims
-}
-
-var jwtKey []byte
-
-func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Print("No .env file found, using system env variables")
-	}
-
-	jwtSecret := os.Getenv("JWT_SECRET")
-
-	if jwtSecret == "" {
-		log.Fatal("JWT_SECRET environment variable not set")
-	}
-
-	jwtKey = []byte(jwtSecret)
-}
 
 func main() {
 	dbUser := os.Getenv("DB_USER")
@@ -63,6 +40,8 @@ func main() {
 
 	defer db.Close()
 
+	fmt.Println(models.CheckIfUserIsAdmin(db, 1))
+
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {
 		log.Fatalf("failed to create migrate driver: %v", err)
@@ -85,14 +64,15 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/api/users/{id}", handlers.GetUser(db)).Methods("GET")
-	r.HandleFunc("/api/users", handlers.AddUser(db)).Methods("POST", "OPTIONS")
-	r.HandleFunc("/api/users/{id}", handlers.UpdateUser(db)).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/api/users/{id}/orders", handlers.GetUserOrderList(db)).Methods("GET")
-	r.HandleFunc("/api/users/{id}/orders", handlers.HandleCheckout(db)).Methods("POST", "OPTIONS")
-	r.HandleFunc("/api/users/{id}/is-admin", handlers.CheckUserIsAdmin(db)).Methods("GET")
+	r.HandleFunc("/api/users/me", handlers.AuthMiddleware(handlers.GetUser(db))).Methods("GET")
+	r.HandleFunc("/api/users/me", handlers.AuthMiddleware(handlers.UpdateUser(db))).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/api/users/me/is-admin", handlers.AuthMiddleware(handlers.CheckIfUserIsAdmin(db))).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/users/me/orders", handlers.AuthMiddleware(handlers.GetUserOrderList(db))).Methods("GET")
+	r.HandleFunc("/api/users/me/orders", handlers.AuthMiddleware(handlers.HandleCheckout(db))).Methods("POST", "OPTIONS")
+	//r.HandleFunc("/api/users/{id}/is-admin", handlers.CheckUserIsAdmin(db)).Methods("GET")
 
-	r.HandleFunc("/api/auth/login", handlers.CheckUserAuth(db)).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/auth/login", handlers.HandleLogin(db)).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/auth/register", handlers.HandleRegistraion(db)).Methods("POST", "OPTIONS")
 
 	r.HandleFunc("/api/products", handlers.GetProductList(db)).Methods("GET")
 	r.HandleFunc("/api/products/{id}", handlers.GetProductByID(db)).Methods("GET")
@@ -108,7 +88,7 @@ func main() {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)

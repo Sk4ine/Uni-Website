@@ -1,0 +1,3 @@
+interface AdminPanelContextType {
+  activeTable: string
+}

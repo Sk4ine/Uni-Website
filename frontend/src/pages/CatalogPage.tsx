@@ -1,4 +1,4 @@
-import { ContentWrapper, Footer, LoadingText, PageWrapper } from "../components/Common";
+import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
 
 import { CatalogSection } from "../components/Catalog";
 import { CategoryListContext, ProductListContext } from "../contexts/otherContexts";
@@ -52,7 +52,7 @@ export function CatalogPage() {
 
           <ContentWrapper>
             {isLoading ? (
-              <LoadingText></LoadingText>
+              <LoadingMessage text="Загрузка товаров..." heightVH={50}></LoadingMessage>
             ) : (
               <CatalogSection></CatalogSection>
             )}

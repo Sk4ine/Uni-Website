@@ -3,9 +3,10 @@ import artezaLogo from '../assets/Arteza.png';
 import { InputField } from './Common';
 import { useState } from 'react';
 import { User } from '../classes/user';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import type { UserResponse } from '../api/responses/apiResponses';
-import { useCurrentUserContext } from '../contexts/currentUserContext';
+import { handleLogin } from '../api/requests/user';
+import { useAuthContext } from '../contexts/authContext';
 
 export function HomePageButton() {
   return (
@@ -33,21 +34,18 @@ export function LoginSection() {
 }
 
 function LoginForm() {
-  const currentUserContext = useCurrentUserContext();
   const [loginFailMessage, setLoginFailMessage] = useState<string>("");
+  const authContext = useAuthContext();
   const navigate = useNavigate();
 
   function login(formData: FormData) {
-    axios.post<UserResponse>("http://localhost:8080/api/auth/login", {email: formData.get("email") as string, password: formData.get("password") as string})
-      .then(res => {
-        const userName: string[] = res.data.name.split(" ");
-
-        currentUserContext.setCurrentUser(new User(res.data.id, res.data.email, "", userName[0], userName[1], res.data.phoneNumber));
-
+    async function tryLogin(): Promise<void> {
+      try {
+        const token = await handleLogin(formData.get("email") as string, formData.get("password") as string);
+        authContext.signIn(token);
         navigate("/home");
-      })
-      .catch(err => {
-        if(axios.isAxiosError(err)) {
+      } catch (err) {
+        if (err instanceof AxiosError) {
           switch (err.response?.status) {
             case 401:
               setLoginFailMessage("Неверный email или пароль");
@@ -57,7 +55,10 @@ function LoginForm() {
               console.log(err);
           }
         }
-      }); 
+      }
+    }
+    
+    tryLogin();
   }
 
   return (

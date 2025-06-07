@@ -3,12 +3,11 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/Sk4ine/Uni-Website/models"
-	"github.com/gorilla/mux"
 )
 
 type CheckoutData struct {
@@ -19,12 +18,12 @@ type CheckoutData struct {
 
 func GetUserOrderList(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		idStr := vars["id"]
+		var userContext = r.Context()
 
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "ID must be a number", http.StatusBadRequest)
+		id, ok := userContext.Value(UserID).(int)
+		if !ok {
+			log.Printf("Error: UserID not found in context for protected route")
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
@@ -42,12 +41,12 @@ func GetUserOrderList(db *sql.DB) http.HandlerFunc {
 
 func HandleCheckout(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		idStr := vars["id"]
+		var userContext = r.Context()
 
-		clientID, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "ID must be a number", http.StatusBadRequest)
+		clientID, ok := userContext.Value(UserID).(int)
+		if !ok {
+			log.Printf("Error: UserID not found in context for protected route")
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
@@ -58,7 +57,7 @@ func HandleCheckout(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		_, err = models.HandleCheckout(db, clientID, time.Now(), checkoutData.ShippingAddress, checkoutData.ProductID, checkoutData.ProductQuantity)
+		_, err := models.HandleCheckout(db, clientID, time.Now(), checkoutData.ShippingAddress, checkoutData.ProductID, checkoutData.ProductQuantity)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

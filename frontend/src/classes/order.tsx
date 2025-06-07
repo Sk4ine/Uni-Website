@@ -23,17 +23,10 @@ export class Order {
     return this._status;
   }
 
-  private _userID: number;
-
-  public get userID(): number {
-    return this._userID;
-  }
-
-  public constructor(productID: number, productQuantity: number, cost: number, status: string, userID: number) {
+  public constructor(productID: number, productQuantity: number, cost: number, status: string) {
     this._productQuantity = productQuantity;
     this._productID = productID;
     this._cost = cost;
     this._status = status;
-    this._userID = userID;
   }
 }

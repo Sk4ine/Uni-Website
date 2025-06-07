@@ -5,12 +5,30 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
+	"os"
+	"time"
 
 	"github.com/Sk4ine/Uni-Website/models"
-	"github.com/gorilla/mux"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var jwtKey []byte
+
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found, using system env variables")
+	}
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+
+	if jwtSecret == "" {
+		log.Fatal("JWT_SECRET environment variable not set")
+	}
+
+	jwtKey = []byte(jwtSecret)
+}
 
 type RegistrationData struct {
 	Email    string `json:"email"`
@@ -29,6 +47,13 @@ type LoginFormData struct {
 	Password string `json:"password"`
 }
 
+type Claims struct {
+	UserID  int  `json:"id"`
+	IsAdmin bool `json:"isAdmin"`
+	jwt.RegisteredClaims
+}
+
+/*
 func CheckUserIsAdmin(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -50,9 +75,9 @@ func CheckUserIsAdmin(db *sql.DB) http.HandlerFunc {
 
 		json.NewEncoder(w).Encode(user.IsAdmin)
 	}
-}
+}*/
 
-func CheckUserAuth(db *sql.DB) http.HandlerFunc {
+func HandleLogin(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var loginForm LoginFormData
 
@@ -60,7 +85,7 @@ func CheckUserAuth(db *sql.DB) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 
-		user, err := models.CheckUserAuth(db, loginForm.Email, loginForm.Password)
+		userAuth, err := models.CheckUserAuth(db, loginForm.Email, loginForm.Password)
 		if err == sql.ErrNoRows {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
@@ -69,18 +94,61 @@ func CheckUserAuth(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
+		expirationTime := time.Now().Add(48 * time.Hour)
+		claims := &Claims{
+			UserID:  userAuth.ID,
+			IsAdmin: userAuth.IsAdmin,
+			RegisteredClaims: jwt.RegisteredClaims{
+				ExpiresAt: jwt.NewNumericDate(expirationTime),
+				IssuedAt:  jwt.NewNumericDate(time.Now()),
+				NotBefore: jwt.NewNumericDate(time.Now()),
+			},
+		}
+
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+		tokenString, err := token.SignedString(jwtKey)
+		if err != nil {
+			http.Error(w, "Could not generate token", http.StatusInternalServerError)
+			return
+		}
+
 		w.WriteHeader(http.StatusOK)
 
-		json.NewEncoder(w).Encode(user)
+		json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
+	}
+}
+
+func CheckIfUserIsAdmin(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var userContext = r.Context()
+
+		id, ok := userContext.Value(UserID).(int)
+		if !ok {
+			log.Printf("Error: UserID not found in context for protected route")
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		isAdmin, err := models.CheckIfUserIsAdmin(db, id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+
+		json.NewEncoder(w).Encode(isAdmin)
 	}
 }
 
 func GetUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var id int
+		var userContext = r.Context()
 
-		if err := json.NewDecoder(r.Body).Decode(&id); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+		id, ok := userContext.Value(UserID).(int)
+		if !ok {
+			log.Printf("Error: UserID not found in context for protected route")
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
@@ -99,12 +167,12 @@ func GetUser(db *sql.DB) http.HandlerFunc {
 
 func UpdateUser(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		idStr := vars["id"]
+		var userContext = r.Context()
 
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "ID must be a number", http.StatusBadRequest)
+		id, ok := userContext.Value(UserID).(int)
+		if !ok {
+			log.Printf("Error: UserID not found in context for protected route")
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
 
@@ -116,7 +184,6 @@ func UpdateUser(db *sql.DB) http.HandlerFunc {
 		}
 
 		changedUser, err := models.UpdateUser(db, id, models.User{
-			ID:          id,
 			Name:        formData.FirstName + " " + formData.SecondName,
 			Email:       formData.Email,
 			PhoneNumber: formData.PhoneNumber,
@@ -132,7 +199,7 @@ func UpdateUser(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func AddUser(db *sql.DB) http.HandlerFunc {
+func HandleRegistraion(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var registrationData RegistrationData
 
@@ -141,13 +208,13 @@ func AddUser(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		user, err := models.GetUserByEmail(db, registrationData.Email)
+		exists, err := models.CheckUserExistance(db, registrationData.Email)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		if user.ID != 0 {
+		if exists {
 			http.Error(w, "User already exists", http.StatusConflict)
 			return
 		}

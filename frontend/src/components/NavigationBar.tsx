@@ -2,13 +2,14 @@ import {faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useCartContext } from "../contexts/cartContext";
-import { useCurrentUserContext } from "../contexts/currentUserContext";
 
 import defaultUserLogo from '../assets/defaultUserLogo.png';
 import artezaLogo from '../assets/Arteza.png';
 import shoppingCartIcon from '../assets/shoppingCartIcon.png';
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { checkIfUserIsAdmin } from "../api/requests/user";
+import { useAuthContext } from "../contexts/authContext";
 
 export function NavigationBar() {
   const border: string = location.pathname == "/home" ? "p-[10rem-4px]" : "box-content border-b-4 border-[#EF829A]";
@@ -40,10 +41,9 @@ function NavigationBarButton({text, url} : {text: string, url: string}) {
 
 function UserLogoButton() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const currentUserContext = useCurrentUserContext();
+  const authContext = useAuthContext();
 
   const colors: {[index: string]: string} = {
     pink: "bg-[#D5778D] group-hover:bg-[#B36476]",
@@ -55,7 +55,7 @@ function UserLogoButton() {
   const activeColor: string = (curLocation == "/user-profile") ? colors["pink"] : colors["gray"];
 
   function handleSignOut() {
-    currentUserContext.setCurrentUser(undefined);
+    authContext.signOut();
     if(curLocation == "/user-profile") {
       navigate("/home");
       return;
@@ -65,13 +65,6 @@ function UserLogoButton() {
   }
 
   useEffect(() => {
-    console.log(currentUserContext.currentUser?.id);
-    axios.get<boolean>(`http://localhost:8080/api/users/${currentUserContext.currentUser?.id}/is-admin`)
-      .then(res => {
-        setIsAdmin(res.data);
-      })
-      .catch(err => console.log(err));
-
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -94,7 +87,7 @@ function UserLogoButton() {
               Профиль
             </Link>
 
-            {isAdmin && (
+            {authContext.isAdmin && (
               <Link to="/admin-panel" className="text-nowrap pl-4 pr-10 py-2 text-[#555555] hover:bg-gray-100">
                 Админ панель
               </Link>
@@ -111,11 +104,11 @@ function UserLogoButton() {
 }
 
 export function AccountButton() {
-  const currentUserContext = useCurrentUserContext();
+  const authContext = useAuthContext();
 
   return (
     <div className="flex justify-center items-center h-[65%] w-20">
-      { currentUserContext.currentUser !== undefined ? (
+      { authContext.signedIn ? (
         <UserLogoButton></UserLogoButton>
       ) : (
         <NavigationBarButton text="Вход" url="/login"></NavigationBarButton>

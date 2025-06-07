@@ -1,10 +1,4 @@
 export class User {
-  private _id: number;
-
-  public get id(): number {
-    return this._id;
-  }
-
   private _firstName: string | undefined;
 
   public get firstName(): string | undefined {
@@ -29,10 +23,9 @@ export class User {
     return this._email;
   }
 
-  public logoImagePath: string = '../assets/defaultUserLogo.png';
+  public logoImagePath: string = '/assets/defaultUserLogo.png';
 
-  public constructor(id: number, email: string, firstName?: string, secondName?: string, phoneNumber?: string, logoImagePath?: string) {
-    this._id = id;
+  public constructor(email: string, firstName?: string, secondName?: string, phoneNumber?: string, logoImagePath?: string) {
     this._email = email;
     this._firstName = firstName;
     this._secondName = secondName;

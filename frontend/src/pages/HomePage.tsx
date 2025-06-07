@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ContentWrapper, Footer, LoadingText, PageWrapper } from "../components/Common";
+import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
 import { HomePageBanner, PopularProductsSection } from "../components/Home";
 import { ProductListContext } from "../contexts/otherContexts";
 import { Product } from "../classes/product";
@@ -34,7 +34,7 @@ export function HomePage() {
           <HomePageBanner></HomePageBanner>
 
           {isLoading ? (
-            <LoadingText></LoadingText>
+            <LoadingMessage text="Загрузка товаров..." heightVH={50}></LoadingMessage>
           ) : (
             <PopularProductsSection></PopularProductsSection>
           )}
