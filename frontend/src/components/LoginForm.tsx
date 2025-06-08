@@ -1,10 +1,8 @@
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import artezaLogo from '../assets/Arteza.png';
 import { InputField } from './Common';
 import { useState } from 'react';
-import { User } from '../classes/user';
-import axios, { AxiosError } from 'axios';
-import type { UserResponse } from '../api/responses/apiResponses';
+import axios from 'axios';
 import { handleLogin } from '../api/requests/user';
 import { useAuthContext } from '../contexts/authContext';
 

@@ -1,15 +1,10 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import type { Order } from "../classes/order";
 import { User } from "../classes/user";
 import { InputField, LoadingMessage } from "./Common";
 import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import type { Product } from "../classes/product";
-
 import defaultUserLogo from '../assets/defaultUserLogo.png';
-import { useNavigate } from "react-router";
-import axios from "axios";
-import type { UserResponse } from "../api/responses/apiResponses";
-import { useAuthContext } from "../contexts/authContext";
 import { useUserInfoContext } from "../contexts/userInfoContext";
 
 export function UserProfileSection({ordersLoading} : {ordersLoading: boolean}) {

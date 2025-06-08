@@ -1,8 +1,7 @@
-import { useEffect } from "react";
 import { ContentWrapper, LoadingMessage, PageWrapper } from "../components/Common";
 import { LoginSection, NavigationSection } from "../components/LoginForm";
 import { useAuthContext } from "../contexts/authContext";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate } from "react-router";
 
 export function LoginPage() {
   const authContext = useAuthContext();

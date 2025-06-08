@@ -1,7 +1,6 @@
 import { CheckoutSection } from "../components/Checkout";
 import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
-
-import { Navigate, useNavigate } from "react-router";
+import { Navigate } from "react-router";
 import { useEffect, useState } from "react";
 import { Product } from "../classes/product";
 import type { CartProduct } from "../classes/cartProduct";
