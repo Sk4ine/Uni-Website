@@ -36,23 +36,21 @@ export function LoginSection() {
 function LoginForm() {
   const [loginFailMessage, setLoginFailMessage] = useState<string>("");
   const authContext = useAuthContext();
-  const navigate = useNavigate();
 
   function login(formData: FormData) {
     async function tryLogin(): Promise<void> {
       try {
         const token = await handleLogin(formData.get("email") as string, formData.get("password") as string);
         authContext.signIn(token);
-        navigate("/home");
-      } catch (err) {
-        if (err instanceof AxiosError) {
-          switch (err.response?.status) {
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          switch (error.response?.status) {
             case 401:
               setLoginFailMessage("Неверный email или пароль");
               break;
             default:
               setLoginFailMessage("Неизвестная ошибка");
-              console.log(err);
+              console.log(error);
           }
         }
       }

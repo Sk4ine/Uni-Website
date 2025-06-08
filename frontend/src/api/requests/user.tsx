@@ -32,6 +32,14 @@ export async function handleLogin(email: string, password: string): Promise<stri
   }
 }
 
+export async function handleRegistration(email: string, password: string): Promise<void> {
+  try {
+    await axios.post<void>(`${API_BASE_URL}/api/users`, { email: email, password: password });
+  } catch (error) {
+    throw error as AxiosError;
+  }
+}
+
 export async function getUserInfo(jwtToken: string | null): Promise<User> {
   try {
     const response: AxiosResponse<UserResponse> = await axios.get<UserResponse>(`${API_BASE_URL}/api/users/me`, {

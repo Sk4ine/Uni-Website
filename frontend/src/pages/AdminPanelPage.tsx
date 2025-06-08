@@ -1,32 +1,44 @@
-import { useNavigate } from "react-router";
-import { AdminNavigationBar, DatabaseEditSection } from "../components/AdminNavigationBar";
+import { Navigate, useNavigate } from "react-router";
+import { AdminNavigationBar } from "../components/AdminNavigationBar";
 import { useEffect, useState } from "react";
 import { ActiveTableContext } from "../contexts/activeTableContext";
 import { LoadingMessage, PageWrapper } from "../components/Common";
 import { useAuthContext } from "../contexts/authContext";
+import { DatabaseEditSection } from "../components/AdminPanel";
 
 export function AdminPanelPage() {
   const [activeTable, setActiveTable] = useState<string>("categories");
   const [checkedAdmin, setCheckedAdmin] = useState<boolean>(false);
   const authContext = useAuthContext();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    if(authContext.loadingAuth) {
+    if(authContext.loadingAuth || !authContext.signedIn) {
       return;
     }
 
-    if(!checkedAdmin) {
-      authContext.checkIsAdmin();
+    async function performAdminCheck() {
+      await authContext.checkIsAdmin();
       setCheckedAdmin(true);
     }
 
-    if(!authContext.signedIn || !authContext.isAdmin) {
-      navigate("/home");
-      return;
+    if(!checkedAdmin) {
+      performAdminCheck();
     }
 
-  }, [authContext.isAdmin])
+    
+  }, [authContext.loadingAuth]);
+
+  if(authContext.loadingAuth) {
+    return <LoadingMessage text={"Загрузка прав доступа..."} heightVH={100}></LoadingMessage>;
+  }
+
+  if(!authContext.signedIn) {
+    return <Navigate to="/home" replace></Navigate>;
+  }
+
+  if(checkedAdmin && !authContext.isAdmin) {
+    return <Navigate to="/home" replace></Navigate>;
+  }
 
   return (
     <>

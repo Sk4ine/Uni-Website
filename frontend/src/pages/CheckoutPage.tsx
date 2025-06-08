@@ -10,27 +10,17 @@ import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
 import { CheckoutProductDataContext } from "../contexts/checkoutProductDataContext";
 import { NavigationBar } from "../components/NavigationBar";
 import { useAuthContext } from "../contexts/authContext";
+import { UserInfoProvider } from "../providers/UserInfoProvider";
 
 export function CheckoutPage() {
   const checkoutProductContext = useCheckoutProductContext();
   const authContext = useAuthContext();
-  const navigate = useNavigate();
 
   const [checkoutProductData, setCheckoutProductData] = useState<Product>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if(!authContext.loadingAuth) {
-      return;
-    }
-
-    if(!authContext.signedIn) {
-      navigate("/login");
-      return;
-    }
-
-    if(!checkoutProductContext.checkoutProduct) {
-      navigate("/cart");
+    if(authContext.loadingAuth || !authContext.signedIn) {
       return;
     }
 
@@ -52,22 +42,38 @@ export function CheckoutPage() {
     }
         
     getProduct();
+
+    
   }, [authContext.loadingAuth]);
+
+  if(authContext.loadingAuth) {
+    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100}></LoadingMessage>
+  }
+
+  if(!authContext.signedIn) {
+    return <Navigate to="/login" replace></Navigate>
+  }
+
+  if(!checkoutProductContext.checkoutProduct) {
+    return <Navigate to="/cart" replace></Navigate>
+  }
 
   return (
     <PageWrapper>
       <CheckoutProductDataContext.Provider value={checkoutProductData}>
-        <NavigationBar></NavigationBar>
+        <UserInfoProvider>
+          <NavigationBar></NavigationBar>
 
-        <ContentWrapper>
-          {isLoading || authContext.loadingAuth ? (
-            <LoadingMessage text="Загрузка заказа..." heightVH={50}></LoadingMessage>
-          ) : (
-            <CheckoutSection></CheckoutSection>
-          )}
-        </ContentWrapper>
-        
-        <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
+          <ContentWrapper>
+            {isLoading || authContext.loadingAuth ? (
+              <LoadingMessage text="Загрузка заказа..." heightVH={50}></LoadingMessage>
+            ) : (
+              <CheckoutSection></CheckoutSection>
+            )}
+          </ContentWrapper>
+          
+          <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
+        </UserInfoProvider>
       </CheckoutProductDataContext.Provider>
     </PageWrapper>
   )

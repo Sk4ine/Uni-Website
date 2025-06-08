@@ -7,8 +7,6 @@ import defaultUserLogo from '../assets/defaultUserLogo.png';
 import artezaLogo from '../assets/Arteza.png';
 import shoppingCartIcon from '../assets/shoppingCartIcon.png';
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
-import { checkIfUserIsAdmin } from "../api/requests/user";
 import { useAuthContext } from "../contexts/authContext";
 
 export function NavigationBar() {

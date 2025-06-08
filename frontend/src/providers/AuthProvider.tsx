@@ -12,6 +12,7 @@ export function AuthProvider({ children }: {children: React.ReactNode}) {
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
     if(!token) {
+      setLoadingAuth(false);
       return;
     }
 

@@ -1,7 +1,8 @@
-import { Link, useNavigate } from "react-router";
+import { Link, Navigate, replace, useNavigate } from "react-router";
 import { InputField } from "./Common";
 import { useState } from "react";
 import axios from "axios";
+import { handleRegistration } from "../api/requests/user";
 
 export function RegistrationSection() {
   return (
@@ -13,9 +14,8 @@ export function RegistrationSection() {
 }
 
 export function RegistrationForm() {
-  const navigate = useNavigate();
-
   const [registrationFailMessage, setRegistrationFailMessage] = useState("");
+  const navigate = useNavigate();
 
   function registration(formData: FormData) {    
     if(formData.get("password") !== formData.get("passwordConfirmation")) {
@@ -23,22 +23,25 @@ export function RegistrationForm() {
       return;
     }
 
-    axios.post("http://localhost:8080/api/users", {email: formData.get("email") as string, password: formData.get("password") as string})
-      .then(() => {
+    async function register() {
+      try {
+        await handleRegistration(formData.get("email") as string, formData.get("password") as string);
         navigate("/login");
-      })
-      .catch(err => {
-        if(axios.isAxiosError(err)) {
-          switch (err.response?.status) {
+      } catch (error) {
+        if(axios.isAxiosError(error)) {
+          switch (error.response?.status) {
             case 409:
               setRegistrationFailMessage("Пользователь с таким email уже существует");
               break;
             default:
               setRegistrationFailMessage("Неизвестная ошибка");
-              console.log(err);
+              console.log(error);
           }
         }
-      });
+      }
+    }
+
+    register();
   }
 
   return (

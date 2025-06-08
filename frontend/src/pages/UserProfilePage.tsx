@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ContentWrapper, Footer, PageWrapper } from "../components/Common";
+import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
 import { UserProfileSection } from "../components/UserProfile";
 import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import { Navigate, useNavigate } from "react-router";
@@ -16,19 +16,13 @@ import { AuthProvider } from "../providers/AuthProvider";
 
 export function UserProfilePage() {
   const authContext = useAuthContext();
-  const navigate = useNavigate();
 
   const [productList, setProductList] = useState<Product[]>([]);
   const [ordersLoading, setOrdersLoading] = useState<boolean>(true);
   const [orderList, setOrderList] = useState<Order[]>([]);
 
   useEffect(() => {
-    if(authContext.loadingAuth) {
-      return;
-    }
-
-    if(!authContext.signedIn) {
-      navigate("/home");
+    if(authContext.loadingAuth || !authContext.signedIn) {
       return;
     }
 
@@ -44,6 +38,14 @@ export function UserProfilePage() {
     
     getOrderData();
   }, [authContext.loadingAuth]);
+
+  if(authContext.loadingAuth) {
+    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100}></LoadingMessage>
+  }
+
+  if(!authContext.signedIn) {
+    return <Navigate to="/home" replace></Navigate>
+  }
 
   return (
     <ProductListContext.Provider value={productList}>

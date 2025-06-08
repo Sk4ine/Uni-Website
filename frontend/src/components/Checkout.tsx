@@ -2,13 +2,13 @@ import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Product } from "../classes/product";
 import { InputField } from "./Common";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import type { CartProduct } from "../classes/cartProduct";
-import axios from "axios";
 import { useCheckoutProductDataContext } from "../contexts/checkoutProductDataContext";
 import { useCartContext } from "../contexts/cartContext";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
-import { useAuthContext } from "../contexts/authContext";
+import { addOrder } from "../api/requests/orders";
+import { useUserInfoContext } from "../contexts/userInfoContext";
 
 export function CheckoutSection() {
   const checkoutProductDataContext = useCheckoutProductDataContext();
@@ -30,24 +30,30 @@ export function CheckoutSection() {
 function OrderInfo({product} : {product: Product}) {
   const cartContext = useCartContext();
   const checkoutProductContext = useCheckoutProductContext();
-  const authContext = useAuthContext();
-  const navigate = useNavigate();
 
   function makeOrder(formData: FormData) {
     const cartProduct: CartProduct | undefined = checkoutProductContext.checkoutProduct;
 
-    if(!cartProduct) return;
+    async function addNewOrder(cartProduct: CartProduct) {
+      try {
+        await addOrder(
+          localStorage.getItem("jwtToken"),
+          formData.get("shippingAddress") as string,
+          cartProduct.productID,
+          cartProduct.quantity
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    if (!cartProduct) {
+      return;
+    }
+
+    addNewOrder(cartProduct);
 
     cartContext.removeProduct(cartProduct.productID);
-
-    axios.post(`http://localhost:8080/api/users/me/orders`, {
-      shippingAddress: formData.get("shippingAddress") as string,
-      productID: cartProduct.productID,
-      productQuantity: cartProduct.quantity
-      })
-      .catch(err => console.log(err));
-
-    navigate("/cart");
     
     checkoutProductContext.setCheckoutProduct(undefined);
   }
@@ -64,16 +70,16 @@ function OrderInfo({product} : {product: Product}) {
 }
 
 function CustomerInfo() {
-  const authContext = useAuthContext();
+  const userInfoContext = useUserInfoContext();
 
   return (
     <div className="flex flex-col">
       <p className="font-default text-[#D5778D] text-3xl">Покупатель</p>
       <div className="flex flex-col mt-4 gap-6">
-        <InputField fieldName="Имя" fieldID="firstName" disabled={true} value={currentUserContext.currentUser?.firstName}></InputField>
-        <InputField fieldName="Фамилия" fieldID="secondName" disabled={true} value={currentUserContext.currentUser?.secondName}></InputField>
-        <InputField fieldName="Номер телефона" fieldID="phoneNumber" disabled={true} value={currentUserContext.currentUser?.phoneNumber}></InputField>
-        <InputField fieldName="Электронная почта" fieldID="email" disabled={true} value={currentUserContext.currentUser?.email} required></InputField>
+        <InputField fieldName="Имя" fieldID="firstName" disabled={true} value={userInfoContext.useUserInfo().firstName}></InputField>
+        <InputField fieldName="Фамилия" fieldID="secondName" disabled={true} value={userInfoContext.useUserInfo().secondName}></InputField>
+        <InputField fieldName="Номер телефона" fieldID="phoneNumber" disabled={true} value={userInfoContext.useUserInfo().phoneNumber}></InputField>
+        <InputField fieldName="Электронная почта" fieldID="email" disabled={true} value={userInfoContext.useUserInfo().email} required></InputField>
         <InputField fieldName="Адрес пункта выдачи" fieldID="shippingAddress" required></InputField>
       </div>
     </div>

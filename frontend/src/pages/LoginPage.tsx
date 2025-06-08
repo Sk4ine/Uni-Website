@@ -1,23 +1,19 @@
 import { useEffect } from "react";
-import { ContentWrapper, PageWrapper } from "../components/Common";
+import { ContentWrapper, LoadingMessage, PageWrapper } from "../components/Common";
 import { LoginSection, NavigationSection } from "../components/LoginForm";
 import { useAuthContext } from "../contexts/authContext";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 
 export function LoginPage() {
   const authContext = useAuthContext();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if(authContext.loadingAuth) {
-      return;
-    }
+  if(authContext.loadingAuth) {
+    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100}></LoadingMessage>
+  }
 
-    if(authContext.signedIn) {
-      navigate("/user-profile");
-      return;
-    }
-  }, [authContext.loadingAuth]);
+  if(authContext.signedIn) {
+    return <Navigate to="/user-profile" replace></Navigate>
+  }
 
   return (
     <PageWrapper>

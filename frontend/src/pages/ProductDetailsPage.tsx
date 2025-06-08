@@ -1,36 +1,28 @@
 import { useEffect, useState } from "react";
 import { Product } from "../classes/product";
-import { ContentWrapper, Footer, PageWrapper } from "../components/Common";
+import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
 import { CustomerReviews, ProductPageSection, ReviewCard } from "../components/ProductDetails";
 import axios from "axios";
 import type { ProductResponse } from "../api/responses/apiResponses";
-import { useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 import { NavigationBar } from "../components/NavigationBar";
+import { getProductByID } from "../api/requests/products";
 
 export function ProductDetailsPage() {
   const [product, setProduct] = useState<Product>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const { id } = useParams();
 
   useEffect(() => {
-    let newProduct: Product;
-
     const getProduct = async () => {
       try {
-        const productResponse = await axios.get<ProductResponse>(`http://localhost:8080/api/products/${id}`);
-        newProduct = new Product(
-            productResponse.data.id,
-            productResponse.data.categoryID,
-            productResponse.data.name,
-            productResponse.data.price,
-            productResponse.data.materials.split(","),
-            productResponse.data.weightInGrams,
-            productResponse.data.quantityInStock,
-            productResponse.data.countryOfOrigin
-        );
-        const imageResponse = await axios.get<Blob>(`http://localhost:8080/static/productImages/${id}`, {responseType: 'blob'});
-        newProduct.imagePaths = [URL.createObjectURL(imageResponse.data)];
-        setProduct(newProduct);
+        if(!id) {
+          throw new Error("Product ID is undefined");
+        }
+
+        setProduct(await getProductByID(parseInt(id)));
+        setIsLoading(false);
       } catch (err) {
         console.log(err);
       }
@@ -40,7 +32,7 @@ export function ProductDetailsPage() {
   }, []);
 
   if(!product) {
-    return;
+    return <Navigate to="/home" replace></Navigate>
   }
 
   const reviewCards: React.ReactNode[] = [];
@@ -54,11 +46,16 @@ export function ProductDetailsPage() {
       <NavigationBar></NavigationBar>
 
       <ContentWrapper>
-        <ProductPageSection product={product}>
-          <CustomerReviews product={product}>
-            {reviewCards}
-          </CustomerReviews>
-        </ProductPageSection>
+        {isLoading ? (
+          <LoadingMessage text="Загрузка товара..." heightVH={100}></LoadingMessage>
+        ) : (
+          <ProductPageSection product={product}>
+            <CustomerReviews product={product}>
+              {reviewCards}
+            </CustomerReviews>
+          </ProductPageSection>
+        )}
+        
       </ContentWrapper>
 
       <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
