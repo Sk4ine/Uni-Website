@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { CartProduct } from "../classes/cartProduct";
 import { CartContext } from "../contexts/cartContext";
+import type { Product } from "../classes/product";
+import type { AxiosError } from "axios";
+import { getProductByID } from "../api/requests/products";
+import axios from "axios";
 
 export function CartProvider({ children }: {children: React.ReactNode}) {  
   const [cartProductList, setCartProductList] = useState<CartProduct[]>(() => {
@@ -13,6 +17,8 @@ export function CartProvider({ children }: {children: React.ReactNode}) {
       return [];
     }
   });
+
+  const [catalogProductList, setCatalogProductList] = useState<Product[]>([]);
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartProductList));
@@ -54,8 +60,36 @@ export function CartProvider({ children }: {children: React.ReactNode}) {
     
   }
 
+  async function updateCatalogProductList(): Promise<void> {
+    async function getProduct(id: number): Promise<Product> {
+      try {
+        const product: Product = await getProductByID(id);
+        return product;
+      } catch (err) {
+        throw err as AxiosError;
+      }
+    }
+
+    let products: Product[] = [];
+    
+    for (let i = 0; i < cartProductList.length; i++) {
+      try {
+        products.push(await getProduct(cartProductList[i].productID));
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status) {
+          removeProduct(cartProductList[i].productID);
+          console.log(`Товар ID: ${cartProductList[i].productID} не найден и удален из корзины: ${error}`);
+        }
+
+        throw error as AxiosError;
+      }
+    }
+
+    setCatalogProductList(products);
+  }
+
   return (
-    <CartContext.Provider value={{cartProductList, addProduct, removeProduct, decreaseProductQuantity}}>
+    <CartContext.Provider value={{cartProductList, catalogProductList, addProduct, removeProduct, decreaseProductQuantity, updateCatalogProductList}}>
       {children}
     </CartContext.Provider>
   );

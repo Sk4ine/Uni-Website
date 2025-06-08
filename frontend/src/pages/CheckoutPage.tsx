@@ -24,7 +24,7 @@ export function CheckoutPage() {
     }
 
     if(!checkoutProductContext.checkoutProduct) {
-      throw new Error('checkoutProduct is undefined');
+      return;
     }
 
     const checkoutProduct: CartProduct = checkoutProductContext.checkoutProduct;
@@ -42,7 +42,6 @@ export function CheckoutPage() {
         
     getProduct();
 
-    
   }, [authContext.loadingAuth]);
 
   if(authContext.loadingAuth) {

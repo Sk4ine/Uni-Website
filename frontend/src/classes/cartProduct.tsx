@@ -1,14 +1,10 @@
 export class CartProduct {
-  private _productID: number;
-
-  public get productID(): number {
-    return this._productID;
-  }
+  public productID: number;
 
   public quantity: number;
 
   public constructor(productID: number, quantity: number) {
-    this._productID = productID;
+    this.productID = productID;
     this.quantity = quantity;
   }
 }

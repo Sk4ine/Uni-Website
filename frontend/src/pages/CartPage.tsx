@@ -10,47 +10,23 @@ import type { AxiosError } from "axios";
 import axios from "axios";
 
 export function CartPage() {
-  const [productList, setProductList] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const {cartProductList, removeProduct} = useCartContext();
+  const {cartProductList, updateCatalogProductList} = useCartContext();
 
   useEffect(() => {
-    async function getProduct(id: number): Promise<Product> {
-      try {
-        const product: Product = await getProductByID(id);
-        return product;
-      } catch (err) {
-        throw err as AxiosError
-      }
-    }
-
     async function getProducts(): Promise<void> {
-      for (let i = 0; i < cartProductList.length; i++) {
-        try {
-          console.log(cartProductList[i].productID)
-          productList.push(await getProduct(cartProductList[i].productID));
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            switch (error.response?.status) {
-              case 404:
-                removeProduct(cartProductList[i].productID);
-                console.log(`Товар ID: ${cartProductList[i].productID} не найден и удален из корзины: ${error}`);
-                break;
-              default:
-                setErrorMessage("Не удалось загрузить товары:" + error);
-                console.log(error);
-                return;
-            }
-          }
-        }
+      try {
+        await updateCatalogProductList();
+        setIsLoading(false);
+      } catch (error) {
+        setErrorMessage("Не удалось загрузить товары:" + error);
+        console.log(error);
       }
-
-      setIsLoading(false);
     }
 
     getProducts();
-  }, []);
+  }, [cartProductList]);
 
   let content: React.ReactNode = <CartSection></CartSection>;
 
@@ -61,16 +37,14 @@ export function CartPage() {
   }
 
   return (
-    <ProductListContext.Provider value={productList}>
-      <PageWrapper>
-        <NavigationBar></NavigationBar>
-        
-        <ContentWrapper>
-          {content}
-        </ContentWrapper>
+    <PageWrapper>
+      <NavigationBar></NavigationBar>
+      
+      <ContentWrapper>
+        {content}
+      </ContentWrapper>
 
-        <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-      </PageWrapper>
-    </ProductListContext.Provider>
+      <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
+    </PageWrapper>
   )
 }

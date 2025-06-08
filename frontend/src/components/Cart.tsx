@@ -1,6 +1,5 @@
 import { useContext } from "react"
 import type { Product } from "../classes/product"
-import { ProductListContext } from "../contexts/otherContexts"
 import { Link, useNavigate } from "react-router";
 import { useCartContext } from "../contexts/cartContext";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
@@ -16,11 +15,7 @@ export function CartSection() {
 }
 
 function CartProductList() {
-  const cartContext = useCartContext();
-  const productListContext: Product[] = useContext(ProductListContext);
-
-  const cartProductList = cartContext.cartProductList;
-  console.log(cartProductList)
+  const {cartProductList, catalogProductList} = useCartContext();
 
   if(cartProductList.length == 0) {
     return (
@@ -30,8 +25,8 @@ function CartProductList() {
     )
   }
 
-  const cartProductNodeList = productListContext.map((product, index) => {
-    return (<CartProduct key={index} product={product} quantity={cartProductList[index].quantity}></CartProduct>);
+  const cartProductNodeList = cartProductList.map((product, index) => {
+    return (<CartProduct key={index} product={catalogProductList[index]} quantity={product.quantity}></CartProduct>);
   });
 
   return (
