@@ -8,5 +8,3 @@ export const ProductListContext: React.Context<Product[]> = createContext<Produc
 export const CategoryListContext: React.Context<ProductCategory[]> = createContext<ProductCategory[]>([]);
 
 export const OrderListContext: React.Context<Order[]> = createContext<Order[]>([]);
-
-export const UserIsAdminContext: React.Context<boolean> = createContext<boolean>(false);

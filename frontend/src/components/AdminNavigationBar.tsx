@@ -9,8 +9,8 @@ export function AdminNavigationBar() {
         <HomePageButton></HomePageButton>
       </div>
       
-      <div className='w-[20%] h-[80%] flex justify-center items-center'>
-        <p className='font-default text-5xl text-[#EF829A]'>Админ панель</p>
+      <div className='min-w-[20%] h-[80%] flex justify-center items-center'>
+        <p className='font-default text-5xl text-[#EF829A] text-nowrap'>Админ панель</p>
       </div>
 
       <div className='w-[40%] h-[70%] flex justify-start items-center'>

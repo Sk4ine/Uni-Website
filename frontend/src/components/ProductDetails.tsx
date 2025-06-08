@@ -75,17 +75,7 @@ function ProductDescription({product} : {product: Product}) {
 
 
 function FullInfo({product} : {product: Product}) {
-  let materials: string = "";
-
-  for(let i = 0; i < product.materials.length; i++) {
-    materials += product.materials[i];
-
-    if(i == product.materials.length - 1) {
-      break;
-    }
-
-    materials += ", ";
-  }
+  const materials: string = product.materials.join(", ");
 
   return (
     <div className="flex flex-col w-full px-9 mt-6 font-default text-[#B4A1A6] text-2xl">
@@ -105,7 +95,7 @@ function DescriptionItem({itemName, itemValue} : {itemName: string, itemValue: s
   return (
     <div className="flex justify-between">
       <span className="w-fit whitespace-nowrap">{itemName}</span>
-      <span className="w-full h-[68%] select-none border-b-3 border-dotted mx-0.5"></span>
+      <span className="w-full h-[75%] select-none border-b-3 border-dotted mx-0.5"></span>
       <span className="w-fit text-nowrap">{itemValue}</span>
     </div>
   )

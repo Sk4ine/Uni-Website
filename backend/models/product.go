@@ -1,6 +1,10 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"strconv"
+	"strings"
+)
 
 type Product struct {
 	ID              int    `json:"id"`
@@ -24,7 +28,16 @@ func GetProductList(db *sql.DB) ([]Product, error) {
 	for rows.Next() {
 		var product Product
 
-		if err := rows.Scan(&product.ID, &product.CategoryID, &product.Name, &product.Price, &product.Materials, &product.WeightInGrams, &product.QuantityInStock, &product.CountryOfOrigin); err != nil {
+		if err := rows.Scan(
+			&product.ID,
+			&product.CategoryID,
+			&product.Name,
+			&product.Price,
+			&product.Materials,
+			&product.WeightInGrams,
+			&product.QuantityInStock,
+			&product.CountryOfOrigin,
+		); err != nil {
 			return nil, err
 		}
 
@@ -43,10 +56,57 @@ func GetProductByID(db *sql.DB, id int) (Product, error) {
 	var product Product
 
 	for rows.Next() {
-		if err := rows.Scan(&product.ID, &product.CategoryID, &product.Name, &product.Price, &product.Materials, &product.WeightInGrams, &product.QuantityInStock, &product.CountryOfOrigin); err != nil {
+		if err := rows.Scan(
+			&product.ID,
+			&product.CategoryID,
+			&product.Name,
+			&product.Price,
+			&product.Materials,
+			&product.WeightInGrams,
+			&product.QuantityInStock,
+			&product.CountryOfOrigin,
+		); err != nil {
 			return Product{}, err
 		}
 	}
 
 	return product, nil
+}
+
+func GetProducts(db *sql.DB, ids []int) ([]Product, error) {
+	var idStringArray []string
+
+	for _, num := range ids {
+		idStringArray = append(idStringArray, strconv.Itoa(num))
+	}
+
+	var idString string = strings.Join(idStringArray, ", ")
+
+	rows, err := db.Query("SELECT * FROM products WHERE id IN (?)", idString)
+	if err != nil {
+		return nil, err
+	}
+
+	var products []Product
+
+	for rows.Next() {
+		var product Product
+
+		if err := rows.Scan(
+			&product.ID,
+			&product.CategoryID,
+			&product.Name,
+			&product.Price,
+			&product.Materials,
+			&product.WeightInGrams,
+			&product.QuantityInStock,
+			&product.CountryOfOrigin,
+		); err != nil {
+			return nil, err
+		}
+
+		products = append(products, product)
+	}
+
+	return products, nil
 }

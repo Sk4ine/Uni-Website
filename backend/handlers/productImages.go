@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -27,8 +26,6 @@ func ServeProductImages(db *sql.DB) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		fmt.Println(filepath.Join("static", "productImages", paths[0]))
 
 		http.ServeFile(w, r, filepath.Join("static", "productImages", paths[0]))
 	}

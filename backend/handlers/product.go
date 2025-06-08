@@ -49,6 +49,16 @@ func GetProductByID(db *sql.DB) http.HandlerFunc {
 	}
 }
 
+func GetProducts(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var ids []int
+
+		if err := json.NewDecoder(r.Body).Decode(&ids); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
+	}
+}
+
 func GetProductColumnNames(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		columnData, err := models.GetTableColumnNamesExclude(db, "products", []string{"image_paths"})

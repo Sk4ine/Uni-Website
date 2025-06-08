@@ -1,4 +1,5 @@
 import { useActiveTableContext } from "../contexts/activeTableContext";
+import { useAdminPanelContext } from "../contexts/adminPanelContext";
 
 export function DatabaseEditSection() {
   return (
@@ -10,7 +11,7 @@ export function DatabaseEditSection() {
 
 function TableSelector() {
   return(
-    <div className='flex justify-center items-center'>
+    <div className='flex justify-center items-center gap-5'>
       <TableSelectButton buttonText='Категории' tableName='categories'></TableSelectButton>
       <TableSelectButton buttonText='Продукты' tableName='products'></TableSelectButton>
     </div>
@@ -42,17 +43,17 @@ function TableEditBlock() {
 }
 
 function TableSelectButton({buttonText, tableName} : {buttonText: string, tableName: string}) {
-  const activeTableContext = useActiveTableContext();
+  const {activeTable, switchActiveTable} = useAdminPanelContext();
   
-  const backgroundColor: string = activeTableContext.activeTable == tableName ? "bg-[#F5D4D5]" : "bg-[#E2E2E2]";
-  const textColor: string = activeTableContext.activeTable == tableName ? "text-[#EF829A]" : "text-[#979797]";
-  const backgroundHoverColor: string = activeTableContext.activeTable == tableName ? "hover:bg-[#E6C8C9]" : "hover:bg-[#D1D1D1]";
+  const backgroundColor: string = activeTable == tableName ? "bg-[#F5D4D5]" : "bg-[#E2E2E2]";
+  const textColor: string = activeTable == tableName ? "text-[#EF829A]" : "text-[#979797]";
+  const backgroundHoverColor: string = activeTable == tableName ? "hover:bg-[#E6C8C9]" : "hover:bg-[#D1D1D1]";
 
   function handleClick() {
-    activeTableContext.setActiveTable(tableName);
+    switchActiveTable(tableName);
   }
 
   return (
-    <button onClick={handleClick} className={`${backgroundColor} ${textColor} ${backgroundHoverColor} min-h-[100vh] font-default text-3xl w-64 py-1 flex justify-center items-center rounded-2xl cursor-pointer`}>{buttonText}</button>
+    <button onClick={handleClick} className={`${backgroundColor} ${textColor} ${backgroundHoverColor} font-default text-3xl w-64 py-1 flex justify-center items-center rounded-2xl cursor-pointer`}>{buttonText}</button>
   )
 }

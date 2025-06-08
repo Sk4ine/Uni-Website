@@ -20,6 +20,7 @@ func main() {
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbPort := os.Getenv("DB_PORT")
+	dbName := "unidb"
 
 	if dbUser == "" {
 		dbUser = "root"
@@ -33,14 +34,12 @@ func main() {
 		dbPort = "3306"
 	}
 
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(localhost:%s)/unidb?multiStatements=true", dbUser, dbPassword, dbPort))
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(localhost:%s)/%s?multiStatements=true", dbUser, dbPassword, dbPort, dbName))
 	if err != nil {
 		log.Fatal("Failed to connect to MySQL:", err)
 	}
 
 	defer db.Close()
-
-	fmt.Println(models.CheckIfUserIsAdmin(db, 1))
 
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {
@@ -61,6 +60,8 @@ func main() {
 	}
 
 	log.Println("Migrations applied successfully!")
+
+	fmt.Println(models.GetProductByID(db, 1))
 
 	r := mux.NewRouter()
 

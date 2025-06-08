@@ -23,6 +23,7 @@ export function ProductDetailsPage() {
 
         setProduct(await getProductByID(parseInt(id)));
         setIsLoading(false);
+        window.scrollTo(0, 0);
       } catch (err) {
         console.log(err);
       }
@@ -30,28 +31,20 @@ export function ProductDetailsPage() {
 
     getProduct();
   }, []);
-
-  if(!product) {
-    return <Navigate to="/home" replace></Navigate>
-  }
-
-  const reviewCards: React.ReactNode[] = [];
-
-  for(let i = 0; i < product.customerReviews.length; i++) {
-    reviewCards.push(<ReviewCard key={i} review={product.customerReviews[i]}></ReviewCard>);
-  }
   
   return (
     <PageWrapper>
       <NavigationBar></NavigationBar>
 
       <ContentWrapper>
-        {isLoading ? (
+        {!product || isLoading ? (
           <LoadingMessage text="Загрузка товара..." heightVH={100}></LoadingMessage>
         ) : (
           <ProductPageSection product={product}>
             <CustomerReviews product={product}>
-              {reviewCards}
+              {product.customerReviews.map((review, index) => (
+                <ReviewCard key={index} review={review}></ReviewCard>))
+              }
             </CustomerReviews>
           </ProductPageSection>
         )}
