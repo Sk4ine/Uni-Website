@@ -1,5 +1,5 @@
 import { ContentWrapper, PageWrapper } from "../components/Common";
-import { EmptySpace, HomePageButton } from "../components/LoginForm";
+import { HomePageButton } from "../components/LoginForm";
 import { RegistrationSection } from "../components/RegistrationForm";
 
 export function RegistrationPage() {

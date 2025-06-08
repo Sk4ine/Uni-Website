@@ -2,17 +2,14 @@ import { useEffect, useState } from "react";
 import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
 import { UserProfileSection } from "../components/UserProfile";
 import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate } from "react-router";
 import { Order } from "../classes/order";
 import type { Product } from "../classes/product";
 import { getProductList } from "../api/requests/products";
 import { NavigationBar } from "../components/NavigationBar";
 import { useAuthContext } from "../contexts/authContext";
-import type { User } from "../classes/user";
-import { getUserInfo, getUserOrders } from "../api/requests/user";
-import { UserInfoContext } from "../contexts/userInfoContext";
+import { getUserOrders } from "../api/requests/user";
 import { UserInfoProvider } from "../providers/UserInfoProvider";
-import { AuthProvider } from "../providers/AuthProvider";
 
 export function UserProfilePage() {
   const authContext = useAuthContext();
