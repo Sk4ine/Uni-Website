@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CartSection } from "../components/Cart";
-import { ErrorMessage, LoadingMessage } from "../components/Common";
 import { useCartContext } from "../contexts/cartContext";
+import { ErrorMessageContext, IsLoadingContext } from "../contexts/otherContexts";
 
 export function CartPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -22,17 +22,11 @@ export function CartPage() {
     getProducts();
   }, [cartProductList]);
 
-  let content: React.ReactNode = <CartSection></CartSection>;
-
-  if(isLoading) {
-    content = <LoadingMessage text="Загрузка корзины..." heightVH={50}></LoadingMessage>
-  } else if (errorMessage != "") {
-    content = <ErrorMessage text={errorMessage} heightVH={50}></ErrorMessage>
-  }
-
   return (
-    <>
-      {content}
-    </>
+    <IsLoadingContext.Provider value={isLoading}>
+      <ErrorMessageContext.Provider value={errorMessage}>
+        <CartSection></CartSection>
+      </ErrorMessageContext.Provider>
+    </IsLoadingContext.Provider>
   )
 }

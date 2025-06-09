@@ -2,20 +2,36 @@ import type { Product } from "../classes/product"
 import { Link, useNavigate } from "react-router";
 import { useCartContext } from "../contexts/cartContext";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
+import { useContext } from "react";
+import { ErrorMessageContext, IsLoadingContext } from "../contexts/otherContexts";
 
 export function CartSection() {
   return (
     <div className="flex flex-col items-center mb-48">
       <h1 className="font-default text-[#D5778D] text-4xl mt-7">Корзина</h1>
-      <CartProductList></CartProductList>
+      <CartProductList />
     </div>
   )
 }
 
 function CartProductList() {
   const {cartProductList, catalogProductList} = useCartContext();
+  const isLoading = useContext(IsLoadingContext);
+  const errorMessage = useContext(ErrorMessageContext);
+  
+  let content: React.ReactNode = cartProductList.map((product, index) => (
+    <CartProduct key={index} product={catalogProductList[index]} quantity={product.quantity}></CartProduct>)
+  );
 
-  if(cartProductList.length == 0) {
+  if(isLoading) {
+    content = [...Array(4)].map((_, index) => (
+      <LoadingCartProduct key={index} />
+    ));
+  } else if (errorMessage != "") {
+    content = <p className="font-default text-[#B4A1A6] text-3xl">{errorMessage}</p>
+  }
+
+  if(cartProductList.length == 0 && !isLoading) {
     return (
       <div className="flex justify-center items-center mt-16">
         <p className="font-default text-[#B4A1A6] text-3xl">Корзина пуста</p>
@@ -23,14 +39,10 @@ function CartProductList() {
     )
   }
 
-  const cartProductNodeList = cartProductList.map((product, index) => {
-    return (<CartProduct key={index} product={catalogProductList[index]} quantity={product.quantity}></CartProduct>);
-  });
-
   return (
     <div className="w-[960px] mt-7">
       <div className="flex flex-col items-center gap-5">
-        {cartProductNodeList}
+        {content}
       </div>
     </div>
   )
@@ -47,6 +59,12 @@ function CartProduct({product, quantity} : {product: Product, quantity: number})
         <OrderActions productPrice={product.price} quantity={quantity} productID={product.id}></OrderActions>
       </div>
     </div>
+  )
+}
+
+function LoadingCartProduct() {
+  return (
+    <div className="w-full h-64 rounded-2xl from-[#D9D9D9]/75 via-[#D9D9D9]/50 to-[#D9D9D9]/75 animate-pulse bg-linear-to-tr" />
   )
 }
 

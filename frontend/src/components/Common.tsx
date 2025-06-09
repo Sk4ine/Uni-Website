@@ -4,11 +4,11 @@ import {faCircleCheck} from '@fortawesome/free-solid-svg-icons'
 import type { Product } from '../classes/product';
 import { Link } from 'react-router';
 import { useContext } from 'react';
-import { ProductListContext } from '../contexts/otherContexts';
+import { IsLoadingContext, ProductListContext } from '../contexts/otherContexts';
 import { useCartContext } from '../contexts/cartContext';
 import { useActiveCategoryContext } from '../contexts/activeCategoryContext';
 
-export function ProductCard({product} : {product : Product}) {
+export function ProductCard({product} : {product: Product}) {
   const cartContext = useCartContext();
 
   function handleClick() {
@@ -52,6 +52,7 @@ export function Footer({phoneNumber, address} : {phoneNumber: string, address: s
 export function ProductList({sortByCategory = false} : {sortByCategory?: boolean}) {
   const productListContext = useContext(ProductListContext);
   const activeCategoryContext = useActiveCategoryContext();
+  const isLoading = useContext(IsLoadingContext);
   
   const productCards: React.ReactNode[] = productListContext.map((product, index) => {
     if(!(product.categoryID == activeCategoryContext.activeCategory || activeCategoryContext.activeCategory == 1 || !sortByCategory)) {
@@ -63,8 +64,20 @@ export function ProductList({sortByCategory = false} : {sortByCategory?: boolean
 
   return (
     <div className='flex flex-wrap justify-start pl-[11px] w-[1344px] mt-9 gap-x-3.5 gap-y-6'>
-      {productCards}
+      {isLoading ? (
+        [...Array(4)].map((_, index) => (
+          <LoadingProductCard key={index} />
+        ))
+      ) : (
+        productCards
+      )}
     </div>
+  )
+}
+
+function LoadingProductCard() {
+  return (
+    <div className='w-80 h-[26.5rem] from-[#D9D9D9]/75 via-[#D9D9D9]/50 to-[#D9D9D9]/75 animate-pulse bg-linear-to-tr rounded-2xl' />
   )
 }
 

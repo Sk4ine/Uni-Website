@@ -7,16 +7,16 @@ export function LoginPage() {
   const authContext = useAuthContext();
 
   if(authContext.loadingAuth) {
-    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100}></LoadingMessage>
+    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100} />
   }
 
   if(authContext.signedIn) {
-    return <Navigate to="/user-profile" replace></Navigate>
+    return <Navigate to="/user-profile" replace />
   }
 
   return (
     <>
-      <LoginSection></LoginSection>
+      <LoginSection />
     </>
   )
 }

@@ -1,7 +1,5 @@
-import { LoadingMessage } from "../components/Common";
-
 import { CatalogSection } from "../components/Catalog";
-import { CategoryListContext, ProductListContext } from "../contexts/otherContexts";
+import { CategoryListContext, IsLoadingContext, ProductListContext } from "../contexts/otherContexts";
 import { useState, useEffect } from "react";
 import { getProductList } from "../api/requests/products";
 import type { Product } from "../classes/product";
@@ -39,13 +37,9 @@ export function CatalogPage() {
   return (
     <ProductListContext.Provider value={productList}>
       <CategoryListContext.Provider value={categoryList}>
-
-        {isLoading ? (
-          <LoadingMessage text="Загрузка товаров..." heightVH={50}></LoadingMessage>
-        ) : (
+        <IsLoadingContext.Provider value={isLoading}>
           <CatalogSection></CatalogSection>
-        )}
-
+        </IsLoadingContext.Provider>
       </CategoryListContext.Provider>
     </ProductListContext.Provider>
   )

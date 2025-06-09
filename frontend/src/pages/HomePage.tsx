@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { LoadingMessage } from "../components/Common";
 import { HomePageBanner, PopularProductsSection } from "../components/Home";
-import { ProductListContext } from "../contexts/otherContexts";
+import { IsLoadingContext, ProductListContext } from "../contexts/otherContexts";
 import { Product } from "../classes/product";
 import { getProductList } from "../api/requests/products";
 
@@ -25,13 +24,10 @@ export function HomePage() {
 
   return (
     <ProductListContext.Provider value={productList}>
-      <HomePageBanner></HomePageBanner>
-
-      {isLoading ? (
-        <LoadingMessage text="Загрузка товаров..." heightVH={50}></LoadingMessage>
-      ) : (
-        <PopularProductsSection></PopularProductsSection>
-      )}
+      <IsLoadingContext.Provider value={isLoading}>
+        <HomePageBanner />
+        <PopularProductsSection />
+      </IsLoadingContext.Provider>
     </ProductListContext.Provider>
   )
 }

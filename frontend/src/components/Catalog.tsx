@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { CategoryListContext } from "../contexts/otherContexts";
+import { CategoryListContext, IsLoadingContext } from "../contexts/otherContexts";
 import { ProductList } from "./Common";
 import { useActiveCategoryContext } from "../contexts/activeCategoryContext";
 
@@ -16,6 +16,7 @@ export function CatalogSection() {
 function CategoryList() {
   const categoryListContext = useContext(CategoryListContext);
   const activeCategoryContext = useActiveCategoryContext();
+  const isLoading: boolean = useContext(IsLoadingContext);
 
   const categoryButtonList: React.ReactNode[] = categoryListContext.map((category, index) => (
     <CategoryButton key={index} categoryID={category.id} categoryName={category.name} active={category.id == activeCategoryContext.activeCategory ? true : false}></CategoryButton>
@@ -23,7 +24,13 @@ function CategoryList() {
 
   return (
     <div className="flex flex-wrap justify-center items-center gap-5 w-[1344px] mt-10">
-      {categoryButtonList}
+      {isLoading ? (
+        [...Array(4)].map((_, index) => (
+          <LoadingCategoryButton key={index} />
+        ))
+      ) : (
+        categoryButtonList
+      )}
     </div>
   )
 }
@@ -41,6 +48,12 @@ function CategoryButton({categoryID, categoryName, active} : {categoryID: number
   
   return (
     <button onClick={handleClick} className={`${backgroundColor} ${textColor} ${backgroundHoverColor} font-default text-3xl w-64 py-1 flex justify-center items-center rounded-2xl cursor-pointer`}>{categoryName}</button>
+  )
+}
+
+function LoadingCategoryButton() {
+  return (
+    <div className="w-64 h-10 py-1 from-[#D9D9D9]/75 via-[#D9D9D9]/50 to-[#D9D9D9]/75 animate-pulse rounded-2xl bg-linear-to-tr"/>
   )
 }
 
