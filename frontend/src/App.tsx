@@ -4,7 +4,7 @@ import { CatalogPage } from "./pages/CatalogPage";
 import { HomePage } from "./pages/HomePage";
 import { ProductDetailsPage } from "./pages/ProductDetailsPage";
 
-import { CartProvider } from "./providers/CartProvider";
+import { CartProvider } from "./providers/cartProvider";
 import { useState } from "react";
 import { LoginPage } from "./pages/LoginPage";
 import { RegistrationPage } from "./pages/RegistrationPage";
