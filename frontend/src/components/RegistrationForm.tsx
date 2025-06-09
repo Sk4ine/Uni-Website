@@ -26,7 +26,7 @@ export function RegistrationForm() {
     async function register() {
       try {
         await handleRegistration(formData.get("email") as string, formData.get("password") as string);
-        navigate("/login");
+        navigate("/auth/login");
       } catch (error) {
         if(axios.isAxiosError(error)) {
           switch (error.response?.status) {
@@ -59,7 +59,7 @@ export function RegistrationForm() {
       </div>
       <div className='flex flex-col items-center font-default text-[#555555] text-xl'>
         <p>Уже есть учетная запись?</p>
-        <Link to={"/login"} className='text-[#D5778D]'> Войти</Link>
+        <Link to={"/auth/login"} className='text-[#D5778D]'> Войти</Link>
       </div>
     </form>
   )

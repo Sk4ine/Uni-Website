@@ -32,7 +32,7 @@ export async function getProductList(): Promise<Product[]> {
         if(isAxiosError(error)) {
           if (error.status == 404) {
             productList[i].imagePaths = [defaultProductImage];
-            return productList;
+            continue;
           }
         }
         throw error as AxiosError;

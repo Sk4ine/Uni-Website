@@ -24,7 +24,6 @@ CREATE TABLE products
     weight_in_grams INT NOT NULL DEFAULT 0,
     quantity_in_stock INT CHECK (quantity_in_stock >= 0) DEFAULT 0,
     country_of_origin NVARCHAR(50) NOT NULL DEFAULT "",
-    image_paths NVARCHAR(500) NOT NULL DEFAULT "",
     FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE SET DEFAULT ON UPDATE CASCADE
 );
 
@@ -59,9 +58,9 @@ INSERT INTO categories (id, category_name) VALUES
 (2, 'Кольца'),
 (3, 'Серьги');
 
-INSERT INTO products (category_id, product_name, price, materials, weight_in_grams, quantity_in_stock, country_of_origin, image_paths) VALUES
-(3, 'Серьги металл', 399, 'металл,пластик', 2, 10, "Россия", "earringsMetal.png"),
-(2, 'Кольцо сердца', 349, 'металл', 10, 14, "Россия", "ringHearts.png");
+INSERT INTO products (category_id, product_name, price, materials, weight_in_grams, quantity_in_stock, country_of_origin) VALUES
+(3, 'Серьги металл', 399, 'металл,пластик', 2, 10, "Россия"),
+(2, 'Кольцо сердца', 349, 'металл', 10, 14, "Россия");
 
 INSERT INTO orders (id, client_id, product_id, product_quantity, date_made, shipping_address, cost) VALUES
 (1, 1, 2, 2, "2025-05-29", "Take-ово", 798);

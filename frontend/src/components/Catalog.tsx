@@ -7,7 +7,7 @@ export function CatalogSection() {
   return(
     <div className="flex flex-col items-center">
       <CategoryList></CategoryList>
-      <ProductList></ProductList>
+      <ProductList sortByCategory={true}></ProductList>
       <ShowMoreButtonCatalog></ShowMoreButtonCatalog>
     </div>
   )

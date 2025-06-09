@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Product } from "../classes/product";
-import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
+import { LoadingMessage } from "../components/Common";
 import { CustomerReviews, ProductPageSection, ReviewCard } from "../components/ProductDetails";
 import { useParams } from "react-router";
-import { NavigationBar } from "../components/NavigationBar";
 import { getProductByID } from "../api/requests/products";
 
 export function ProductDetailsPage() {
@@ -31,25 +30,18 @@ export function ProductDetailsPage() {
   }, []);
   
   return (
-    <PageWrapper>
-      <NavigationBar></NavigationBar>
-
-      <ContentWrapper>
-        {!product || isLoading ? (
-          <LoadingMessage text="Загрузка товара..." heightVH={100}></LoadingMessage>
-        ) : (
-          <ProductPageSection product={product}>
-            <CustomerReviews product={product}>
-              {product.customerReviews.map((review, index) => (
-                <ReviewCard key={index} review={review}></ReviewCard>))
-              }
-            </CustomerReviews>
-          </ProductPageSection>
-        )}
-        
-      </ContentWrapper>
-
-      <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-    </PageWrapper>
+    <>
+      {!product || isLoading ? (
+        <LoadingMessage text="Загрузка товара..." heightVH={100}></LoadingMessage>
+      ) : (
+        <ProductPageSection product={product}>
+          <CustomerReviews product={product}>
+            {product.customerReviews.map((review, index) => (
+              <ReviewCard key={index} review={review}></ReviewCard>))
+            }
+          </CustomerReviews>
+        </ProductPageSection>
+      )}
+    </>
   )
 }

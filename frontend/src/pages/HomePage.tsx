@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
+import { LoadingMessage } from "../components/Common";
 import { HomePageBanner, PopularProductsSection } from "../components/Home";
 import { ProductListContext } from "../contexts/otherContexts";
 import { Product } from "../classes/product";
 import { getProductList } from "../api/requests/products";
-import { NavigationBar } from "../components/NavigationBar";
 
 export function HomePage() {
   const [productList, setProductList] = useState<Product[]>([]);
@@ -25,22 +24,14 @@ export function HomePage() {
   
 
   return (
-    <PageWrapper>
-      <ProductListContext.Provider value={productList}>
-        <NavigationBar></NavigationBar>
-        
-        <ContentWrapper>
-          <HomePageBanner></HomePageBanner>
+    <ProductListContext.Provider value={productList}>
+      <HomePageBanner></HomePageBanner>
 
-          {isLoading ? (
-            <LoadingMessage text="Загрузка товаров..." heightVH={50}></LoadingMessage>
-          ) : (
-            <PopularProductsSection></PopularProductsSection>
-          )}
-        </ContentWrapper>
-
-        <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-      </ProductListContext.Provider>
-    </PageWrapper>
+      {isLoading ? (
+        <LoadingMessage text="Загрузка товаров..." heightVH={50}></LoadingMessage>
+      ) : (
+        <PopularProductsSection></PopularProductsSection>
+      )}
+    </ProductListContext.Provider>
   )
 }

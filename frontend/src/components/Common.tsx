@@ -49,18 +49,17 @@ export function Footer({phoneNumber, address} : {phoneNumber: string, address: s
   )
 }
 
-export function ProductList() {
+export function ProductList({sortByCategory = false} : {sortByCategory?: boolean}) {
   const productListContext = useContext(ProductListContext);
   const activeCategoryContext = useActiveCategoryContext();
   
-  const productCards: React.ReactNode[] = [];
-  
-  for(let i = 0; i < productListContext.length; i++) {
-    const curProductCategory = productListContext[i].categoryID;
-    if((curProductCategory == activeCategoryContext.activeCategory) || (activeCategoryContext.activeCategory == 1)) {
-      productCards.push(<ProductCard key={i} product={productListContext[i]}></ProductCard>);
+  const productCards: React.ReactNode[] = productListContext.map((product, index) => {
+    if(!(product.categoryID == activeCategoryContext.activeCategory || activeCategoryContext.activeCategory == 1 || !sortByCategory)) {
+      return;
     }
-  }
+
+    return <ProductCard key={index} product={product}></ProductCard>;
+  });
 
   return (
     <div className='flex flex-wrap justify-start pl-[11px] w-[1344px] mt-9 gap-x-3.5 gap-y-6'>

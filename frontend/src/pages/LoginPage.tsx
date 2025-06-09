@@ -1,5 +1,5 @@
-import { ContentWrapper, LoadingMessage, PageWrapper } from "../components/Common";
-import { LoginSection, NavigationSection } from "../components/LoginForm";
+import { LoadingMessage } from "../components/Common";
+import { LoginSection } from "../components/LoginForm";
 import { useAuthContext } from "../contexts/authContext";
 import { Navigate } from "react-router";
 
@@ -15,11 +15,8 @@ export function LoginPage() {
   }
 
   return (
-    <PageWrapper>
-      <NavigationSection></NavigationSection>
-      <ContentWrapper>
-        <LoginSection></LoginSection>
-      </ContentWrapper>
-    </PageWrapper>
+    <>
+      <LoginSection></LoginSection>
+    </>
   )
 }

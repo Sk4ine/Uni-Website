@@ -1,4 +1,4 @@
-import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
+import { LoadingMessage } from "../components/Common";
 
 import { CatalogSection } from "../components/Catalog";
 import { CategoryListContext, ProductListContext } from "../contexts/otherContexts";
@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 import { getProductList } from "../api/requests/products";
 import type { Product } from "../classes/product";
 import { ProductCategory } from "../classes/productCategory";
-import { NavigationBar } from "../components/NavigationBar";
 import { getCategoryList } from "../api/requests/categories";
 
 export function CatalogPage() {
@@ -38,22 +37,16 @@ export function CatalogPage() {
   }, []);
 
   return (
-    <PageWrapper>
-      <ProductListContext.Provider value={productList}>
-        <CategoryListContext.Provider value={categoryList}>
-          <NavigationBar></NavigationBar>
+    <ProductListContext.Provider value={productList}>
+      <CategoryListContext.Provider value={categoryList}>
 
-          <ContentWrapper>
-            {isLoading ? (
-              <LoadingMessage text="Загрузка товаров..." heightVH={50}></LoadingMessage>
-            ) : (
-              <CatalogSection></CatalogSection>
-            )}
-          </ContentWrapper>
+        {isLoading ? (
+          <LoadingMessage text="Загрузка товаров..." heightVH={50}></LoadingMessage>
+        ) : (
+          <CatalogSection></CatalogSection>
+        )}
 
-          <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-        </CategoryListContext.Provider>
-      </ProductListContext.Provider>
-    </PageWrapper>
+      </CategoryListContext.Provider>
+    </ProductListContext.Provider>
   )
 }

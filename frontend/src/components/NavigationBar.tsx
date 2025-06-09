@@ -10,8 +10,8 @@ import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../contexts/authContext";
 
 export function NavigationBar() {
-  const border: string = location.pathname == "/home" ? "p-[10rem-4px]" : "box-content border-b-4 border-[#EF829A]";
-
+  const border: string = useLocation().pathname == "/home" ? "p-[10rem-4px]" : "box-content border-b-4 border-[#EF829A]";
+  
   return (
     <div className={`flex items-end gap-5 justify-center h-40 bg-white ${border}`}>
       <img src={artezaLogo} className="h-[80%] object-none"></img>
@@ -109,7 +109,7 @@ export function AccountButton() {
       { authContext.signedIn ? (
         <UserLogoButton></UserLogoButton>
       ) : (
-        <NavigationBarButton text="Вход" url="/login"></NavigationBarButton>
+        <NavigationBarButton text="Вход" url="/auth/login"></NavigationBarButton>
       )}
     </div>
   )

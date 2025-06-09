@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
+import { LoadingMessage } from "../components/Common";
 import { UserProfileSection } from "../components/UserProfile";
 import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import { Navigate } from "react-router";
 import { Order } from "../classes/order";
 import type { Product } from "../classes/product";
 import { getProductList } from "../api/requests/products";
-import { NavigationBar } from "../components/NavigationBar";
 import { useAuthContext } from "../contexts/authContext";
 import { getUserOrders } from "../api/requests/user";
 import { UserInfoProvider } from "../providers/UserInfoProvider";
@@ -48,15 +47,9 @@ export function UserProfilePage() {
     <ProductListContext.Provider value={productList}>
       <OrderListContext.Provider value={orderList}>
         <UserInfoProvider>
-          <PageWrapper>
-            <NavigationBar></NavigationBar>
 
-            <ContentWrapper>
-              <UserProfileSection ordersLoading={ordersLoading}></UserProfileSection>
-            </ContentWrapper>
-            
-            <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-          </PageWrapper>
+          <UserProfileSection ordersLoading={ordersLoading}></UserProfileSection>
+
         </UserInfoProvider>
       </OrderListContext.Provider>
     </ProductListContext.Provider>

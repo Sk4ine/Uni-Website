@@ -193,7 +193,6 @@ function CategoryEditForm() {
   function handleSave(formData: FormData) {
     async function saveCategory() {
       try {
-        console.log(formData.get("name") as string);
         await updateCategory(localStorage.getItem("jwtToken"), selectedRecord, formData.get("name") as string);
         updateTableRecords(false);
       } catch (error) {
@@ -247,7 +246,9 @@ function ProductEditForm() {
   function handleSave(formData: FormData) {
     async function saveProduct() {
       try {
-        console.log(formData.get("materials") as string);
+        const newFormData = new FormData();
+        newFormData.append("imageFile", formData.get("imageFile") as File);
+
         await updateProduct(localStorage.getItem("jwtToken"), selectedRecord, new Product(
           selectedRecord,
           parseInt(formData.get("categoryID") as string),
@@ -257,7 +258,9 @@ function ProductEditForm() {
           parseInt(formData.get("weightInGrams") as string),
           parseInt(formData.get("quantityInStock") as string),
           formData.get("countryOfOrigin") as string,
-        ));
+        ),
+        newFormData
+      );
         updateTableRecords(false);
       } catch (error) {
         console.log(error);
@@ -298,7 +301,7 @@ function ProductEditForm() {
 
   return (
     <div className="flex justify-center items-center fixed inset-0 bg-black/50 z-50">
-      <form action={handleSave} className="flex flex-col items-center font-default text-xl bg-white rounded-2xl px-4 pt-4 pb-2">
+      <form action={handleSave} className="flex flex-col items-center font-default text-xl bg-white rounded-2xl px-4 pt-4 pb-4">
         { loadingCategories ? (
           <p className="font-default text-font-gray text-2xl">Загрузка формы...</p>
         ) : (
@@ -308,8 +311,8 @@ function ProductEditForm() {
                 <FontAwesomeIcon icon={faClose} size="xl"></FontAwesomeIcon>
               </button>
             </div>
-            <div className="flex flex-col items-center py-4 px-6">
-              <p className="text-3xl">Редактировать категорию</p>
+            <p className="text-3xl">Редактировать товар</p>
+            <div className="flex flex-col items-center gap-4 py-4 px-6 max-h-[75vh] overflow-y-scroll">
               <EditFormDropDownMenu defaultValue={productData.categoryID} name="categoryID" labelText="Категория" options={categoryOptions}></EditFormDropDownMenu>
               <EditFormInputField defaultValue={productData.name} type="text" name="name" labelText="Название"></EditFormInputField>
               <EditFormInputField defaultValue={productData.price} type="number" name="price" labelText="Цена"></EditFormInputField>
@@ -317,8 +320,9 @@ function ProductEditForm() {
               <EditFormInputField defaultValue={productData.weightGrams} type="number" name="weightInGrams" labelText="Вес (г.)"></EditFormInputField>
               <EditFormInputField defaultValue={productData.quantityInStock} type="number" name="quantityInStock" labelText="Штук в наличии"></EditFormInputField>
               <EditFormInputField defaultValue={productData.countryOfOrigin} type="text" name="countryOfOrigin" labelText="Страна"></EditFormInputField>
-              <button type='submit' className="bg-[#F5D4D5] hover:bg-[#E6C8C9] py-1 px-7 rounded-xl mt-4 text-2xl cursor-pointer">Сохранить</button>
+              <EditFileUploadField name="imageFile" labelText="Изображение"></EditFileUploadField>
             </div>
+            <button type='submit' className="bg-[#F5D4D5] hover:bg-[#E6C8C9] text-font-pink py-1 px-7 rounded-xl mt-4 text-2xl cursor-pointer">Сохранить</button>
           </>
         )}
       </form>
@@ -391,7 +395,7 @@ function DeleteConfirmDialog() {
 
 function EditFormInputField({name, labelText, type, defaultValue} : {name: string, labelText: string, type: string, defaultValue?: string | number}) {
   return (
-    <div className="flex flex-col w-full mt-4">
+    <div className="flex flex-col w-full">
       <label htmlFor={name}>{labelText}</label>
       <input defaultValue={defaultValue} id={name} type={type} name={name} className="border-2 px-2 py-1 border-font-darkgray outline-none rounded-xl"></input>
     </div>
@@ -400,11 +404,20 @@ function EditFormInputField({name, labelText, type, defaultValue} : {name: strin
 
 function EditFormDropDownMenu({name, labelText, options, defaultValue} : {name: string, labelText: string, options: React.ReactNode, defaultValue: number}) {
   return (
-    <div className="flex flex-col w-full mt-4">
+    <div className="flex flex-col w-full">
       <label htmlFor="categoryID">{labelText}</label>
       <select id="categoryID" defaultValue={defaultValue} name={name} className="border-2 px-2 py-1 border-font-darkgray outline-none rounded-xl">
         {options}
       </select>
+    </div>
+  )
+}
+
+function EditFileUploadField({name, labelText} : {name: string, labelText: string}) {
+  return (
+    <div className="flex flex-col">
+      <label htmlFor="image">{labelText}</label>
+      <input id="image" type='file' name={name} accept="image/*" className="border-2 border-font-darkgray aspect-square rounded-xl cursor-pointer"></input>
     </div>
   )
 }

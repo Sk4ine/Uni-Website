@@ -76,7 +76,9 @@ func main() {
 
 	r.HandleFunc("/api/categories", handlers.GetCategoryList(db)).Methods("GET")
 
-	r.HandleFunc("/static/productImages/{product-id}", handlers.ServeProductImages(db)).Methods("GET")
+	r.HandleFunc("/static/productImages/{product-id}", handlers.ServeProductImage()).Methods("GET")
+	r.HandleFunc("/static/productImages/{product-id}", handlers.AuthMiddleware(handlers.UploadProductImage(), true)).Methods("POST", "OPTIONS")
+	r.HandleFunc("/static/productImages/{product-id}", handlers.AuthMiddleware(handlers.DeleteProductImage(), true)).Methods("DELETE", "OPTIONS")
 
 	r.HandleFunc("/api/admin/categories/{id}", handlers.AuthMiddleware(handlers.UpdateCategory(db), true)).Methods("PUT", "OPTIONS")
 	r.HandleFunc("/api/admin/categories", handlers.AuthMiddleware(handlers.AddCategory(db), true)).Methods("POST", "OPTIONS")

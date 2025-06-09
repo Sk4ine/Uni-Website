@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, type AxiosResponse } from "axios";
 import { Product } from "../../classes/product";
 import { ProductCategory } from "../../classes/productCategory";
 import { getCategoryList } from "./categories";
@@ -24,11 +24,11 @@ export async function getTableRecords(tableName: string): Promise<ProductCategor
 export async function updateCategory(jwtToken: string | null, id: number, name: string): Promise<void> {
   try {
     await axios.put<void>(`${API_BASE_URL}/api/admin/categories/${id}`, name,
-    {
-      headers: {
-        'Authorization': `Bearer ${jwtToken}`
-      }
-    });
+      {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`
+        }
+      });
   } catch (error)  {
     throw error as AxiosError;
   }
@@ -37,11 +37,11 @@ export async function updateCategory(jwtToken: string | null, id: number, name: 
 export async function addCategory(jwtToken: string | null): Promise<void> {
   try {
     await axios.post<void>(`${API_BASE_URL}/api/admin/categories`, {},
-    {
-      headers: {
-        'Authorization': `Bearer ${jwtToken}`
-      }
-    });
+      {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`
+        }
+      });
   } catch (error)  {
     throw error as AxiosError;
   }
@@ -50,33 +50,47 @@ export async function addCategory(jwtToken: string | null): Promise<void> {
 export async function deleteCategory(jwtToken: string | null, id: number): Promise<void> {
   try {
     await axios.delete<void>(`${API_BASE_URL}/api/admin/categories/${id}`,
-    {
-      headers: {
-        'Authorization': `Bearer ${jwtToken}`
-      }
-    });
+      {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`
+        }
+      });
   } catch (error)  {
     throw error as AxiosError;
   }
 }
 
-export async function updateProduct(jwtToken: string | null, id: number, updatedProduct: Product): Promise<void> {
+export async function updateProduct(jwtToken: string | null, id: number, updatedProduct: Product, updatedImage: FormData): Promise<void> {
   try {
     await axios.put<void>(`${API_BASE_URL}/api/admin/products/${id}`, 
-    {
-      categoryID: updatedProduct.categoryID,
-      name: updatedProduct.name,
-      price: updatedProduct.price,
-      materials: updatedProduct.materials.join(","),
-      weightInGrams: updatedProduct.weightGrams,
-      quantityInStock: updatedProduct.quantityInStock,
-      countryOfOrigin: updatedProduct.countryOfOrigin
-    },
-    {
-      headers: {
-        'Authorization': `Bearer ${jwtToken}`
-      }
-    });
+      {
+        categoryID: updatedProduct.categoryID,
+        name: updatedProduct.name,
+        price: updatedProduct.price,
+        materials: updatedProduct.materials.join(","),
+        weightInGrams: updatedProduct.weightGrams,
+        quantityInStock: updatedProduct.quantityInStock,
+        countryOfOrigin: updatedProduct.countryOfOrigin
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`
+        }
+      });
+
+    if(!updatedImage) {
+      return;
+    }
+
+    await axios.post<void>(`${API_BASE_URL}/static/productImages/${id}`,
+      updatedImage,
+      { 
+        headers: 
+        {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${jwtToken}`
+        } 
+      });
   } catch (error)  {
     throw error as AxiosError;
   }
@@ -103,6 +117,14 @@ export async function deleteProduct(jwtToken: string | null, id: number): Promis
         'Authorization': `Bearer ${jwtToken}`
       }
     });
+
+    await axios.delete<void>(`${API_BASE_URL}/static/productImages/${id}`,
+      { 
+        headers: 
+        {
+          'Authorization': `Bearer ${jwtToken}`
+        } 
+      });
   } catch (error)  {
     throw error as AxiosError;
   }

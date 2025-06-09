@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { CartSection } from "../components/Cart";
-import { ContentWrapper, ErrorMessage, Footer, LoadingMessage, PageWrapper } from "../components/Common";
-import { NavigationBar } from "../components/NavigationBar";
+import { ErrorMessage, LoadingMessage } from "../components/Common";
 import { useCartContext } from "../contexts/cartContext";
 
 export function CartPage() {
@@ -32,14 +31,8 @@ export function CartPage() {
   }
 
   return (
-    <PageWrapper>
-      <NavigationBar></NavigationBar>
-      
-      <ContentWrapper>
-        {content}
-      </ContentWrapper>
-
-      <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
-    </PageWrapper>
+    <>
+      {content}
+    </>
   )
 }

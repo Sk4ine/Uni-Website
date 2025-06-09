@@ -52,7 +52,7 @@ function CartProduct({product, quantity} : {product: Product, quantity: number})
 
 function ProductInfo({productName, quantity, productID} : {productName: string, quantity: number, productID: number}) {
   return (
-    <div className="flex flex-col items-center">
+    <div className="w-[50%] flex flex-col justify-center items-center">
       <p className="font-default text-[#B4A1A6] text-4xl">{productName}</p>
       <QuantityCounter quantity={quantity} productID={productID}></QuantityCounter>
     </div>

@@ -71,7 +71,7 @@ function LoginForm() {
       </div>
       <div className='flex flex-col items-center font-default text-[#555555] text-xl'>
         <p>Нет учетной записи?</p>
-        <Link to={"/registration"} className='text-[#D5778D]'> Создать</Link>
+        <Link to={"/auth/registration"} className='text-[#D5778D]'> Создать</Link>
       </div>
     </form>
   )

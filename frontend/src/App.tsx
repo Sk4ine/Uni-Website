@@ -15,6 +15,8 @@ import { ActiveCategoryContext } from "./contexts/activeCategoryContext";
 import { CheckoutProductContext } from "./contexts/checkoutProductContext";
 import { AdminPanelPage } from "./pages/AdminPanelPage";
 import { AuthProvider } from "./providers/AuthProvider";
+import { MainLayout } from "./layouts/MainLayout";
+import { AuthLayout } from "./layouts/AuthLayout";
 
 export function App() {
   const [activeCategory, setActiveCategory] = useState<number>(1);
@@ -28,15 +30,21 @@ export function App() {
           <ActiveCategoryContext.Provider value={{activeCategory, setActiveCategory}}>
             <CheckoutProductContext.Provider value={{checkoutProduct, setCheckoutProduct}}>
               <Routes>
-                <Route path="/" element={<Navigate to="/home" replace />} />
-                <Route path="home" element={<HomePage />}></Route>
-                <Route path="catalog" element={<CatalogPage />}></Route>
-                <Route path="cart" element={<CartPage />}></Route>
-                <Route path="catalog/:id" element={<ProductDetailsPage />}></Route>
-                <Route path="login" element={<LoginPage />}></Route>
-                <Route path="registration" element={<RegistrationPage />}></Route>
-                <Route path="user-profile" element={<UserProfilePage />}></Route>
-                <Route path="checkout" element={<CheckoutPage />}></Route>
+                <Route path="/" element={<MainLayout />}>
+                  <Route index element={<Navigate to="/home" />}></Route>
+                  <Route path="home" element={<HomePage />}></Route>
+                  <Route path="catalog" element={<CatalogPage />}></Route>
+                  <Route path="cart" element={<CartPage />}></Route>
+                  <Route path="catalog/:id" element={<ProductDetailsPage />}></Route>
+                  <Route path="user-profile" element={<UserProfilePage />}></Route>
+                  <Route path="checkout" element={<CheckoutPage />}></Route>
+                </Route>
+
+                <Route path="auth" element={<AuthLayout />}>
+                  <Route path="login" element={<LoginPage />}></Route>
+                  <Route path="registration" element={<RegistrationPage />}></Route>
+                </Route>
+
                 <Route path="admin-panel" element={<AdminPanelPage />}></Route>
               </Routes>
             </CheckoutProductContext.Provider>
