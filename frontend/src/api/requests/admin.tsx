@@ -1,4 +1,4 @@
-import axios, { AxiosError, type AxiosResponse } from "axios";
+import axios, { AxiosError } from "axios";
 import { Product } from "../../classes/product";
 import { ProductCategory } from "../../classes/productCategory";
 import { getCategoryList } from "./categories";

@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import type { Order } from "../classes/order";
 import { User } from "../classes/user";
-import { ErrorMessage, InputField, LoadingMessage } from "./Common";
+import { InputField, LoadingMessage } from "./Common";
 import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import type { Product } from "../classes/product";
 import defaultUserLogo from '../assets/defaultUserLogo.png';
