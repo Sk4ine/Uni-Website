@@ -1,18 +1,18 @@
 import { useContext } from "react";
 import type { Order } from "../classes/order";
 import { User } from "../classes/user";
-import { InputField, LoadingMessage } from "./Common";
+import { ErrorMessage, InputField, LoadingMessage } from "./Common";
 import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import type { Product } from "../classes/product";
 import defaultUserLogo from '../assets/defaultUserLogo.png';
 import { useUserInfoContext } from "../contexts/userInfoContext";
 
 export function UserProfileSection({ordersLoading} : {ordersLoading: boolean}) {
-  const userInfoContext = useUserInfoContext();
+  const {userLoading} = useUserInfoContext();
 
   return (
     <div className="flex flex-col items-center mb-48">
-      {userInfoContext.userLoading ? (
+      {userLoading ? (
         <LoadingMessage text="Загрузка профиля..." heightVH={50}></LoadingMessage>
       ) : (
         <UserInfo></UserInfo>
@@ -28,12 +28,12 @@ export function UserProfileSection({ordersLoading} : {ordersLoading: boolean}) {
 }
 
 function UserInfo() {
-  const userInfoContext = useUserInfoContext();
+  const {useUserInfo} = useUserInfoContext();
 
   return (
     <div className="flex justify-between w-[1100px] mt-12">
-      <UserLogo user={userInfoContext.useUserInfo()}></UserLogo>
-      <UserInfoForm user={userInfoContext.useUserInfo()}></UserInfoForm>
+      <UserLogo user={useUserInfo()}></UserLogo>
+      <UserInfoForm user={useUserInfo()}></UserInfoForm>
     </div>
   )
 }
@@ -50,10 +50,10 @@ function UserLogo({user} : {user: User}) {
 }
 
 function UserInfoForm({user} : {user: User}) {
-  const userInfoContext = useUserInfoContext();
+  const {updateUser} = useUserInfoContext();
 
   function saveUserInfo(formData: FormData) {
-    userInfoContext.updateUser(
+    updateUser(
       localStorage.getItem("jwtToken"),
       formData.get("firstName") as string,
       formData.get("secondName") as string,
@@ -89,9 +89,14 @@ function OrdersList() {
   return (
     <div className="flex flex-col items-center mt-8">
       <h1 className="font-default text-[#D5778D] text-5xl">Заказы</h1>
-      <div className="flex flex-wrap w-[1200px] mt-3 gap-x-3.5 gap-y-6 pl-2.5">
-        {orderCards}
-      </div>
+
+      { userOrders.length == 0 ? (
+        <p className="font-default text-[#B4A1A6] text-4xl mt-8">У вас нет заказов</p>
+      ) : (
+        <div className="flex flex-wrap w-[1200px] mt-3 gap-x-3.5 gap-y-6 pl-2.5">
+          {orderCards}
+        </div>
+      )}
     </div>
   )
 }

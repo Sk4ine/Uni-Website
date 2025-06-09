@@ -152,33 +152,12 @@ func UpdateUser(db *sql.DB, id int, changedUser User) (User, error) {
 }
 
 func AddUser(db *sql.DB, email string, password []byte) (int64, error) {
-	transaction, err := db.Begin()
+	result, err := db.Exec("INSERT INTO clients (email, client_hashed_password) VALUES (?, ?)", email, password)
 	if err != nil {
 		return 0, err
 	}
 
-	defer transaction.Rollback()
-
-	result, err := db.Exec("INSERT INTO clients_general (email) VALUES (?)", email)
-	if err != nil {
-		return 0, err
-	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	_, err = db.Exec("INSERT INTO clients_auth (id, client_password) VALUES (?, ?)", id, password)
-	if err != nil {
-		return 0, err
-	}
-
-	if err := transaction.Commit(); err != nil {
-		return 0, err
-	}
-
-	return id, nil
+	return result.LastInsertId()
 }
 
 func CheckUserExistance(db *sql.DB, email string) (bool, error) {
