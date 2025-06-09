@@ -5,7 +5,7 @@ import axios, { isAxiosError } from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const defaultProductImage = "../frontend/src/assets/defaultProductImage.jpg";
+const defaultProductImage = "/defaultProductImage.jpg";
 
 export async function getProductList(): Promise<Product[]> {
   try {
