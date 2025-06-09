@@ -4,4 +4,12 @@
 
 @theme {
   --font-default: "Manrope", sans-serif;
+
+  --color-font-pink: #D5778D;
+  --color-font-pink-hover: #B36476;
+
+  --color-font-gray: #B5ABA1;
+  --color-font-gray-hover: #878078;
+
+  --color-font-darkgray: #979797;
 }

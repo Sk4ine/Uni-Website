@@ -2,8 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"strconv"
-	"strings"
 )
 
 type Product struct {
@@ -73,40 +71,38 @@ func GetProductByID(db *sql.DB, id int) (Product, error) {
 	return product, nil
 }
 
-func GetProducts(db *sql.DB, ids []int) ([]Product, error) {
-	var idStringArray []string
-
-	for _, num := range ids {
-		idStringArray = append(idStringArray, strconv.Itoa(num))
-	}
-
-	var idString string = strings.Join(idStringArray, ", ")
-
-	rows, err := db.Query("SELECT * FROM products WHERE id IN (?)", idString)
+func UpdateProduct(db *sql.DB, id, category_id int, name string, price int, materials string, weightInGrams, quantityInStock int, countryOfOrigin string) error {
+	_, err := db.Exec("UPDATE products SET category_id = ?, product_name = ?, price = ?, materials = ?, weight_in_grams = ?, quantity_in_stock = ?, country_of_origin = ? WHERE id = ?",
+		category_id,
+		name,
+		price,
+		materials,
+		weightInGrams,
+		quantityInStock,
+		countryOfOrigin,
+		id,
+	)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	var products []Product
+	return nil
+}
 
-	for rows.Next() {
-		var product Product
-
-		if err := rows.Scan(
-			&product.ID,
-			&product.CategoryID,
-			&product.Name,
-			&product.Price,
-			&product.Materials,
-			&product.WeightInGrams,
-			&product.QuantityInStock,
-			&product.CountryOfOrigin,
-		); err != nil {
-			return nil, err
-		}
-
-		products = append(products, product)
+func AddProduct(db *sql.DB) error {
+	_, err := db.Exec("INSERT INTO products () VALUES ()")
+	if err != nil {
+		return err
 	}
 
-	return products, nil
+	return nil
+}
+
+func DeleteProduct(db *sql.DB, id int) error {
+	_, err := db.Exec("DELETE FROM products WHERE id=?", id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

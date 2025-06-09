@@ -37,7 +37,6 @@ export function AuthProvider({ children }: {children: React.ReactNode}) {
 
   const signIn = (token: string) => {
     localStorage.setItem("jwtToken", token);
-    setSignedIn(true);
 
     try {
       const decodedToken: { isAdmin?: boolean; exp: number } = jwtDecode(token);
@@ -56,19 +55,15 @@ export function AuthProvider({ children }: {children: React.ReactNode}) {
     setIsAdmin(false);
   }
 
-  const checkIsAdmin = () => {
+  const checkIsAdmin = async (): Promise<void> => {
     setLoadingAuth(true);
 
-    async function checkIfAdmin(): Promise<void> {
-      try {
-        setIsAdmin(await checkIfUserIsAdmin(localStorage.getItem("jwtToken")));
-        setLoadingAuth(false);
-      } catch (err) {
-        console.error(err);
-      }
+    try {
+      setIsAdmin(await checkIfUserIsAdmin(localStorage.getItem("jwtToken")));
+      setLoadingAuth(false);
+    } catch (err) {
+      console.error(err);
     }
-
-    checkIfAdmin();
   }
 
   return (

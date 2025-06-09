@@ -14,10 +14,9 @@ export function HomePage() {
     async function getProducts(): Promise<void> {
       try {
         setProductList(await getProductList());
+        setIsLoading(false);
       } catch (err) {
         console.error(err);
-      } finally {
-        setIsLoading(false);
       }
     }
 

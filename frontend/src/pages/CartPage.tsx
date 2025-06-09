@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
 import { CartSection } from "../components/Cart";
 import { ContentWrapper, ErrorMessage, Footer, LoadingMessage, PageWrapper } from "../components/Common";
-import type { Product } from "../classes/product";
-import { getProductByID, getProductList } from "../api/requests/products";
-import { ProductListContext } from "../contexts/otherContexts";
 import { NavigationBar } from "../components/NavigationBar";
 import { useCartContext } from "../contexts/cartContext";
-import type { AxiosError } from "axios";
-import axios from "axios";
 
 export function CartPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);

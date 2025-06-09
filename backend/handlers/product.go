@@ -59,16 +59,73 @@ func GetProducts(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func GetProductColumnNames(db *sql.DB) http.HandlerFunc {
+func UpdateProduct(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		columnData, err := models.GetTableColumnNamesExclude(db, "products", []string{"image_paths"})
+		vars := mux.Vars(r)
+		idStr := vars["id"]
+
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "ID must be a number", http.StatusBadRequest)
+			return
+		}
+
+		var productData models.Product
+
+		if err := json.NewDecoder(r.Body).Decode(&productData); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err = models.UpdateProduct(
+			db,
+			id,
+			productData.CategoryID,
+			productData.Name,
+			productData.Price,
+			productData.Materials,
+			productData.WeightInGrams,
+			productData.QuantityInStock,
+			productData.CountryOfOrigin,
+		)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
+	}
+}
 
-		json.NewEncoder(w).Encode(columnData)
+func AddProduct(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		err := models.AddProduct(db)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+	}
+}
+
+func DeleteProduct(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		idStr := vars["id"]
+
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "ID must be a number", http.StatusBadRequest)
+			return
+		}
+
+		err = models.DeleteProduct(db, id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
 	}
 }

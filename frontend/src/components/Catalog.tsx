@@ -17,13 +17,9 @@ function CategoryList() {
   const categoryListContext = useContext(CategoryListContext);
   const activeCategoryContext = useActiveCategoryContext();
 
-  const categoryButtonList: React.ReactNode[] = [];
-
-  categoryButtonList.push(<CategoryButton key={0} categoryID={0} categoryName="Всё" active={activeCategoryContext.activeCategory == 0 ? true : false}></CategoryButton>)
-
-  for(let i = 0; i < categoryListContext.length; i++) {
-    categoryButtonList.push(<CategoryButton key={i + 1} categoryID={categoryListContext[i].id} categoryName={categoryListContext[i].name} active={categoryListContext[i].id == activeCategoryContext.activeCategory ? true : false}></CategoryButton>);
-  }
+  const categoryButtonList: React.ReactNode[] = categoryListContext.map((category, index) => (
+    <CategoryButton key={index} categoryID={category.id} categoryName={category.name} active={category.id == activeCategoryContext.activeCategory ? true : false}></CategoryButton>
+  ));
 
   return (
     <div className="flex flex-wrap justify-center items-center gap-5 w-[1344px] mt-10">

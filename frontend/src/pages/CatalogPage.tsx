@@ -5,10 +5,9 @@ import { CategoryListContext, ProductListContext } from "../contexts/otherContex
 import { useState, useEffect } from "react";
 import { getProductList } from "../api/requests/products";
 import type { Product } from "../classes/product";
-import axios from "axios";
-import type { CategoryResponse } from "../api/responses/apiResponses";
 import { ProductCategory } from "../classes/productCategory";
 import { NavigationBar } from "../components/NavigationBar";
+import { getCategoryList } from "../api/requests/categories";
 
 export function CatalogPage() {
   const [productList, setProductList] = useState<Product[]>([]);
@@ -19,29 +18,23 @@ export function CatalogPage() {
     async function getProducts(): Promise<void> {
       try {
         setProductList(await getProductList());
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function getCategories(): Promise<void> {
+      try {
+        setCategoryList(await getCategoryList())
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     }
 
     getProducts();
-
-    axios.get<CategoryResponse[]>("http://localhost:8080/api/categories")
-      .then(res => {
-        let categoryList: ProductCategory[] = [];
-
-        for(let i = 0; i < res.data.length; i++) {
-          const currentCategory: CategoryResponse = res.data[i];
-
-          categoryList.push(new ProductCategory(currentCategory.id, currentCategory.name))
-        }
-
-        setCategoryList(categoryList);
-      })
-      .catch(err => {
-        console.log(err);
-      })
-      .finally(() => setIsLoading(false));
+    getCategories();
   }, []);
 
   return (

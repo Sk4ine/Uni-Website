@@ -2,11 +2,10 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { CartPage } from "./pages/CartPage";
 import { CatalogPage } from "./pages/CatalogPage";
 import { HomePage } from "./pages/HomePage";
-import { User } from "./classes/user";
 import { ProductDetailsPage } from "./pages/ProductDetailsPage";
 
 import { CartProvider } from "./providers/CartProvider";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LoginPage } from "./pages/LoginPage";
 import { RegistrationPage } from "./pages/RegistrationPage";
 import { CartProduct } from "./classes/cartProduct";
@@ -15,11 +14,10 @@ import { CheckoutPage } from "./pages/CheckoutPage";
 import { ActiveCategoryContext } from "./contexts/activeCategoryContext";
 import { CheckoutProductContext } from "./contexts/checkoutProductContext";
 import { AdminPanelPage } from "./pages/AdminPanelPage";
-import { checkIfUserIsAdmin } from "./api/requests/user";
 import { AuthProvider } from "./providers/AuthProvider";
 
 export function App() {
-  const [activeCategory, setActiveCategory] = useState<number>(0);
+  const [activeCategory, setActiveCategory] = useState<number>(1);
 
   const [checkoutProduct, setCheckoutProduct] = useState<CartProduct | undefined>(undefined);
   

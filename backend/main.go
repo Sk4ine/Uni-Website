@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/Sk4ine/Uni-Website/handlers"
-	"github.com/Sk4ine/Uni-Website/models"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
@@ -61,16 +60,13 @@ func main() {
 
 	log.Println("Migrations applied successfully!")
 
-	fmt.Println(models.GetProductByID(db, 1))
-
 	r := mux.NewRouter()
 
-	r.HandleFunc("/api/users/me", handlers.AuthMiddleware(handlers.GetUser(db))).Methods("GET")
-	r.HandleFunc("/api/users/me", handlers.AuthMiddleware(handlers.UpdateUser(db))).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/api/users/me/is-admin", handlers.AuthMiddleware(handlers.CheckIfUserIsAdmin(db))).Methods("GET", "OPTIONS")
-	r.HandleFunc("/api/users/me/orders", handlers.AuthMiddleware(handlers.GetUserOrderList(db))).Methods("GET")
-	r.HandleFunc("/api/users/me/orders", handlers.AuthMiddleware(handlers.HandleCheckout(db))).Methods("POST", "OPTIONS")
-	//r.HandleFunc("/api/users/{id}/is-admin", handlers.CheckUserIsAdmin(db)).Methods("GET")
+	r.HandleFunc("/api/users/me", handlers.AuthMiddleware(handlers.GetUser(db), false)).Methods("GET")
+	r.HandleFunc("/api/users/me", handlers.AuthMiddleware(handlers.UpdateUser(db), false)).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/api/users/me/is-admin", handlers.AuthMiddleware(handlers.CheckIfUserIsAdmin(db), false)).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/users/me/orders", handlers.AuthMiddleware(handlers.GetUserOrderList(db), false)).Methods("GET")
+	r.HandleFunc("/api/users/me/orders", handlers.AuthMiddleware(handlers.HandleCheckout(db), false)).Methods("POST", "OPTIONS")
 
 	r.HandleFunc("/api/auth/login", handlers.HandleLogin(db)).Methods("POST", "OPTIONS")
 	r.HandleFunc("/api/auth/register", handlers.HandleRegistraion(db)).Methods("POST", "OPTIONS")
@@ -82,13 +78,21 @@ func main() {
 
 	r.HandleFunc("/static/productImages/{product-id}", handlers.ServeProductImages(db)).Methods("GET")
 
+	r.HandleFunc("/api/admin/categories/{id}", handlers.AuthMiddleware(handlers.UpdateCategory(db), true)).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/api/admin/categories", handlers.AuthMiddleware(handlers.AddCategory(db), true)).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/admin/categories/{id}", handlers.AuthMiddleware(handlers.DeleteCategory(db), true)).Methods("DELETE", "OPTIONS")
+
+	r.HandleFunc("/api/admin/products/{id}", handlers.AuthMiddleware(handlers.UpdateProduct(db), true)).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/api/admin/products", handlers.AuthMiddleware(handlers.AddProduct(db), true)).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/admin/products/{id}", handlers.AuthMiddleware(handlers.DeleteProduct(db), true)).Methods("DELETE", "OPTIONS")
+
 	fs := http.FileServer(http.Dir("static/"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
-			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
 			if r.Method == "OPTIONS" {

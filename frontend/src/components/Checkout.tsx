@@ -1,7 +1,7 @@
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Product } from "../classes/product";
-import { InputField } from "./Common";
+import { InputField, LoadingMessage } from "./Common";
 import { Link } from "react-router";
 import type { CartProduct } from "../classes/cartProduct";
 import { useCheckoutProductDataContext } from "../contexts/checkoutProductDataContext";
@@ -70,16 +70,20 @@ function OrderInfo({product} : {product: Product}) {
 }
 
 function CustomerInfo() {
-  const userInfoContext = useUserInfoContext();
+  const {userLoading, useUserInfo} = useUserInfoContext();
+
+  if (userLoading) {
+    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={50}></LoadingMessage>
+  }
 
   return (
     <div className="flex flex-col">
       <p className="font-default text-[#D5778D] text-3xl">Покупатель</p>
       <div className="flex flex-col mt-4 gap-6">
-        <InputField fieldName="Имя" fieldID="firstName" disabled={true} value={userInfoContext.useUserInfo().firstName}></InputField>
-        <InputField fieldName="Фамилия" fieldID="secondName" disabled={true} value={userInfoContext.useUserInfo().secondName}></InputField>
-        <InputField fieldName="Номер телефона" fieldID="phoneNumber" disabled={true} value={userInfoContext.useUserInfo().phoneNumber}></InputField>
-        <InputField fieldName="Электронная почта" fieldID="email" disabled={true} value={userInfoContext.useUserInfo().email} required></InputField>
+        <InputField fieldName="Имя" fieldID="firstName" disabled={true} value={useUserInfo().firstName}></InputField>
+        <InputField fieldName="Фамилия" fieldID="secondName" disabled={true} value={useUserInfo().secondName}></InputField>
+        <InputField fieldName="Номер телефона" fieldID="phoneNumber" disabled={true} value={useUserInfo().phoneNumber}></InputField>
+        <InputField fieldName="Электронная почта" fieldID="email" disabled={true} value={useUserInfo().email} required></InputField>
         <InputField fieldName="Адрес пункта выдачи" fieldID="shippingAddress" required></InputField>
       </div>
     </div>

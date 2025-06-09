@@ -57,7 +57,7 @@ export function ProductList() {
   
   for(let i = 0; i < productListContext.length; i++) {
     const curProductCategory = productListContext[i].categoryID;
-    if((curProductCategory == activeCategoryContext.activeCategory) || (activeCategoryContext.activeCategory == 0)) {
+    if((curProductCategory == activeCategoryContext.activeCategory) || (activeCategoryContext.activeCategory == 1)) {
       productCards.push(<ProductCard key={i} product={productListContext[i]}></ProductCard>);
     }
   }

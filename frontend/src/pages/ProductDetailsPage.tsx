@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { Product } from "../classes/product";
 import { ContentWrapper, Footer, LoadingMessage, PageWrapper } from "../components/Common";
 import { CustomerReviews, ProductPageSection, ReviewCard } from "../components/ProductDetails";
-import axios from "axios";
-import type { ProductResponse } from "../api/responses/apiResponses";
-import { Navigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { NavigationBar } from "../components/NavigationBar";
 import { getProductByID } from "../api/requests/products";
 

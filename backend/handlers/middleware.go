@@ -12,7 +12,7 @@ type contextKey string
 
 const UserID = contextKey("userID")
 
-func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
+func AuthMiddleware(next http.HandlerFunc, adminOnly bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		tokenString := r.Header.Get("Authorization")
 		if tokenString == "" {
@@ -46,6 +46,11 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 		if !token.Valid {
 			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			return
+		}
+
+		if adminOnly && !claims.IsAdmin {
+			http.Error(w, "User is not admin", http.StatusUnauthorized)
 			return
 		}
 

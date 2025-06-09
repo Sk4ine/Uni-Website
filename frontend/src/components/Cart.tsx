@@ -1,9 +1,7 @@
-import { useContext } from "react"
 import type { Product } from "../classes/product"
 import { Link, useNavigate } from "react-router";
 import { useCartContext } from "../contexts/cartContext";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
-import { ErrorMessage } from "./Common";
 
 export function CartSection() {
   return (

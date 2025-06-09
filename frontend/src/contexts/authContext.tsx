@@ -6,7 +6,7 @@ interface AuthContextType {
   loadingAuth: boolean,
   signIn: (token: string) => void,
   signOut: () => void,
-  checkIsAdmin: () => void
+  checkIsAdmin: () => Promise<void>
 }
 
 export const AuthContext: React.Context<AuthContextType | undefined> = createContext<AuthContextType | undefined>(undefined);
