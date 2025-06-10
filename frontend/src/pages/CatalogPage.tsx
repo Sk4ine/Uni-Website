@@ -22,11 +22,10 @@ export function CatalogPage() {
 
     async function getCategories(): Promise<void> {
       try {
-        setCategoryList(await getCategoryList())
+        setCategoryList(await getCategoryList());
+        setIsLoading(false);
       } catch (error) {
         console.log(error);
-      } finally {
-        setIsLoading(false);
       }
     }
 
