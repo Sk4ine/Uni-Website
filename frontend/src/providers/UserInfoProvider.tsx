@@ -37,15 +37,7 @@ export function UserInfoProvider({ children }: { children: React.ReactNode }) {
   ): void => {
     async function update() {
       try {
-        setUserInfo(
-          await updateUserInfo(
-            jwtToken,
-            firstName,
-            secondName,
-            email,
-            phoneNumber,
-          ),
-        );
+        setUserInfo(await updateUserInfo(jwtToken, firstName, secondName, email, phoneNumber));
       } catch (error) {
         console.log(error);
       }

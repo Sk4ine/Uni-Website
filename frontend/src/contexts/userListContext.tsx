@@ -6,8 +6,9 @@ type UserListContextType = {
   setUserList: React.Dispatch<React.SetStateAction<User[]>>;
 };
 
-export const UserListContext: React.Context<UserListContextType | undefined> =
-  createContext<UserListContextType | undefined>(undefined);
+export const UserListContext: React.Context<UserListContextType | undefined> = createContext<
+  UserListContextType | undefined
+>(undefined);
 
 export const useUserListContext = (): UserListContextType => {
   const context = useContext(UserListContext);

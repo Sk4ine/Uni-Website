@@ -7,9 +7,7 @@ export function LoginPage() {
   const authContext = useAuthContext();
 
   if (authContext.loadingAuth) {
-    return (
-      <LoadingMessage text="Загрузка данных пользователя..." heightVH={100} />
-    );
+    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100} />;
   }
 
   if (authContext.signedIn) {

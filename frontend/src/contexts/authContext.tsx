@@ -9,8 +9,9 @@ interface AuthContextType {
   checkIsAdmin: () => Promise<void>;
 }
 
-export const AuthContext: React.Context<AuthContextType | undefined> =
-  createContext<AuthContextType | undefined>(undefined);
+export const AuthContext: React.Context<AuthContextType | undefined> = createContext<
+  AuthContextType | undefined
+>(undefined);
 
 export const useAuthContext = (): AuthContextType => {
   const context = useContext(AuthContext);

@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { Product } from "../classes/product";
 import { LoadingMessage } from "../components/Common";
-import {
-  CustomerReviews,
-  ProductPageSection,
-  ReviewCard,
-} from "../components/ProductDetails";
+import { CustomerReviews, ProductPageSection, ReviewCard } from "../components/ProductDetails";
 import { useParams } from "react-router";
 import { getProductByID } from "../api/requests/products";
 
@@ -31,15 +27,12 @@ export function ProductDetailsPage() {
     };
 
     getProduct();
-  }, []);
+  }, [id]);
 
   return (
     <>
       {!product || isLoading ? (
-        <LoadingMessage
-          text="Загрузка товара..."
-          heightVH={100}
-        ></LoadingMessage>
+        <LoadingMessage text="Загрузка товара..." heightVH={100}></LoadingMessage>
       ) : (
         <ProductPageSection product={product}>
           <CustomerReviews product={product}>

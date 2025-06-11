@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CartProduct } from "../classes/cartProduct";
 import { CartContext } from "../contexts/cartContext";
 import type { Product } from "../classes/product";
@@ -18,43 +18,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   });
 
-  const [catalogProductList, setCatalogProductList] = useState<Product[]>([]);
+  const checkProductPresence = useCallback(
+    (productID: number): boolean => {
+      if (cartProductList.findIndex((product) => product.productID == productID) !== -1) {
+        return true;
+      }
 
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartProductList));
-  }, [cartProductList]);
+      return false;
+    },
+    [cartProductList],
+  );
 
-  function addProduct(productID: number) {
-    if (checkProductPresence(productID)) {
-      changeProductQuantity(productID, true);
-      return;
-    }
-
-    setCartProductList((p) => [...p, new CartProduct(productID, 1)]);
-  }
-
-  function removeProduct(productID: number) {
-    setCartProductList((p) =>
-      p.filter((product) => product.productID != productID),
-    );
-  }
-
-  function decreaseProductQuantity(productID: number) {
-    changeProductQuantity(productID, false);
-  }
-
-  function checkProductPresence(productID: number): boolean {
-    if (
-      cartProductList.findIndex((product) => product.productID == productID) !==
-      -1
-    ) {
-      return true;
-    }
-
-    return false;
-  }
-
-  function changeProductQuantity(productID: number, increase: boolean): void {
+  const changeProductQuantity = useCallback((productID: number, increase: boolean): void => {
     const value: number = increase ? 1 : -1;
 
     setCartProductList((p) => {
@@ -64,9 +39,38 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       ].quantity += value;
       return newProductList;
     });
-  }
+  }, []);
 
-  async function updateCatalogProductList(): Promise<void> {
+  const [catalogProductList, setCatalogProductList] = useState<Product[]>([]);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartProductList));
+  }, [cartProductList]);
+
+  const addProduct = useCallback(
+    (productID: number) => {
+      if (checkProductPresence(productID)) {
+        changeProductQuantity(productID, true);
+        return;
+      }
+
+      setCartProductList((p) => [...p, new CartProduct(productID, 1)]);
+    },
+    [changeProductQuantity, checkProductPresence],
+  );
+
+  const removeProduct = useCallback((productID: number) => {
+    setCartProductList((p) => p.filter((product) => product.productID != productID));
+  }, []);
+
+  const decreaseProductQuantity = useCallback(
+    (productID: number) => {
+      changeProductQuantity(productID, false);
+    },
+    [changeProductQuantity],
+  );
+
+  const updateCatalogProductList = useCallback(async (): Promise<void> => {
     async function getProduct(id: number): Promise<Product> {
       try {
         const product: Product = await getProductByID(id);
@@ -76,7 +80,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    let products: Product[] = [];
+    const products: Product[] = [];
 
     for (let i = 0; i < cartProductList.length; i++) {
       try {
@@ -94,7 +98,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
 
     setCatalogProductList(products);
-  }
+  }, [cartProductList, removeProduct]);
 
   return (
     <CartContext.Provider

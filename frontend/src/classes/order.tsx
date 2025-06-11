@@ -23,12 +23,7 @@ export class Order {
     return this._status;
   }
 
-  public constructor(
-    productID: number,
-    productQuantity: number,
-    cost: number,
-    status: string,
-  ) {
+  public constructor(productID: number, productQuantity: number, cost: number, status: string) {
     this._productQuantity = productQuantity;
     this._productID = productID;
     this._cost = cost;

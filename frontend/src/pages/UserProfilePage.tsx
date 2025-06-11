@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { LoadingMessage } from "../components/Common";
 import { UserProfileSection } from "../components/UserProfile";
-import {
-  OrderListContext,
-  ProductListContext,
-} from "../contexts/otherContexts";
+import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import { Navigate } from "react-router";
 import { Order } from "../classes/order";
 import type { Product } from "../classes/product";
@@ -36,15 +33,10 @@ export function UserProfilePage() {
     }
 
     getOrderData();
-  }, [authContext.loadingAuth]);
+  }, [authContext.loadingAuth, authContext.signedIn]);
 
   if (authContext.loadingAuth) {
-    return (
-      <LoadingMessage
-        text="Загрузка данных пользователя..."
-        heightVH={100}
-      ></LoadingMessage>
-    );
+    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100}></LoadingMessage>;
   }
 
   if (!authContext.signedIn) {
@@ -55,9 +47,7 @@ export function UserProfilePage() {
     <ProductListContext.Provider value={productList}>
       <OrderListContext.Provider value={orderList}>
         <UserInfoProvider>
-          <UserProfileSection
-            ordersLoading={ordersLoading}
-          ></UserProfileSection>
+          <UserProfileSection ordersLoading={ordersLoading} />
         </UserInfoProvider>
       </OrderListContext.Provider>
     </ProductListContext.Provider>

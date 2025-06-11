@@ -13,15 +13,14 @@ interface UserInfoContextType {
   ) => void;
 }
 
-export const UserInfoContext: React.Context<UserInfoContextType | undefined> =
-  createContext<UserInfoContextType | undefined>(undefined);
+export const UserInfoContext: React.Context<UserInfoContextType | undefined> = createContext<
+  UserInfoContextType | undefined
+>(undefined);
 
 export const useUserInfoContext = (): UserInfoContextType => {
   const context = useContext(UserInfoContext);
   if (context === undefined) {
-    throw new Error(
-      "useUserInfoContext must be used within a UserInfoProvider",
-    );
+    throw new Error("useUserInfoContext must be used within a UserInfoProvider");
   }
   return context;
 };

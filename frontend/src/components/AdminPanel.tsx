@@ -27,31 +27,17 @@ export function DatabaseEditSection() {
 function TableSelector() {
   return (
     <div className="flex justify-center items-center gap-5">
-      <TableSelectButton
-        buttonText="Категории"
-        tableName="categories"
-      ></TableSelectButton>
-      <TableSelectButton
-        buttonText="Продукты"
-        tableName="products"
-      ></TableSelectButton>
+      <TableSelectButton buttonText="Категории" tableName="categories"></TableSelectButton>
+      <TableSelectButton buttonText="Продукты" tableName="products"></TableSelectButton>
     </div>
   );
 }
 
-function TableSelectButton({
-  buttonText,
-  tableName,
-}: {
-  buttonText: string;
-  tableName: string;
-}) {
+function TableSelectButton({ buttonText, tableName }: { buttonText: string; tableName: string }) {
   const { activeTable, switchActiveTable } = useAdminPanelContext();
 
-  const backgroundColor: string =
-    activeTable == tableName ? "bg-[#F5D4D5]" : "bg-[#E2E2E2]";
-  const textColor: string =
-    activeTable == tableName ? "text-[#EF829A]" : "text-[#979797]";
+  const backgroundColor: string = activeTable == tableName ? "bg-[#F5D4D5]" : "bg-[#E2E2E2]";
+  const textColor: string = activeTable == tableName ? "text-[#EF829A]" : "text-[#979797]";
   const backgroundHoverColor: string =
     activeTable == tableName ? "hover:bg-[#E6C8C9]" : "hover:bg-[#D1D1D1]";
 
@@ -70,8 +56,7 @@ function TableSelectButton({
 }
 
 function TableEditor() {
-  const { activeTable, tableData, tableRecords, loadingRecords } =
-    useAdminPanelContext();
+  const { activeTable, tableData, tableRecords, loadingRecords } = useAdminPanelContext();
   const [categoryList, setCategoryList] = useState<ProductCategory[]>([]);
   const [loadingCategories, setLoadingCategories] = useState<boolean>(true);
 
@@ -89,9 +74,7 @@ function TableEditor() {
   }, []);
 
   if (loadingRecords || loadingCategories) {
-    return (
-      <LoadingMessage text="Загрузка таблицы..." heightVH={50}></LoadingMessage>
-    );
+    return <LoadingMessage text="Загрузка таблицы..." heightVH={50}></LoadingMessage>;
   }
 
   let recordNodes: React.ReactNode[] = [];
@@ -158,12 +141,8 @@ function TableEditor() {
       <table className="w-[1000px] mt-6 rounded-xl font-default shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)]">
         <tbody>
           <tr className="text-font-darkgray text-xl">
-            <th className="py-1 w-[20%] border-r-2 border-font-darkgray/50">
-              ID
-            </th>
-            <th className="py-1 w-[80%] border-l-2 border-font-darkgray/50">
-              {tableData.header}
-            </th>
+            <th className="py-1 w-[20%] border-r-2 border-font-darkgray/50">ID</th>
+            <th className="py-1 w-[80%] border-l-2 border-font-darkgray/50">{tableData.header}</th>
           </tr>
 
           {recordNodes}
@@ -217,8 +196,7 @@ function CellBase({ children }: { children: React.ReactNode }) {
 }
 
 function EditButtons({ recordID }: { recordID: number }) {
-  const { activeTable, setEditIsOpen, setSelectedRecord, setDeleteIsOpen } =
-    useAdminPanelContext();
+  const { activeTable, setEditIsOpen, setSelectedRecord, setDeleteIsOpen } = useAdminPanelContext();
 
   function handleEdit() {
     setSelectedRecord(recordID);
@@ -416,9 +394,7 @@ function ProductEditForm() {
         className="flex flex-col items-center font-default text-xl bg-white rounded-2xl px-4 pt-4 pb-4"
       >
         {loadingCategories ? (
-          <p className="font-default text-font-gray text-2xl">
-            Загрузка формы...
-          </p>
+          <p className="font-default text-font-gray text-2xl">Загрузка формы...</p>
         ) : (
           <>
             <div className="flex justify-end w-full">
@@ -470,10 +446,7 @@ function ProductEditForm() {
                 name="countryOfOrigin"
                 labelText="Страна"
               ></EditFormInputField>
-              <EditFileUploadField
-                name="imageFile"
-                labelText="Изображение"
-              ></EditFileUploadField>
+              <EditFileUploadField name="imageFile" labelText="Изображение"></EditFileUploadField>
             </div>
             <button
               type="submit"
@@ -504,17 +477,11 @@ function DeleteConfirmDialog() {
       try {
         switch (activeTable) {
           case "categories":
-            await deleteCategory(
-              localStorage.getItem("jwtToken"),
-              selectedRecord,
-            );
+            await deleteCategory(localStorage.getItem("jwtToken"), selectedRecord);
             updateTableRecords(false);
             break;
           case "products":
-            await deleteProduct(
-              localStorage.getItem("jwtToken"),
-              selectedRecord,
-            );
+            await deleteProduct(localStorage.getItem("jwtToken"), selectedRecord);
             updateTableRecords(false);
         }
       } catch (error) {
@@ -557,9 +524,7 @@ function DeleteConfirmDialog() {
   return (
     <div className="flex justify-center items-center fixed inset-0 bg-black/50 z-50">
       <div className="flex flex-col items-center bg-white rounded-2xl px-4 py-4">
-        <p className="font-default text-font-darkgray text-2xl max-w-[80%] text-center">
-          {text}
-        </p>
+        <p className="font-default text-font-darkgray text-2xl max-w-[80%] text-center">{text}</p>
         <div className="flex justify-between items-center font-default text-2xl gap-5 mt-4">
           <button
             onClick={handleConfirm}
@@ -630,13 +595,7 @@ function EditFormDropDownMenu({
   );
 }
 
-function EditFileUploadField({
-  name,
-  labelText,
-}: {
-  name: string;
-  labelText: string;
-}) {
+function EditFileUploadField({ name, labelText }: { name: string; labelText: string }) {
   return (
     <div className="flex flex-col">
       <label htmlFor="image">{labelText}</label>
@@ -681,11 +640,7 @@ function AddRecordButton() {
           onClick={handleAdd}
           className="w-full h-full cursor-pointer py-2 text-font-pink hover:text-font-pink-hover hover:bg-gray-50 rounded-b-xl"
         >
-          <FontAwesomeIcon
-            icon={faPlus}
-            size="xl"
-            className=""
-          ></FontAwesomeIcon>
+          <FontAwesomeIcon icon={faPlus} size="xl" className=""></FontAwesomeIcon>
         </button>
       </td>
     </tr>

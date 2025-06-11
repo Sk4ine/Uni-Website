@@ -18,16 +18,14 @@ interface AdminPanelContextType {
   setDeleteIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const AdminPanelContext: React.Context<
+export const AdminPanelContext: React.Context<AdminPanelContextType | undefined> = createContext<
   AdminPanelContextType | undefined
-> = createContext<AdminPanelContextType | undefined>(undefined);
+>(undefined);
 
 export const useAdminPanelContext = (): AdminPanelContextType => {
   const context = useContext(AdminPanelContext);
   if (context === undefined) {
-    throw new Error(
-      "useAdminPanelContext must be used within a AdminPanelProvider",
-    );
+    throw new Error("useAdminPanelContext must be used within a AdminPanelProvider");
   }
   return context;
 };

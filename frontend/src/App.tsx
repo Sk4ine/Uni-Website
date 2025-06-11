@@ -21,43 +21,28 @@ import { AuthLayout } from "./layouts/AuthLayout";
 export function App() {
   const [activeCategory, setActiveCategory] = useState<number>(1);
 
-  const [checkoutProduct, setCheckoutProduct] = useState<
-    CartProduct | undefined
-  >(undefined);
+  const [checkoutProduct, setCheckoutProduct] = useState<CartProduct | undefined>(undefined);
 
   return (
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
-          <ActiveCategoryContext.Provider
-            value={{ activeCategory, setActiveCategory }}
-          >
-            <CheckoutProductContext.Provider
-              value={{ checkoutProduct, setCheckoutProduct }}
-            >
+          <ActiveCategoryContext.Provider value={{ activeCategory, setActiveCategory }}>
+            <CheckoutProductContext.Provider value={{ checkoutProduct, setCheckoutProduct }}>
               <Routes>
                 <Route path="/" element={<MainLayout />}>
                   <Route index element={<Navigate to="/home" />}></Route>
                   <Route path="home" element={<HomePage />}></Route>
                   <Route path="catalog" element={<CatalogPage />}></Route>
                   <Route path="cart" element={<CartPage />}></Route>
-                  <Route
-                    path="catalog/:id"
-                    element={<ProductDetailsPage />}
-                  ></Route>
-                  <Route
-                    path="user-profile"
-                    element={<UserProfilePage />}
-                  ></Route>
+                  <Route path="catalog/:id" element={<ProductDetailsPage />}></Route>
+                  <Route path="user-profile" element={<UserProfilePage />}></Route>
                   <Route path="checkout" element={<CheckoutPage />}></Route>
                 </Route>
 
                 <Route path="auth" element={<AuthLayout />}>
                   <Route path="login" element={<LoginPage />}></Route>
-                  <Route
-                    path="registration"
-                    element={<RegistrationPage />}
-                  ></Route>
+                  <Route path="registration" element={<RegistrationPage />}></Route>
                 </Route>
 
                 <Route path="admin-panel" element={<AdminPanelPage />}></Route>

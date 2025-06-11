@@ -9,9 +9,9 @@ const defaultProductImage = "/defaultProductImage.jpg";
 
 export async function getProductList(): Promise<Product[]> {
   try {
-    const response: AxiosResponse<ProductResponse[]> = await axios.get<
-      ProductResponse[]
-    >(`${API_BASE_URL}/api/products`);
+    const response: AxiosResponse<ProductResponse[]> = await axios.get<ProductResponse[]>(
+      `${API_BASE_URL}/api/products`,
+    );
     const productResponses: ProductResponse[] = response.data;
 
     const productList: Product[] = productResponses.map(
@@ -57,8 +57,9 @@ export async function getProductList(): Promise<Product[]> {
 
 export async function getProductByID(id: number): Promise<Product> {
   try {
-    const response: AxiosResponse<ProductResponse> =
-      await axios.get<ProductResponse>(`${API_BASE_URL}/api/products/${id}`);
+    const response: AxiosResponse<ProductResponse> = await axios.get<ProductResponse>(
+      `${API_BASE_URL}/api/products/${id}`,
+    );
 
     const product: Product = new Product(
       response.data.id,
@@ -74,10 +75,9 @@ export async function getProductByID(id: number): Promise<Product> {
     let imageResponse: AxiosResponse<Blob> | undefined = undefined;
 
     try {
-      imageResponse = await axios.get<Blob>(
-        `${API_BASE_URL}/static/productImages/${product.id}`,
-        { responseType: "blob" },
-      );
+      imageResponse = await axios.get<Blob>(`${API_BASE_URL}/static/productImages/${product.id}`, {
+        responseType: "blob",
+      });
     } catch (error) {
       if (isAxiosError(error)) {
         if (error.status == 404) {

@@ -34,9 +34,7 @@ export function RegistrationForm() {
         if (axios.isAxiosError(error)) {
           switch (error.response?.status) {
             case 409:
-              setRegistrationFailMessage(
-                "Пользователь с таким email уже существует",
-              );
+              setRegistrationFailMessage("Пользователь с таким email уже существует");
               break;
             default:
               setRegistrationFailMessage("Неизвестная ошибка");
@@ -54,11 +52,7 @@ export function RegistrationForm() {
       action={registration}
       className="w-[400px] mt-6 flex flex-col py-6 px-10 gap-5 items-center rounded-2xl shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)]"
     >
-      <InputField
-        fieldName="Email"
-        fieldID="email"
-        required={true}
-      ></InputField>
+      <InputField fieldName="Email" fieldID="email" required={true}></InputField>
       <InputField
         fieldName="Пароль"
         fieldID="password"

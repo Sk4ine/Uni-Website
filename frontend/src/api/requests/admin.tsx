@@ -6,20 +6,14 @@ import { getProductList } from "./products";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function getTableRecords(
-  tableName: string,
-): Promise<ProductCategory[] | Product[]> {
-  try {
-    switch (tableName) {
-      case "categories":
-        return await getCategoryList();
-      case "products":
-        return await getProductList();
-      default:
-        throw new Error("Invalid table name");
-    }
-  } catch (error) {
-    throw error;
+export async function getTableRecords(tableName: string): Promise<ProductCategory[] | Product[]> {
+  switch (tableName) {
+    case "categories":
+      return await getCategoryList();
+    case "products":
+      return await getProductList();
+    default:
+      throw new Error("Invalid table name");
   }
 }
 
@@ -55,10 +49,7 @@ export async function addCategory(jwtToken: string | null): Promise<void> {
   }
 }
 
-export async function deleteCategory(
-  jwtToken: string | null,
-  id: number,
-): Promise<void> {
+export async function deleteCategory(jwtToken: string | null, id: number): Promise<void> {
   try {
     await axios.delete<void>(`${API_BASE_URL}/api/admin/categories/${id}`, {
       headers: {
@@ -99,16 +90,12 @@ export async function updateProduct(
       return;
     }
 
-    await axios.post<void>(
-      `${API_BASE_URL}/static/admin/productImages/${id}`,
-      updatedImage,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${jwtToken}`,
-        },
+    await axios.post<void>(`${API_BASE_URL}/static/admin/productImages/${id}`, updatedImage, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${jwtToken}`,
       },
-    );
+    });
   } catch (error) {
     throw error as AxiosError;
   }
@@ -130,10 +117,7 @@ export async function addProduct(jwtToken: string | null): Promise<void> {
   }
 }
 
-export async function deleteProduct(
-  jwtToken: string | null,
-  id: number,
-): Promise<void> {
+export async function deleteProduct(jwtToken: string | null, id: number): Promise<void> {
   try {
     await axios.delete<void>(`${API_BASE_URL}/api/admin/products/${id}`, {
       headers: {
@@ -141,14 +125,11 @@ export async function deleteProduct(
       },
     });
 
-    await axios.delete<void>(
-      `${API_BASE_URL}/static/admin/productImages/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
+    await axios.delete<void>(`${API_BASE_URL}/static/admin/productImages/${id}`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
       },
-    );
+    });
   } catch (error) {
     throw error as AxiosError;
   }

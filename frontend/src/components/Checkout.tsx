@@ -20,11 +20,7 @@ export function CheckoutSection() {
           to="/cart"
           className="flex justify-center items-center cursor-pointer text-[#B5ABA1] hover:text-[#878078]"
         >
-          <FontAwesomeIcon
-            className="basis-[20%] mt-1"
-            icon={faChevronLeft}
-            size="lg"
-          />
+          <FontAwesomeIcon className="basis-[20%] mt-1" icon={faChevronLeft} size="lg" />
           <p className="font-default text-xl text-nowrap ml-1">В корзину</p>
         </Link>
         <p className="font-default text-[#D5778D] text-5xl absolute left-1/2 transform-[TranslateX(-50%)]">
@@ -41,8 +37,7 @@ function OrderInfo({ product }: { product: Product }) {
   const checkoutProductContext = useCheckoutProductContext();
 
   function makeOrder(formData: FormData) {
-    const cartProduct: CartProduct | undefined =
-      checkoutProductContext.checkoutProduct;
+    const cartProduct: CartProduct | undefined = checkoutProductContext.checkoutProduct;
 
     async function addNewOrder(cartProduct: CartProduct) {
       try {
@@ -86,14 +81,10 @@ function OrderInfo({ product }: { product: Product }) {
 
 function CustomerInfo() {
   const { userLoading, useUserInfo } = useUserInfoContext();
+  const userInfo = useUserInfo();
 
   if (userLoading) {
-    return (
-      <LoadingMessage
-        text="Загрузка данных пользователя..."
-        heightVH={50}
-      ></LoadingMessage>
-    );
+    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={50}></LoadingMessage>;
   }
 
   return (
@@ -104,32 +95,28 @@ function CustomerInfo() {
           fieldName="Имя"
           fieldID="firstName"
           disabled={true}
-          value={useUserInfo().firstName}
+          value={userInfo.firstName}
         ></InputField>
         <InputField
           fieldName="Фамилия"
           fieldID="secondName"
           disabled={true}
-          value={useUserInfo().secondName}
+          value={userInfo.secondName}
         ></InputField>
         <InputField
           fieldName="Номер телефона"
           fieldID="phoneNumber"
           disabled={true}
-          value={useUserInfo().phoneNumber}
+          value={userInfo.phoneNumber}
         ></InputField>
         <InputField
           fieldName="Электронная почта"
           fieldID="email"
           disabled={true}
-          value={useUserInfo().email}
+          value={userInfo.email}
           required
         ></InputField>
-        <InputField
-          fieldName="Адрес пункта выдачи"
-          fieldID="shippingAddress"
-          required
-        ></InputField>
+        <InputField fieldName="Адрес пункта выдачи" fieldID="shippingAddress" required></InputField>
       </div>
     </div>
   );
@@ -138,9 +125,7 @@ function CustomerInfo() {
 function ProductInfo({ product }: { product: Product }) {
   const cartContext = useCartContext();
 
-  const quantity = cartContext.cartProductList.find(
-    (p) => p.productID == product.id,
-  )?.quantity;
+  const quantity = cartContext.cartProductList.find((p) => p.productID == product.id)?.quantity;
 
   if (!quantity) return;
 
@@ -148,6 +133,7 @@ function ProductInfo({ product }: { product: Product }) {
     <div className="flex flex-col items-center w-96 rounded-2xl py-4 shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)] font-default text-[#B4A1A6] text-3xl">
       <img
         src={product.imagePaths[0]}
+        alt=""
         className="w-[80%] aspect-square mt-2 object-cover"
       ></img>
       <p className="mt-3">{product.name}</p>

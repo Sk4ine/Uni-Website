@@ -11,15 +11,11 @@ import { useAuthContext } from "../contexts/authContext";
 
 export function NavigationBar() {
   const border: string =
-    useLocation().pathname == "/home"
-      ? "p-[10rem-4px]"
-      : "box-content border-b-4 border-[#EF829A]";
+    useLocation().pathname == "/home" ? "p-[10rem-4px]" : "box-content border-b-4 border-[#EF829A]";
 
   return (
-    <div
-      className={`flex items-end gap-5 justify-center h-40 bg-white ${border}`}
-    >
-      <img src={artezaLogo} className="h-[80%] object-none"></img>
+    <div className={`flex items-end gap-5 justify-center h-40 bg-white ${border}`}>
+      <img src={artezaLogo} alt="" className="h-[80%] object-none"></img>
       <NavigationBarButton text="Главная" url="/home"></NavigationBarButton>
       <NavigationBarButton text="Каталог" url="/catalog"></NavigationBarButton>
       <SearchBar></SearchBar>
@@ -35,8 +31,7 @@ function NavigationBarButton({ text, url }: { text: string; url: string }) {
     gray: "text-[#B5ABA1] hover:text-[#878078]",
   };
 
-  const activeColor: string =
-    useLocation().pathname == url ? colors["pink"] : colors["gray"];
+  const activeColor: string = useLocation().pathname == url ? colors["pink"] : colors["gray"];
 
   return (
     <Link
@@ -61,8 +56,7 @@ function UserLogoButton() {
 
   const curLocation = useLocation().pathname;
 
-  const activeColor: string =
-    curLocation == "/user-profile" ? colors["pink"] : colors["gray"];
+  const activeColor: string = curLocation == "/user-profile" ? colors["pink"] : colors["gray"];
 
   function handleSignOut() {
     authContext.signOut();
@@ -136,10 +130,7 @@ export function AccountButton() {
       {authContext.signedIn ? (
         <UserLogoButton></UserLogoButton>
       ) : (
-        <NavigationBarButton
-          text="Вход"
-          url="/auth/login"
-        ></NavigationBarButton>
+        <NavigationBarButton text="Вход" url="/auth/login"></NavigationBarButton>
       )}
     </div>
   );
@@ -172,14 +163,10 @@ function CartIcon() {
     gray: "bg-[#B5ABA1] group-hover:bg-[#878078]",
   };
 
-  const activeColor: string =
-    useLocation().pathname == "/cart" ? colors["pink"] : colors["gray"];
+  const activeColor: string = useLocation().pathname == "/cart" ? colors["pink"] : colors["gray"];
 
   return (
-    <Link
-      to={"/cart"}
-      className={`flex justify-center items-center h-[65%] w-20 group`}
-    >
+    <Link to={"/cart"} className={`flex justify-center items-center h-[65%] w-20 group`}>
       <div className="relative size-[50px]">
         <div
           style={{ maskImage: `url(${shoppingCartIcon})` }}
@@ -187,8 +174,7 @@ function CartIcon() {
         ></div>
         <div
           style={{
-            visibility:
-              cartContext.cartProductList.length > 0 ? "visible" : "hidden",
+            visibility: cartContext.cartProductList.length > 0 ? "visible" : "hidden",
           }}
           className="size-[20px] flex justify-center items-center absolute right-[-8px] top-0 rounded-full bg-[#D5778D]"
         >

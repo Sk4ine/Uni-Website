@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { CartSection } from "../components/Cart";
 import { useCartContext } from "../contexts/cartContext";
-import {
-  ErrorMessageContext,
-  IsLoadingContext,
-} from "../contexts/otherContexts";
+import { ErrorMessageContext, IsLoadingContext } from "../contexts/otherContexts";
 
 export function CartPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -23,7 +20,7 @@ export function CartPage() {
     }
 
     getProducts();
-  }, [cartProductList]);
+  }, [cartProductList, updateCatalogProductList]);
 
   return (
     <IsLoadingContext.Provider value={isLoading}>

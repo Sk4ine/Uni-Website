@@ -3,10 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { useCartContext } from "../contexts/cartContext";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
 import { useContext } from "react";
-import {
-  ErrorMessageContext,
-  IsLoadingContext,
-} from "../contexts/otherContexts";
+import { ErrorMessageContext, IsLoadingContext } from "../contexts/otherContexts";
 
 export function CartSection() {
   return (
@@ -31,12 +28,12 @@ function CartProductList() {
   ));
 
   if (isLoading || content.length === 0) {
-    content = [...Array(2)].map((_, index) => (
-      <LoadingCartProduct key={index} />
-    ));
+    content = [...Array(2)].map((_, index) => <LoadingCartProduct key={index} />);
   } else if (errorMessage != "") {
     content = [
-      <p className="font-default text-[#B4A1A6] text-3xl">{errorMessage}</p>,
+      <p key={0} className="font-default text-[#B4A1A6] text-3xl">
+        {errorMessage}
+      </p>,
     ];
   }
 
@@ -55,21 +52,13 @@ function CartProductList() {
   );
 }
 
-function CartProduct({
-  product,
-  quantity,
-}: {
-  product: Product;
-  quantity: number;
-}) {
+function CartProduct({ product, quantity }: { product: Product; quantity: number }) {
   return (
     <div className="w-full h-64 flex justify-between items-center rounded-2xl shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)] animate-fade-in">
-      <Link
-        to={`/catalog/${product.id}`}
-        className="h-[88%] ml-4 rounded-2xl w-1/4"
-      >
+      <Link to={`/catalog/${product.id}`} className="h-[88%] ml-4 rounded-2xl w-1/4">
         <img
           src={product.imagePaths[0]}
+          alt={product.name}
           className="h-full aspect-square rounded-2xl object-contain"
         ></img>
       </Link>
@@ -107,21 +96,12 @@ function ProductInfo({
   return (
     <div className="w-[50%] flex flex-col justify-center items-center">
       <p className="font-default text-[#B4A1A6] text-4xl">{productName}</p>
-      <QuantityCounter
-        quantity={quantity}
-        productID={productID}
-      ></QuantityCounter>
+      <QuantityCounter quantity={quantity} productID={productID}></QuantityCounter>
     </div>
   );
 }
 
-function QuantityCounter({
-  quantity,
-  productID,
-}: {
-  quantity: number;
-  productID: number;
-}) {
+function QuantityCounter({ quantity, productID }: { quantity: number; productID: number }) {
   const cartContext = useCartContext();
 
   function handleClickRemove() {
@@ -143,10 +123,7 @@ function QuantityCounter({
         -
       </button>
       <p className="text-[#B4A1A6]">{quantity}</p>
-      <button
-        onClick={handleClickAdd}
-        className="w-8 text-[#D5778D] cursor-pointer"
-      >
+      <button onClick={handleClickAdd} className="w-8 text-[#D5778D] cursor-pointer">
         +
       </button>
     </div>

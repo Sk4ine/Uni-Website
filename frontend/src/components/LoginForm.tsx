@@ -9,7 +9,7 @@ import { useAuthContext } from "../contexts/authContext";
 export function HomePageButton() {
   return (
     <Link to={"/home"} className="h-[80%] flex justify-center items-center">
-      <img src={artezaLogo} className="h-full object-none"></img>
+      <img src={artezaLogo} alt="toHomePage" className="h-full object-none"></img>
     </Link>
   );
 }
@@ -65,20 +65,11 @@ function LoginForm() {
       action={login}
       className="mt-6 flex flex-col py-6 px-10 gap-5 items-center rounded-2xl shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)]"
     >
-      <InputField
-        fieldName="Email"
-        fieldID="email"
-        required={true}
-      ></InputField>
-      <PasswordInputField
-        fieldName="Пароль"
-        fieldID="password"
-      ></PasswordInputField>
+      <InputField fieldName="Email" fieldID="email" required={true}></InputField>
+      <PasswordInputField fieldName="Пароль" fieldID="password"></PasswordInputField>
       <div className="w-full flex flex-col items-center gap-2 mt-4">
         {loginFailMessage.length > 0 ? (
-          <p className="font-default text-[#BC4241] text-xl">
-            {loginFailMessage}
-          </p>
+          <p className="font-default text-[#BC4241] text-xl">{loginFailMessage}</p>
         ) : null}
         <button
           type="submit"
@@ -98,13 +89,7 @@ function LoginForm() {
   );
 }
 
-function PasswordInputField({
-  fieldName,
-  fieldID,
-}: {
-  fieldName: string;
-  fieldID: string;
-}) {
+function PasswordInputField({ fieldName, fieldID }: { fieldName: string; fieldID: string }) {
   return (
     <div className="flex flex-col items-start">
       <div className="w-full flex justify-between items-end mb-1">

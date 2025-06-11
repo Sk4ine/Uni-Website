@@ -30,9 +30,7 @@ export function CheckoutPage() {
 
     async function getProduct(): Promise<void> {
       try {
-        const newProduct: Product = await getProductByID(
-          checkoutProduct.productID,
-        );
+        const newProduct: Product = await getProductByID(checkoutProduct.productID);
         setCheckoutProductData(newProduct);
       } catch (err) {
         console.error(err);
@@ -42,15 +40,10 @@ export function CheckoutPage() {
     }
 
     getProduct();
-  }, [authContext.loadingAuth]);
+  }, [authContext.loadingAuth, authContext.signedIn, checkoutProductContext.checkoutProduct]);
 
   if (authContext.loadingAuth) {
-    return (
-      <LoadingMessage
-        text="Загрузка данных пользователя..."
-        heightVH={100}
-      ></LoadingMessage>
-    );
+    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100}></LoadingMessage>;
   }
 
   if (!authContext.signedIn) {
@@ -65,10 +58,7 @@ export function CheckoutPage() {
     <CheckoutProductDataContext.Provider value={checkoutProductData}>
       <UserInfoProvider>
         {isLoading || authContext.loadingAuth ? (
-          <LoadingMessage
-            text="Загрузка заказа..."
-            heightVH={50}
-          ></LoadingMessage>
+          <LoadingMessage text="Загрузка заказа..." heightVH={50}></LoadingMessage>
         ) : (
           <CheckoutSection></CheckoutSection>
         )}

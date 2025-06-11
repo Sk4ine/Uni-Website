@@ -1,8 +1,5 @@
 import { useContext } from "react";
-import {
-  CategoryListContext,
-  IsLoadingContext,
-} from "../contexts/otherContexts";
+import { CategoryListContext, IsLoadingContext } from "../contexts/otherContexts";
 import { ProductList } from "./Common";
 import { useActiveCategoryContext } from "../contexts/activeCategoryContext";
 
@@ -21,18 +18,14 @@ function CategoryList() {
   const activeCategoryContext = useActiveCategoryContext();
   const isLoading: boolean = useContext(IsLoadingContext);
 
-  const categoryButtonList: React.ReactNode[] = categoryListContext.map(
-    (category, index) => (
-      <CategoryButton
-        key={index}
-        categoryID={category.id}
-        categoryName={category.name}
-        active={
-          category.id == activeCategoryContext.activeCategory ? true : false
-        }
-      ></CategoryButton>
-    ),
-  );
+  const categoryButtonList: React.ReactNode[] = categoryListContext.map((category, index) => (
+    <CategoryButton
+      key={index}
+      categoryID={category.id}
+      categoryName={category.name}
+      active={category.id == activeCategoryContext.activeCategory ? true : false}
+    ></CategoryButton>
+  ));
 
   return (
     <div className="flex flex-wrap justify-center items-center gap-5 w-[1344px] mt-10">
@@ -54,9 +47,7 @@ function CategoryButton({
 }) {
   const backgroundColor: string = active ? "bg-[#F5D4D5]" : "bg-[#E2E2E2]";
   const textColor: string = active ? "text-[#EF829A]" : "text-[#979797]";
-  const backgroundHoverColor: string = active
-    ? "hover:bg-[#E6C8C9]"
-    : "hover:bg-[#D1D1D1]";
+  const backgroundHoverColor: string = active ? "hover:bg-[#E6C8C9]" : "hover:bg-[#D1D1D1]";
 
   const activeCategoryContext = useActiveCategoryContext();
 

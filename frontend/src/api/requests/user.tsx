@@ -1,17 +1,11 @@
 import axios, { AxiosError, type AxiosResponse } from "axios";
-import type {
-  LoginResponse,
-  OrderResponse,
-  UserResponse,
-} from "../responses/apiResponses";
+import type { LoginResponse, OrderResponse, UserResponse } from "../responses/apiResponses";
 import { User } from "../../classes/user";
 import { Order } from "../../classes/order";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function checkIfUserIsAdmin(
-  jwtToken: string | null,
-): Promise<boolean> {
+export async function checkIfUserIsAdmin(jwtToken: string | null): Promise<boolean> {
   try {
     const response: AxiosResponse<boolean> = await axios.get<boolean>(
       `${API_BASE_URL}/api/users/me/is-admin`,
@@ -28,16 +22,15 @@ export async function checkIfUserIsAdmin(
   }
 }
 
-export async function handleLogin(
-  email: string,
-  password: string,
-): Promise<string> {
+export async function handleLogin(email: string, password: string): Promise<string> {
   try {
-    const response: AxiosResponse<LoginResponse> =
-      await axios.post<LoginResponse>(`${API_BASE_URL}/api/auth/login`, {
+    const response: AxiosResponse<LoginResponse> = await axios.post<LoginResponse>(
+      `${API_BASE_URL}/api/auth/login`,
+      {
         email: email,
         password: password,
-      });
+      },
+    );
 
     return response.data.token;
   } catch (error) {
@@ -45,10 +38,7 @@ export async function handleLogin(
   }
 }
 
-export async function handleRegistration(
-  email: string,
-  password: string,
-): Promise<void> {
+export async function handleRegistration(email: string, password: string): Promise<void> {
   try {
     await axios.post<void>(`${API_BASE_URL}/api/auth/register`, {
       email: email,
@@ -85,27 +75,18 @@ export async function getUserInfo(jwtToken: string | null): Promise<User> {
 
 export async function getUserOrders(jwtToken: string | null): Promise<Order[]> {
   try {
-    const response = await axios.get<OrderResponse[]>(
-      `${API_BASE_URL}/api/users/me/orders`,
-      {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
+    const response = await axios.get<OrderResponse[]>(`${API_BASE_URL}/api/users/me/orders`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
       },
-    );
+    });
 
     if (!response.data) {
       return [];
     }
 
-    let orders: Order[] = response.data.map(
-      (order) =>
-        new Order(
-          order.productID,
-          order.productQuantity,
-          order.cost,
-          "Обрабатывается",
-        ),
+    const orders: Order[] = response.data.map(
+      (order) => new Order(order.productID, order.productQuantity, order.cost, "Обрабатывается"),
     );
 
     return orders;
