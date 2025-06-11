@@ -26,7 +26,7 @@ export class Product {
   }
 
   public imagePaths: string[] = [];
-  
+
   private _materials: string[];
 
   public get materials(): string[] {
@@ -43,7 +43,7 @@ export class Product {
 
   public get quantityInStock(): number {
     return this._quantityInStock;
-  } 
+  }
 
   private _countryOfOrigin: string;
 
@@ -63,7 +63,17 @@ export class Product {
     return this._rating;
   }
 
-  public constructor(id: number, categoryID: number, name: string, price: number, materials: string[], weightGrams: number, quantityInStock: number, countryOfOrigin: string, imagePaths?: string[]) {
+  public constructor(
+    id: number,
+    categoryID: number,
+    name: string,
+    price: number,
+    materials: string[],
+    weightGrams: number,
+    quantityInStock: number,
+    countryOfOrigin: string,
+    imagePaths?: string[],
+  ) {
     this._id = id;
     this._categoryID = categoryID;
     this._name = name;
@@ -73,7 +83,7 @@ export class Product {
     this._quantityInStock = quantityInStock;
     this._countryOfOrigin = countryOfOrigin;
 
-    if(imagePaths !== undefined) {
+    if (imagePaths !== undefined) {
       this.imagePaths = imagePaths;
     }
   }
@@ -86,7 +96,7 @@ export class Product {
   private calculateRating(): number {
     let rating: number = 0;
 
-    for(let i = 0; i < this.customerReviews.length; i++) {
+    for (let i = 0; i < this.customerReviews.length; i++) {
       rating += this.customerReviews[i].rating;
     }
 

@@ -10,7 +10,7 @@ export class User {
   public get secondName(): string | undefined {
     return this._secondName;
   }
-  
+
   private _phoneNumber: string = "";
 
   public get phoneNumber(): string {
@@ -23,18 +23,24 @@ export class User {
     return this._email;
   }
 
-  public logoImagePath: string = '/assets/defaultUserLogo.png';
+  public logoImagePath: string = "/assets/defaultUserLogo.png";
 
-  public constructor(email: string, firstName?: string, secondName?: string, phoneNumber?: string, logoImagePath?: string) {
+  public constructor(
+    email: string,
+    firstName?: string,
+    secondName?: string,
+    phoneNumber?: string,
+    logoImagePath?: string,
+  ) {
     this._email = email;
     this._firstName = firstName;
     this._secondName = secondName;
 
-    if(phoneNumber !== undefined) {
+    if (phoneNumber !== undefined) {
       this._phoneNumber = phoneNumber;
     }
 
-    if(logoImagePath !== undefined) {
+    if (logoImagePath !== undefined) {
       this.logoImagePath = logoImagePath;
     }
   }

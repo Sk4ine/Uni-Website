@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { HomePageBanner, PopularProductsSection } from "../components/Home";
-import { IsLoadingContext, ProductListContext } from "../contexts/otherContexts";
+import {
+  IsLoadingContext,
+  ProductListContext,
+} from "../contexts/otherContexts";
 import { Product } from "../classes/product";
 import { getProductList } from "../api/requests/products";
 
@@ -20,7 +23,6 @@ export function HomePage() {
 
     getProducts();
   }, []);
-  
 
   return (
     <ProductListContext.Provider value={productList}>
@@ -29,5 +31,5 @@ export function HomePage() {
         <PopularProductsSection />
       </IsLoadingContext.Provider>
     </ProductListContext.Provider>
-  )
+  );
 }

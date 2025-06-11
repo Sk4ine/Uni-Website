@@ -1,5 +1,9 @@
 import { CatalogSection } from "../components/Catalog";
-import { CategoryListContext, IsLoadingContext, ProductListContext } from "../contexts/otherContexts";
+import {
+  CategoryListContext,
+  IsLoadingContext,
+  ProductListContext,
+} from "../contexts/otherContexts";
 import { useState, useEffect } from "react";
 import { getProductList } from "../api/requests/products";
 import type { Product } from "../classes/product";
@@ -10,7 +14,7 @@ export function CatalogPage() {
   const [productList, setProductList] = useState<Product[]>([]);
   const [categoryList, setCategoryList] = useState<ProductCategory[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  
+
   useEffect(() => {
     async function getProducts(): Promise<void> {
       try {
@@ -41,5 +45,5 @@ export function CatalogPage() {
         </IsLoadingContext.Provider>
       </CategoryListContext.Provider>
     </ProductListContext.Provider>
-  )
+  );
 }

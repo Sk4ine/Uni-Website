@@ -62,31 +62,55 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/api/users/me", handlers.AuthMiddleware(handlers.GetUser(db), false)).Methods("GET")
-	r.HandleFunc("/api/users/me", handlers.AuthMiddleware(handlers.UpdateUser(db), false)).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/api/users/me/is-admin", handlers.AuthMiddleware(handlers.CheckIfUserIsAdmin(db), false)).Methods("GET", "OPTIONS")
-	r.HandleFunc("/api/users/me/orders", handlers.AuthMiddleware(handlers.GetUserOrderList(db), false)).Methods("GET")
-	r.HandleFunc("/api/users/me/orders", handlers.AuthMiddleware(handlers.HandleCheckout(db), false)).Methods("POST", "OPTIONS")
+	apiRouter := r.PathPrefix("/api").Subrouter()
 
-	r.HandleFunc("/api/auth/login", handlers.HandleLogin(db)).Methods("POST", "OPTIONS")
-	r.HandleFunc("/api/auth/register", handlers.HandleRegistraion(db)).Methods("POST", "OPTIONS")
+	userRouter := apiRouter.PathPrefix("/users").Subrouter()
+	userRouter.Use(handlers.AuthMiddleware(false))
 
-	r.HandleFunc("/api/products", handlers.GetProductList(db)).Methods("GET")
-	r.HandleFunc("/api/products/{id}", handlers.GetProductByID(db)).Methods("GET")
+	userRouter.HandleFunc("/me", handlers.GetUser(db)).Methods("GET")
+	userRouter.HandleFunc("/me", handlers.UpdateUser(db)).Methods("PUT", "OPTIONS")
+	userRouter.HandleFunc("/me/is-admin", handlers.CheckIfUserIsAdmin(db)).Methods("GET", "OPTIONS")
+	userRouter.HandleFunc("/me/orders", handlers.GetUserOrderList(db)).Methods("GET")
+	userRouter.HandleFunc("/me/orders", handlers.HandleCheckout(db)).Methods("POST", "OPTIONS")
 
-	r.HandleFunc("/api/categories", handlers.GetCategoryList(db)).Methods("GET")
+	authRouter := apiRouter.PathPrefix("/auth").Subrouter()
 
-	r.HandleFunc("/static/productImages/{product-id}", handlers.ServeProductImage()).Methods("GET")
-	r.HandleFunc("/static/productImages/{product-id}", handlers.AuthMiddleware(handlers.UploadProductImage(), true)).Methods("POST", "OPTIONS")
-	r.HandleFunc("/static/productImages/{product-id}", handlers.AuthMiddleware(handlers.DeleteProductImage(), true)).Methods("DELETE", "OPTIONS")
+	authRouter.HandleFunc("/login", handlers.HandleLogin(db)).Methods("POST", "OPTIONS")
+	authRouter.HandleFunc("/register", handlers.HandleRegistraion(db)).Methods("POST", "OPTIONS")
 
-	r.HandleFunc("/api/admin/categories/{id}", handlers.AuthMiddleware(handlers.UpdateCategory(db), true)).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/api/admin/categories", handlers.AuthMiddleware(handlers.AddCategory(db), true)).Methods("POST", "OPTIONS")
-	r.HandleFunc("/api/admin/categories/{id}", handlers.AuthMiddleware(handlers.DeleteCategory(db), true)).Methods("DELETE", "OPTIONS")
+	productsRouter := apiRouter.PathPrefix("/products").Subrouter()
 
-	r.HandleFunc("/api/admin/products/{id}", handlers.AuthMiddleware(handlers.UpdateProduct(db), true)).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/api/admin/products", handlers.AuthMiddleware(handlers.AddProduct(db), true)).Methods("POST", "OPTIONS")
-	r.HandleFunc("/api/admin/products/{id}", handlers.AuthMiddleware(handlers.DeleteProduct(db), true)).Methods("DELETE", "OPTIONS")
+	productsRouter.HandleFunc("", handlers.GetProductList(db)).Methods("GET")
+	productsRouter.HandleFunc("/{id}", handlers.GetProductByID(db)).Methods("GET")
+
+	apiRouter.HandleFunc("/categories", handlers.GetCategoryList(db)).Methods("GET")
+
+	staticRouter := r.PathPrefix("/static").Subrouter()
+
+	productImagesRouter := staticRouter.PathPrefix("/productImages").Subrouter()
+
+	productImagesRouter.HandleFunc("/{product-id}", handlers.ServeProductImage()).Methods("GET")
+
+	staticAdminRouter := staticRouter.PathPrefix("/admin").Subrouter()
+	staticAdminRouter.Use(handlers.AuthMiddleware(true))
+
+	staticAdminRouter.HandleFunc("/productImages/{product-id}", handlers.UploadProductImage()).Methods("POST", "OPTIONS")
+	staticAdminRouter.HandleFunc("/productImages/{product-id}", handlers.DeleteProductImage()).Methods("DELETE", "OPTIONS")
+
+	adminRouter := apiRouter.PathPrefix("/admin").Subrouter()
+	adminRouter.Use(handlers.AuthMiddleware(true))
+
+	adminCategoriesRouter := adminRouter.PathPrefix("/categories").Subrouter()
+
+	adminCategoriesRouter.HandleFunc("/{id}", handlers.UpdateCategory(db)).Methods("PUT", "OPTIONS")
+	adminCategoriesRouter.HandleFunc("", handlers.AddCategory(db)).Methods("POST", "OPTIONS")
+	adminCategoriesRouter.HandleFunc("/{id}", handlers.DeleteCategory(db)).Methods("DELETE", "OPTIONS")
+
+	adminProductsRouter := adminRouter.PathPrefix("/products").Subrouter()
+
+	adminProductsRouter.HandleFunc("/{id}", handlers.UpdateProduct(db)).Methods("PUT", "OPTIONS")
+	adminProductsRouter.HandleFunc("", handlers.AddProduct(db)).Methods("POST", "OPTIONS")
+	adminProductsRouter.HandleFunc("/{id}", handlers.DeleteProduct(db)).Methods("DELETE", "OPTIONS")
 
 	fs := http.FileServer(http.Dir("static/"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))

@@ -11,12 +11,13 @@ export type CartContextType = {
   updateCatalogProductList: () => Promise<void>;
 };
 
-export const CartContext: React.Context<CartContextType | undefined> = createContext<CartContextType | undefined>(undefined);
+export const CartContext: React.Context<CartContextType | undefined> =
+  createContext<CartContextType | undefined>(undefined);
 
 export const useCartContext = (): CartContextType => {
   const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error('useCartContext must be used within a CartProvider');
+    throw new Error("useCartContext must be used within a CartProvider");
   }
   return context;
 };

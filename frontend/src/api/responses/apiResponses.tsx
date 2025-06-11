@@ -1,33 +1,33 @@
 export interface UserResponse {
-  name: string,
-  email: string,
-  phoneNumber: string
+  name: string;
+  email: string;
+  phoneNumber: string;
 }
 
 export interface ProductResponse {
-  id: number,
-  categoryID: number,
-  name: string,
-  price: number,
-  materials: string,
-  weightInGrams: number,
-  quantityInStock: number,
-  countryOfOrigin: string
+  id: number;
+  categoryID: number;
+  name: string;
+  price: number;
+  materials: string;
+  weightInGrams: number;
+  quantityInStock: number;
+  countryOfOrigin: string;
 }
 
 export interface CategoryResponse {
-  id: number,
-  name: string
+  id: number;
+  name: string;
 }
 
 export interface OrderResponse {
-  id: number,
-  productID: number,
-  productQuantity: number,
-  clientID: number,
-  dateMade: string,
-  shippingAddress: string,
-  cost: number
+  id: number;
+  productID: number;
+  productQuantity: number;
+  clientID: number;
+  dateMade: string;
+  shippingAddress: string;
+  cost: number;
 }
 
 export interface TableColumnsResponse {
@@ -35,5 +35,5 @@ export interface TableColumnsResponse {
 }
 
 export interface LoginResponse {
-  token: string
+  token: string;
 }

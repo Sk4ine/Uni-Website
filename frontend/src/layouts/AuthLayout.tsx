@@ -10,5 +10,5 @@ export function AuthLayout() {
         <Outlet />
       </ContentWrapper>
     </PageWrapper>
-  )
+  );
 }

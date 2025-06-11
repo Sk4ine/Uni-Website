@@ -1,7 +1,11 @@
 import { Navigate } from "react-router";
 import { AdminNavigationBar } from "../components/AdminNavigationBar";
 import { useEffect, useState } from "react";
-import { ContentWrapper, LoadingMessage, PageWrapper } from "../components/Common";
+import {
+  ContentWrapper,
+  LoadingMessage,
+  PageWrapper,
+} from "../components/Common";
 import { useAuthContext } from "../contexts/authContext";
 import { DatabaseEditSection } from "../components/AdminPanel";
 import { AdminPanelProvider } from "../providers/AdminPanelProvider";
@@ -11,7 +15,7 @@ export function AdminPanelPage() {
   const authContext = useAuthContext();
 
   useEffect(() => {
-    if(authContext.loadingAuth || !authContext.signedIn) {
+    if (authContext.loadingAuth || !authContext.signedIn) {
       return;
     }
 
@@ -20,29 +24,35 @@ export function AdminPanelPage() {
       setCheckedAdmin(true);
     }
 
-    if(!checkedAdmin) {
+    if (!checkedAdmin) {
       performAdminCheck();
     }
-
-    
   }, [authContext.loadingAuth]);
 
-  if(authContext.loadingAuth) {
-    return <LoadingMessage text={"Загрузка прав доступа..."} heightVH={100}></LoadingMessage>;
+  if (authContext.loadingAuth) {
+    return (
+      <LoadingMessage
+        text={"Загрузка прав доступа..."}
+        heightVH={100}
+      ></LoadingMessage>
+    );
   }
 
-  if(!authContext.signedIn) {
+  if (!authContext.signedIn) {
     return <Navigate to="/home" replace></Navigate>;
   }
 
-  if(checkedAdmin && !authContext.isAdmin) {
+  if (checkedAdmin && !authContext.isAdmin) {
     return <Navigate to="/home" replace></Navigate>;
   }
 
   return (
     <PageWrapper>
       {authContext.loadingAuth ? (
-        <LoadingMessage text={"Загрузка прав доступа..."} heightVH={100}></LoadingMessage>
+        <LoadingMessage
+          text={"Загрузка прав доступа..."}
+          heightVH={100}
+        ></LoadingMessage>
       ) : (
         <AdminPanelProvider>
           <ContentWrapper>
@@ -52,5 +62,5 @@ export function AdminPanelPage() {
         </AdminPanelProvider>
       )}
     </PageWrapper>
-  )
+  );
 }

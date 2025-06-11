@@ -18,11 +18,11 @@ export function CheckoutPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if(authContext.loadingAuth || !authContext.signedIn) {
+    if (authContext.loadingAuth || !authContext.signedIn) {
       return;
     }
 
-    if(!checkoutProductContext.checkoutProduct) {
+    if (!checkoutProductContext.checkoutProduct) {
       return;
     }
 
@@ -30,7 +30,9 @@ export function CheckoutPage() {
 
     async function getProduct(): Promise<void> {
       try {
-        const newProduct: Product = await getProductByID(checkoutProduct.productID);
+        const newProduct: Product = await getProductByID(
+          checkoutProduct.productID,
+        );
         setCheckoutProductData(newProduct);
       } catch (err) {
         console.error(err);
@@ -38,34 +40,39 @@ export function CheckoutPage() {
         setIsLoading(false);
       }
     }
-        
-    getProduct();
 
+    getProduct();
   }, [authContext.loadingAuth]);
 
-  if(authContext.loadingAuth) {
-    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100}></LoadingMessage>
+  if (authContext.loadingAuth) {
+    return (
+      <LoadingMessage
+        text="Загрузка данных пользователя..."
+        heightVH={100}
+      ></LoadingMessage>
+    );
   }
 
-  if(!authContext.signedIn) {
-    return <Navigate to="/auth/login" replace></Navigate>
+  if (!authContext.signedIn) {
+    return <Navigate to="/auth/login" replace></Navigate>;
   }
 
-  if(!checkoutProductContext.checkoutProduct) {
-    return <Navigate to="/cart" replace></Navigate>
+  if (!checkoutProductContext.checkoutProduct) {
+    return <Navigate to="/cart" replace></Navigate>;
   }
 
   return (
     <CheckoutProductDataContext.Provider value={checkoutProductData}>
       <UserInfoProvider>
-
         {isLoading || authContext.loadingAuth ? (
-          <LoadingMessage text="Загрузка заказа..." heightVH={50}></LoadingMessage>
+          <LoadingMessage
+            text="Загрузка заказа..."
+            heightVH={50}
+          ></LoadingMessage>
         ) : (
           <CheckoutSection></CheckoutSection>
         )}
-        
       </UserInfoProvider>
     </CheckoutProductDataContext.Provider>
-  )
+  );
 }

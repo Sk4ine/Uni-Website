@@ -6,17 +6,19 @@ import { Navigate } from "react-router";
 export function LoginPage() {
   const authContext = useAuthContext();
 
-  if(authContext.loadingAuth) {
-    return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100} />
+  if (authContext.loadingAuth) {
+    return (
+      <LoadingMessage text="Загрузка данных пользователя..." heightVH={100} />
+    );
   }
 
-  if(authContext.signedIn) {
-    return <Navigate to="/user-profile" replace />
+  if (authContext.signedIn) {
+    return <Navigate to="/user-profile" replace />;
   }
 
   return (
     <>
       <LoginSection />
     </>
-  )
+  );
 }

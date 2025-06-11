@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { CartSection } from "../components/Cart";
 import { useCartContext } from "../contexts/cartContext";
-import { ErrorMessageContext, IsLoadingContext } from "../contexts/otherContexts";
+import {
+  ErrorMessageContext,
+  IsLoadingContext,
+} from "../contexts/otherContexts";
 
 export function CartPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const {cartProductList, updateCatalogProductList} = useCartContext();
+  const { cartProductList, updateCatalogProductList } = useCartContext();
 
   useEffect(() => {
     async function getProducts(): Promise<void> {
@@ -28,5 +31,5 @@ export function CartPage() {
         <CartSection></CartSection>
       </ErrorMessageContext.Provider>
     </IsLoadingContext.Provider>
-  )
+  );
 }

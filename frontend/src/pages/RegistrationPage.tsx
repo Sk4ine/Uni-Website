@@ -5,5 +5,5 @@ export function RegistrationPage() {
     <>
       <RegistrationSection></RegistrationSection>
     </>
-  )
+  );
 }

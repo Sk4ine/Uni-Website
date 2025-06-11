@@ -13,5 +13,5 @@ export function MainLayout() {
 
       <Footer phoneNumber="8 999 999 99 99" address="г. Иваново"></Footer>
     </PageWrapper>
-  )
+  );
 }

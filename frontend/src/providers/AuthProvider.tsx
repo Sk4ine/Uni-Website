@@ -3,15 +3,14 @@ import { AuthContext } from "../contexts/authContext";
 import { jwtDecode } from "jwt-decode";
 import { checkIfUserIsAdmin } from "../api/requests/user";
 
-
-export function AuthProvider({ children }: {children: React.ReactNode}) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [signedIn, setSignedIn] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
 
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
-    if(!token) {
+    if (!token) {
       setLoadingAuth(false);
       return;
     }
@@ -22,7 +21,7 @@ export function AuthProvider({ children }: {children: React.ReactNode}) {
 
       if (decodedToken.exp <= currentTime) {
         signOut();
-        return;  
+        return;
       }
 
       setSignedIn(true);
@@ -47,13 +46,13 @@ export function AuthProvider({ children }: {children: React.ReactNode}) {
       setSignedIn(false);
       setIsAdmin(false);
     }
-  }
+  };
 
   const signOut = () => {
     localStorage.removeItem("jwtToken");
     setSignedIn(false);
     setIsAdmin(false);
-  }
+  };
 
   const checkIsAdmin = async (): Promise<void> => {
     setLoadingAuth(true);
@@ -64,11 +63,13 @@ export function AuthProvider({ children }: {children: React.ReactNode}) {
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   return (
-    <AuthContext.Provider value={{signedIn, isAdmin, loadingAuth, signIn, signOut, checkIsAdmin}}>
+    <AuthContext.Provider
+      value={{ signedIn, isAdmin, loadingAuth, signIn, signOut, checkIsAdmin }}
+    >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
