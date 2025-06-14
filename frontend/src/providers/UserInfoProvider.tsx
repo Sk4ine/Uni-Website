@@ -10,7 +10,7 @@ export function UserInfoProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function getUser() {
       try {
-        setUserInfo(await getUserInfo(localStorage.getItem("jwtToken")));
+        setUserInfo(await getUserInfo());
         setUserLoading(false);
       } catch (error) {
         console.error(error);
@@ -29,7 +29,6 @@ export function UserInfoProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updateUser = (
-    jwtToken: string | null,
     firstName: string,
     secondName: string,
     email: string,
@@ -37,7 +36,7 @@ export function UserInfoProvider({ children }: { children: React.ReactNode }) {
   ): void => {
     async function update() {
       try {
-        setUserInfo(await updateUserInfo(jwtToken, firstName, secondName, email, phoneNumber));
+        setUserInfo(await updateUserInfo(firstName, secondName, email, phoneNumber));
       } catch (error) {
         console.log(error);
       }

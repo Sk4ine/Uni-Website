@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/authContext";
 import { jwtDecode } from "jwt-decode";
-import { checkIfUserIsAdmin } from "../api/requests/user";
+import { checkIfUserIsAdmin, handleLogout } from "../api/requests/user";
+import { setLogoutCallback } from "../api/requests/axiosInstance";
+import type { JWTTokenResponse } from "../api/responses/apiResponses";
+import type { AxiosResponse } from "axios";
+import axios from "axios";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [signedIn, setSignedIn] = useState<boolean>(false);
@@ -9,9 +15,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loadingAuth, setLoadingAuth] = useState<boolean>(true);
 
   const signOut = useCallback(() => {
-    localStorage.removeItem("jwtToken");
-    setSignedIn(false);
-    setIsAdmin(false);
+    async function logOut() {
+      try {
+        await handleLogout();
+        localStorage.removeItem("jwtToken");
+        setSignedIn(false);
+        setIsAdmin(false);
+        setLoadingAuth(false);
+      } catch (error) {
+        console.log("Logout failed: " + error);
+      }
+    }
+
+    logOut();
   }, []);
 
   const signIn = useCallback((token: string) => {
@@ -32,38 +48,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoadingAuth(true);
 
     try {
-      setIsAdmin(await checkIfUserIsAdmin(localStorage.getItem("jwtToken")));
+      setIsAdmin(await checkIfUserIsAdmin());
       setLoadingAuth(false);
     } catch (err) {
       console.error(err);
     }
   }, []);
 
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    if (!token) {
-      setLoadingAuth(false);
-      return;
-    }
-
+  const refreshToken = useCallback(async (): Promise<void> => {
     try {
-      const decodedToken: { isAdmin?: boolean; exp: number } = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
+      const response: AxiosResponse<JWTTokenResponse> = await axios.get<JWTTokenResponse>(
+        `${API_BASE_URL}/api/auth/refresh-token`,
+        {
+          withCredentials: true,
+        },
+      );
 
-      if (decodedToken.exp <= currentTime) {
-        signOut();
-        return;
+      if (response) {
+        const decodedToken: { isAdmin?: boolean; exp: number } = jwtDecode(response.data.token);
+
+        localStorage.setItem("jwtToken", response.data.token);
+
+        setSignedIn(true);
+        setIsAdmin(!!decodedToken.isAdmin);
+      } else {
+        localStorage.setItem("jwtToken", "");
       }
 
-      setSignedIn(true);
-      setIsAdmin(!!decodedToken.isAdmin);
-    } catch (err) {
-      console.error("Failed to decode or validate JWT:", err);
+      setLoadingAuth(false);
+    } catch (error) {
+      console.log(error);
       signOut();
     }
-
-    setLoadingAuth(false);
   }, [signOut]);
+
+  useEffect(() => {
+    setLogoutCallback(signOut);
+    refreshToken();
+  }, [signOut, refreshToken]);
 
   return (
     <AuthContext.Provider value={{ signedIn, isAdmin, loadingAuth, signIn, signOut, checkIsAdmin }}>

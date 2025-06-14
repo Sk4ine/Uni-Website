@@ -248,11 +248,7 @@ function CategoryEditForm() {
   function handleSave(formData: FormData) {
     async function saveCategory() {
       try {
-        await updateCategory(
-          localStorage.getItem("jwtToken"),
-          selectedRecord,
-          formData.get("name") as string,
-        );
+        await updateCategory(selectedRecord, formData.get("name") as string);
         updateTableRecords(false);
       } catch (error) {
         console.log(error);
@@ -331,7 +327,6 @@ function ProductEditForm() {
         newFormData.append("imageFile", formData.get("imageFile") as File);
 
         await updateProduct(
-          localStorage.getItem("jwtToken"),
           selectedRecord,
           new Product(
             selectedRecord,
@@ -477,11 +472,11 @@ function DeleteConfirmDialog() {
       try {
         switch (activeTable) {
           case "categories":
-            await deleteCategory(localStorage.getItem("jwtToken"), selectedRecord);
+            await deleteCategory(selectedRecord);
             updateTableRecords(false);
             break;
           case "products":
-            await deleteProduct(localStorage.getItem("jwtToken"), selectedRecord);
+            await deleteProduct(selectedRecord);
             updateTableRecords(false);
         }
       } catch (error) {
@@ -618,11 +613,11 @@ function AddRecordButton() {
       try {
         switch (activeTable) {
           case "categories":
-            await addCategory(localStorage.getItem("jwtToken"));
+            await addCategory();
             updateTableRecords(false);
             break;
           case "products":
-            await addProduct(localStorage.getItem("jwtToken"));
+            await addProduct();
             updateTableRecords(false);
         }
       } catch (error) {

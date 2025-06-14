@@ -98,7 +98,6 @@ function UserInfoForm({ user }: { user: User }) {
 
   function saveUserInfo(formData: FormData) {
     updateUser(
-      localStorage.getItem("jwtToken"),
       formData.get("firstName") as string,
       formData.get("secondName") as string,
       formData.get("email") as string,

@@ -1,19 +1,15 @@
 import axios, { AxiosError, type AxiosResponse } from "axios";
-import type { LoginResponse, OrderResponse, UserResponse } from "../responses/apiResponses";
+import type { JWTTokenResponse, OrderResponse, UserResponse } from "../responses/apiResponses";
 import { User } from "../../classes/user";
 import { Order } from "../../classes/order";
+import axiosInstanceAuth from "./axiosInstance";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export async function checkIfUserIsAdmin(jwtToken: string | null): Promise<boolean> {
+export async function checkIfUserIsAdmin(): Promise<boolean> {
   try {
-    const response: AxiosResponse<boolean> = await axios.get<boolean>(
+    const response: AxiosResponse<boolean> = await axiosInstanceAuth.get<boolean>(
       `${API_BASE_URL}/api/users/me/is-admin`,
-      {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      },
     );
 
     return response.data;
@@ -24,12 +20,13 @@ export async function checkIfUserIsAdmin(jwtToken: string | null): Promise<boole
 
 export async function handleLogin(email: string, password: string): Promise<string> {
   try {
-    const response: AxiosResponse<LoginResponse> = await axios.post<LoginResponse>(
+    const response: AxiosResponse<JWTTokenResponse> = await axios.post<JWTTokenResponse>(
       `${API_BASE_URL}/api/auth/login`,
       {
         email: email,
         password: password,
       },
+      { withCredentials: true },
     );
 
     return response.data.token;
@@ -49,15 +46,10 @@ export async function handleRegistration(email: string, password: string): Promi
   }
 }
 
-export async function getUserInfo(jwtToken: string | null): Promise<User> {
+export async function getUserInfo(): Promise<User> {
   try {
-    const response: AxiosResponse<UserResponse> = await axios.get<UserResponse>(
+    const response: AxiosResponse<UserResponse> = await axiosInstanceAuth.get<UserResponse>(
       `${API_BASE_URL}/api/users/me`,
-      {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      },
     );
 
     const userInfo: User = new User(
@@ -73,13 +65,11 @@ export async function getUserInfo(jwtToken: string | null): Promise<User> {
   }
 }
 
-export async function getUserOrders(jwtToken: string | null): Promise<Order[]> {
+export async function getUserOrders(): Promise<Order[]> {
   try {
-    const response = await axios.get<OrderResponse[]>(`${API_BASE_URL}/api/users/me/orders`, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
+    const response = await axiosInstanceAuth.get<OrderResponse[]>(
+      `${API_BASE_URL}/api/users/me/orders`,
+    );
 
     if (!response.data) {
       return [];
@@ -96,25 +86,19 @@ export async function getUserOrders(jwtToken: string | null): Promise<Order[]> {
 }
 
 export async function updateUserInfo(
-  jwtToken: string | null,
   firstName: string,
   secondName: string,
   email: string,
   phoneNumber: string,
 ): Promise<User> {
   try {
-    const response: AxiosResponse<UserResponse> = await axios.put(
+    const response: AxiosResponse<UserResponse> = await axiosInstanceAuth.put(
       `${API_BASE_URL}/api/users/me`,
       {
         firstName: firstName,
         secondName: secondName,
         email: email,
         phoneNumber: phoneNumber,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
       },
     );
 
@@ -128,6 +112,16 @@ export async function updateUserInfo(
     );
 
     return user;
+  } catch (error) {
+    throw error as AxiosError;
+  }
+}
+
+export async function handleLogout(): Promise<void> {
+  try {
+    await axios.delete(`${API_BASE_URL}/api/auth/logout`, {
+      withCredentials: true,
+    });
   } catch (error) {
     throw error as AxiosError;
   }

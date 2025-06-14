@@ -77,6 +77,8 @@ func main() {
 
 	authRouter.HandleFunc("/login", handlers.HandleLogin(db)).Methods("POST", "OPTIONS")
 	authRouter.HandleFunc("/register", handlers.HandleRegistraion(db)).Methods("POST", "OPTIONS")
+	authRouter.HandleFunc("/logout", handlers.HandleLogout(db)).Methods("DELETE", "OPTIONS")
+	authRouter.HandleFunc("/refresh-token", handlers.RefreshAccessToken(db)).Methods("GET")
 
 	productsRouter := apiRouter.PathPrefix("/products").Subrouter()
 
@@ -120,6 +122,7 @@ func main() {
 			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 			if r.Method == "OPTIONS" {
 				w.WriteHeader(http.StatusOK)

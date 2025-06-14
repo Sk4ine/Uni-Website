@@ -134,7 +134,7 @@ export function InputField({
 export function LoadingMessage({ text, heightVH }: { text: string; heightVH: number }) {
   return (
     <div style={{ height: `${heightVH}vh` }} className="flex justify-center items-center">
-      <div className="mr-5 size-12 animate-spin rounded-full border- border-t-[#D5778D] border-x-[#B5ABA1]/50 border-b-[#B5ABA1]/50 border-5"></div>
+      <div className="mr-5 size-12 animate-spin rounded-full border-t-[#D5778D] border-x-[#B5ABA1]/50 border-b-[#B5ABA1]/50 border-5"></div>
       <p className="font-default text-[#B4A1A6] text-4xl">{text}</p>
     </div>
   );

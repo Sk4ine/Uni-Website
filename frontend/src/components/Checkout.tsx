@@ -42,7 +42,6 @@ function OrderInfo({ product }: { product: Product }) {
     async function addNewOrder(cartProduct: CartProduct) {
       try {
         await addOrder(
-          localStorage.getItem("jwtToken"),
           formData.get("shippingAddress") as string,
           cartProduct.productID,
           cartProduct.quantity,

@@ -1,8 +1,9 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { Product } from "../../classes/product";
 import { ProductCategory } from "../../classes/productCategory";
 import { getCategoryList } from "./categories";
 import { getProductList } from "./products";
+import axiosInstanceAuth from "./axiosInstance";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -17,98 +18,56 @@ export async function getTableRecords(tableName: string): Promise<ProductCategor
   }
 }
 
-export async function updateCategory(
-  jwtToken: string | null,
-  id: number,
-  name: string,
-): Promise<void> {
+export async function updateCategory(id: number, name: string): Promise<void> {
   try {
-    await axios.put<void>(`${API_BASE_URL}/api/admin/categories/${id}`, name, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
+    await axiosInstanceAuth.put<void>(`${API_BASE_URL}/api/admin/categories/${id}`, name);
   } catch (error) {
     throw error as AxiosError;
   }
 }
 
-export async function addCategory(jwtToken: string | null): Promise<void> {
+export async function addCategory(): Promise<void> {
   try {
-    await axios.post<void>(
-      `${API_BASE_URL}/api/admin/categories`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      },
-    );
+    await axiosInstanceAuth.post<void>(`${API_BASE_URL}/api/admin/categories`);
   } catch (error) {
     throw error as AxiosError;
   }
 }
 
-export async function deleteCategory(jwtToken: string | null, id: number): Promise<void> {
+export async function deleteCategory(id: number): Promise<void> {
   try {
-    await axios.delete<void>(`${API_BASE_URL}/api/admin/categories/${id}`, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
+    await axiosInstanceAuth.delete<void>(`${API_BASE_URL}/api/admin/categories/${id}`);
   } catch (error) {
     throw error as AxiosError;
   }
 }
 
 export async function updateProduct(
-  jwtToken: string | null,
   id: number,
   updatedProduct: Product,
   updatedImage: FormData,
 ): Promise<void> {
   try {
-    await axios.put<void>(
-      `${API_BASE_URL}/api/admin/products/${id}`,
-      {
-        categoryID: updatedProduct.categoryID,
-        name: updatedProduct.name,
-        price: updatedProduct.price,
-        materials: updatedProduct.materials.join(","),
-        weightInGrams: updatedProduct.weightGrams,
-        quantityInStock: updatedProduct.quantityInStock,
-        countryOfOrigin: updatedProduct.countryOfOrigin,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      },
-    );
+    await axiosInstanceAuth.put<void>(`${API_BASE_URL}/api/admin/products/${id}`, {
+      categoryID: updatedProduct.categoryID,
+      name: updatedProduct.name,
+      price: updatedProduct.price,
+      materials: updatedProduct.materials.join(","),
+      weightInGrams: updatedProduct.weightGrams,
+      quantityInStock: updatedProduct.quantityInStock,
+      countryOfOrigin: updatedProduct.countryOfOrigin,
+    });
 
     if ((updatedImage.get("imageFile") as File).size === 0) {
       return;
     }
 
-    await axios.post<void>(`${API_BASE_URL}/static/admin/productImages/${id}`, updatedImage, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
-  } catch (error) {
-    throw error as AxiosError;
-  }
-}
-
-export async function addProduct(jwtToken: string | null): Promise<void> {
-  try {
-    await axios.post<void>(
-      `${API_BASE_URL}/api/admin/products`,
-      {},
+    await axiosInstanceAuth.post<void>(
+      `${API_BASE_URL}/static/admin/productImages/${id}`,
+      updatedImage,
       {
         headers: {
-          Authorization: `Bearer ${jwtToken}`,
+          "Content-Type": "multipart/form-data",
         },
       },
     );
@@ -117,19 +76,19 @@ export async function addProduct(jwtToken: string | null): Promise<void> {
   }
 }
 
-export async function deleteProduct(jwtToken: string | null, id: number): Promise<void> {
+export async function addProduct(): Promise<void> {
   try {
-    await axios.delete<void>(`${API_BASE_URL}/api/admin/products/${id}`, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
+    await axiosInstanceAuth.post<void>(`${API_BASE_URL}/api/admin/products`);
+  } catch (error) {
+    throw error as AxiosError;
+  }
+}
 
-    await axios.delete<void>(`${API_BASE_URL}/static/admin/productImages/${id}`, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
+export async function deleteProduct(id: number): Promise<void> {
+  try {
+    await axiosInstanceAuth.delete<void>(`${API_BASE_URL}/api/admin/products/${id}`);
+
+    await axiosInstanceAuth.delete<void>(`${API_BASE_URL}/static/admin/productImages/${id}`);
   } catch (error) {
     throw error as AxiosError;
   }

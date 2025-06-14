@@ -1,0 +1,7 @@
+CREATE TABLE refresh_tokens (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  jti CHAR(255) NOT NULL,
+  client_id INT NOT NULL,
+  hashed_token TEXT NOT NULL,
+  FOREIGN KEY (client_id) REFERENCES clients (id) ON DELETE CASCADE ON UPDATE CASCADE
+)

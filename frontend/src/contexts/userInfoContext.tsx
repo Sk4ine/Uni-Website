@@ -4,13 +4,7 @@ import type { User } from "../classes/user";
 interface UserInfoContextType {
   userLoading: boolean;
   useUserInfo: () => User;
-  updateUser: (
-    jwtToken: string | null,
-    firstName: string,
-    secondName: string,
-    email: string,
-    phoneNumber: string,
-  ) => void;
+  updateUser: (firstName: string, secondName: string, email: string, phoneNumber: string) => void;
 }
 
 export const UserInfoContext: React.Context<UserInfoContextType | undefined> = createContext<

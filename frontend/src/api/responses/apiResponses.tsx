@@ -34,6 +34,6 @@ export interface TableColumnsResponse {
   columns: string[];
 }
 
-export interface LoginResponse {
+export interface JWTTokenResponse {
   token: string;
 }

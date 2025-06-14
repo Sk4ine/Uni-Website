@@ -123,17 +123,19 @@ function UserLogoButton() {
 }
 
 export function AccountButton() {
-  const authContext = useAuthContext();
+  const { signedIn, loadingAuth } = useAuthContext();
 
-  return (
-    <div className="flex justify-center items-center h-[65%] w-20">
-      {authContext.signedIn ? (
-        <UserLogoButton></UserLogoButton>
-      ) : (
-        <NavigationBarButton text="Вход" url="/auth/login"></NavigationBarButton>
-      )}
-    </div>
-  );
+  let content: React.ReactNode = <NavigationBarButton text="Вход" url="/auth/login" />;
+
+  if (loadingAuth) {
+    content = (
+      <div className="size-[50px] animate-spin rounded-full border-t-[#D5778D] border-x-[#B5ABA1]/50 border-b-[#B5ABA1]/50 border-5" />
+    );
+  } else if (signedIn) {
+    content = <UserLogoButton />;
+  }
+
+  return <div className="flex justify-center items-center h-[65%] w-20">{content}</div>;
 }
 
 function SearchBar() {

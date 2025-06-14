@@ -25,7 +25,7 @@ export function UserProfilePage() {
     async function getOrderData(): Promise<void> {
       try {
         setProductList(await getProductList());
-        setOrderList(await getUserOrders(localStorage.getItem("jwtToken")));
+        setOrderList(await getUserOrders());
         setOrdersLoading(false);
       } catch (err) {
         console.error(err);

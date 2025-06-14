@@ -22,37 +22,20 @@ func AuthMiddleware(adminOnly bool) mux.MiddlewareFunc {
 				return
 			}
 
-			if len(tokenString) < 7 || tokenString[:7] != "Bearer " {
-				http.Error(w, "Invalid token format", http.StatusUnauthorized)
-				return
-			}
-			tokenString = tokenString[7:]
-
-			claims := &Claims{}
-
-			token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-				}
-				return jwtKey, nil
-			})
-
+			claims, err := ValidateAccessToken(tokenString, adminOnly)
 			if err != nil {
-				if err == jwt.ErrSignatureInvalid {
+				switch(err) {
+				case jwt.ErrSignatureInvalid:
 					http.Error(w, "Invalid token signature", http.StatusUnauthorized)
-					return
+				case jwt.ErrTokenExpired:
+					http.Error(w, "Token expired", http.StatusUnauthorized)
+				case fmt.Errorf("invalid token format"):
+					http.Error(w, "Invalid token format", http.StatusUnauthorized)
+				case fmt.Errorf("user is not admin"):
+					http.Error(w, "User is not admin", http.StatusForbidden)
+				default:
+					http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
 				}
-				http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
-				return
-			}
-
-			if !token.Valid {
-				http.Error(w, "Invalid token", http.StatusUnauthorized)
-				return
-			}
-
-			if adminOnly && !claims.IsAdmin {
-				http.Error(w, "User is not admin", http.StatusUnauthorized)
 				return
 			}
 

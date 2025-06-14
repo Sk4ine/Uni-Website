@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -15,6 +16,7 @@ import (
 )
 
 var jwtKey []byte
+var jwtRefreshKey []byte
 
 func init() {
 	if err := godotenv.Load(); err != nil {
@@ -28,6 +30,14 @@ func init() {
 	}
 
 	jwtKey = []byte(jwtSecret)
+
+	jwtRefreshSecret := os.Getenv("JWT_REFRESH_SECRET")
+
+	if jwtRefreshSecret == "" {
+		log.Fatal("JWT_REFRESH_SECRET environment variable not set")
+	}
+
+	jwtRefreshKey = []byte(jwtRefreshSecret)
 }
 
 type RegistrationData struct {
@@ -47,35 +57,71 @@ type LoginFormData struct {
 	Password string `json:"password"`
 }
 
-type Claims struct {
+type AccessClaims struct {
 	UserID  int  `json:"id"`
 	IsAdmin bool `json:"isAdmin"`
 	jwt.RegisteredClaims
 }
 
-/*
-func CheckUserIsAdmin(db *sql.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		idStr := vars["id"]
+type RefreshClaims struct {
+	UserID int `json:"id"`
+	JTI string `json:"jti"`
+	jwt.RegisteredClaims
+}
 
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "ID must be a number", http.StatusBadRequest)
-			return
-		}
 
-		user, err := models.GetUserAuth(db, id)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-
-		json.NewEncoder(w).Encode(user.IsAdmin)
+func GenerateAccessToken(userAuth models.UserAuth) (string, error) {
+	expirationTime := time.Now().Add(15 * time.Minute)
+	claims := &AccessClaims{
+		UserID:  userAuth.ID,
+		IsAdmin: userAuth.IsAdmin,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+		},
 	}
-}*/
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtKey)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
+}
+
+func GenerateRefreshToken(db *sql.DB, userID int) (string, error) {
+	expirationTime := time.Now().Add(7 * 24 * time.Hour)
+	jti := fmt.Sprintf("%x", time.Now().UnixNano())  
+	claims := &RefreshClaims{
+		UserID:  userID,
+		JTI: jti,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtRefreshKey)
+	if err != nil {
+		return "", err
+	}
+
+	hashedJTI, err := bcrypt.GenerateFromPassword([]byte(jti), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal("Error hashing password:", err)
+	}
+
+	err = models.AddRefreshToken(db, hashedJTI, userID)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
+}
 
 func HandleLogin(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -94,27 +140,66 @@ func HandleLogin(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		expirationTime := time.Now().Add(48 * time.Hour)
-		claims := &Claims{
-			UserID:  userAuth.ID,
-			IsAdmin: userAuth.IsAdmin,
-			RegisteredClaims: jwt.RegisteredClaims{
-				ExpiresAt: jwt.NewNumericDate(expirationTime),
-				IssuedAt:  jwt.NewNumericDate(time.Now()),
-				NotBefore: jwt.NewNumericDate(time.Now()),
-			},
-		}
-
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-		tokenString, err := token.SignedString(jwtKey)
+		tokenString, err := GenerateAccessToken(userAuth)
 		if err != nil {
-			http.Error(w, "Could not generate token", http.StatusInternalServerError)
+			http.Error(w, "Could not generate access token", http.StatusInternalServerError)
 			return
 		}
+
+		refreshTokenString, err := GenerateRefreshToken(db, userAuth.ID)
+		if err != nil {
+			http.Error(w, "Could not generate refresh token", http.StatusInternalServerError)
+			return
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "jwtRefresh",
+			Value:    refreshTokenString,
+			Path:     "/",
+			Expires:  time.Now().Add(7 * 24 * time.Hour),
+			HttpOnly: true,
+			Secure:   os.Getenv("NODE_ENV") == "production",
+			SameSite: http.SameSiteLaxMode,
+		})
 
 		w.WriteHeader(http.StatusOK)
 
 		json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
+	}
+}
+
+func HandleLogout(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		http.SetCookie(w, &http.Cookie{
+			Name:     "jwtRefresh",
+			Value:    "",
+			Path:     "/",
+			MaxAge:   -1,
+			HttpOnly: true,
+			Secure:   os.Getenv("NODE_ENV") == "production",
+			SameSite: http.SameSiteLaxMode,
+		})
+
+		cookie, err := r.Cookie("jwtRefresh")
+		if err != nil {
+			return
+		}
+
+		claims, err := ValidateRefreshToken(cookie.Value)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = models.DeleteRefreshToken(db, claims.JTI, claims.UserID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Println("Logged out")
+
+		w.WriteHeader(http.StatusNoContent)
 	}
 }
 
@@ -232,4 +317,118 @@ func HandleRegistraion(db *sql.DB) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusCreated)
 	}
+}
+
+func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("jwtRefresh")
+		if err != nil {
+			if err == http.ErrNoCookie {
+				http.Error(w, "Refresh token cookie not found", http.StatusUnauthorized)
+				return
+			}
+			
+			http.Error(w, "Error reading cookie", http.StatusBadRequest)
+			return
+		}
+
+		refreshTokenString := cookie.Value
+
+		claims, err := ValidateRefreshToken(refreshTokenString)
+		if err != nil {
+			switch(err) {
+			case jwt.ErrSignatureInvalid:
+				http.Error(w, "Invalid token signature", http.StatusUnauthorized)
+			case jwt.ErrTokenExpired:
+				http.Error(w, "Token expired", http.StatusUnauthorized)
+			case fmt.Errorf("invalid token format"):
+				http.Error(w, "Invalid token format", http.StatusUnauthorized)
+			default:
+				http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
+			}
+			return
+		}
+
+		err = models.CheckRefreshToken(db, claims.JTI, claims.UserID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+				return
+			} else {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
+		isAdmin, err := models.CheckIfUserIsAdmin(db, claims.UserID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		var userAuth models.UserAuth = models.UserAuth{ID: claims.UserID, IsAdmin: isAdmin}
+
+		newTokenString, err := GenerateAccessToken(userAuth)
+		if err != nil {
+			http.Error(w, "Could not generate refresh token", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+
+		json.NewEncoder(w).Encode(map[string]string{"token": newTokenString})
+	}
+}
+
+func ValidateAccessToken(tokenString string, adminOnly bool) (*AccessClaims, error) {
+	if len(tokenString) < 7 || tokenString[:7] != "Bearer " {
+		return nil, fmt.Errorf("invalid token format")
+	}
+
+	tokenString = tokenString[7:]
+
+	claims := &AccessClaims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		
+		return jwtKey, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+
+	if adminOnly && !claims.IsAdmin {
+		return nil, fmt.Errorf("user is not admin")
+	}
+
+	return claims, nil
+}
+
+func ValidateRefreshToken(tokenString string) (*RefreshClaims, error) {
+	claims := &RefreshClaims{}
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		
+		return jwtRefreshKey, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+
+	return claims, nil
 }
