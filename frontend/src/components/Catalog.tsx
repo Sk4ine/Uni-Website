@@ -13,7 +13,7 @@ export function CatalogSection() {
   );
 }
 
-function CategoryList() {
+export function CategoryList() {
   const categoryListContext = useContext(CategoryListContext);
   const activeCategoryContext = useActiveCategoryContext();
   const isLoading: boolean = useContext(IsLoadingContext);
@@ -24,7 +24,7 @@ function CategoryList() {
       categoryID={category.id}
       categoryName={category.name}
       active={category.id == activeCategoryContext.activeCategory ? true : false}
-    ></CategoryButton>
+    />
   ));
 
   return (
@@ -67,7 +67,10 @@ function CategoryButton({
 
 function LoadingCategoryButton() {
   return (
-    <div className="w-64 h-10 py-1 from-[#D9D9D9]/75 via-[#D9D9D9]/50 to-[#D9D9D9]/75 animate-pulse rounded-2xl bg-linear-to-tr" />
+    <div
+      className="w-64 h-10 py-1 from-[#D9D9D9]/75 via-[#D9D9D9]/50 to-[#D9D9D9]/75 animate-pulse rounded-2xl bg-linear-to-tr"
+      data-testid="loading-button"
+    />
   );
 }
 

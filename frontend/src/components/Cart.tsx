@@ -1,9 +1,15 @@
 import type { Product } from "../classes/product";
 import { Link, useNavigate } from "react-router";
-import { useCartContext } from "../contexts/cartContext";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
 import { useContext } from "react";
 import { ErrorMessageContext, IsLoadingContext } from "../contexts/otherContexts";
+import {
+  useAddProduct,
+  useCartProductList,
+  useCatalogProductList,
+  useDecreaseProductQuantity,
+  useRemoveProduct,
+} from "../stores/cartStore";
 
 export function CartSection() {
   return (
@@ -15,7 +21,9 @@ export function CartSection() {
 }
 
 function CartProductList() {
-  const { cartProductList, catalogProductList } = useCartContext();
+  const cartProductList = useCartProductList();
+  const catalogProductList = useCatalogProductList();
+
   const isLoading = useContext(IsLoadingContext);
   const errorMessage = useContext(ErrorMessageContext);
 
@@ -27,22 +35,22 @@ function CartProductList() {
     ></CartProduct>
   ));
 
-  if (isLoading || content.length === 0) {
+  if ((isLoading || content.length === 0) && errorMessage == "") {
     content = [...Array(2)].map((_, index) => <LoadingCartProduct key={index} />);
+
+    if (cartProductList.length === 0 && !isLoading) {
+      return (
+        <div className="flex justify-center items-center mt-16">
+          <p className="font-default text-[#B4A1A6] text-3xl">Корзина пуста</p>
+        </div>
+      );
+    }
   } else if (errorMessage != "") {
     content = [
       <p key={0} className="font-default text-[#B4A1A6] text-3xl">
         {errorMessage}
       </p>,
     ];
-  }
-
-  if (cartProductList.length === 0 && !isLoading) {
-    return (
-      <div className="flex justify-center items-center mt-16">
-        <p className="font-default text-[#B4A1A6] text-3xl">Корзина пуста</p>
-      </div>
-    );
   }
 
   return (
@@ -80,7 +88,10 @@ function CartProduct({ product, quantity }: { product: Product; quantity: number
 
 function LoadingCartProduct() {
   return (
-    <div className="w-full h-64 rounded-2xl from-[#D9D9D9]/75 via-[#D9D9D9]/50 to-[#D9D9D9]/75 animate-pulse bg-linear-to-tr" />
+    <div
+      className="w-full h-64 rounded-2xl from-[#D9D9D9]/75 via-[#D9D9D9]/50 to-[#D9D9D9]/75 animate-pulse bg-linear-to-tr"
+      data-testid="loading-product"
+    />
   );
 }
 
@@ -102,14 +113,15 @@ function ProductInfo({
 }
 
 function QuantityCounter({ quantity, productID }: { quantity: number; productID: number }) {
-  const cartContext = useCartContext();
+  const decreaseProductQuantity = useDecreaseProductQuantity();
+  const addProduct = useAddProduct();
 
   function handleClickRemove() {
-    cartContext.decreaseProductQuantity(productID);
+    decreaseProductQuantity(productID);
   }
 
   function handleClickAdd() {
-    cartContext.addProduct(productID);
+    addProduct(productID);
   }
 
   return (
@@ -122,7 +134,9 @@ function QuantityCounter({ quantity, productID }: { quantity: number; productID:
       >
         -
       </button>
-      <p className="text-[#B4A1A6]">{quantity}</p>
+      <p className="text-[#B4A1A6]" data-testid="quantity-counter">
+        {quantity}
+      </p>
       <button onClick={handleClickAdd} className="w-8 text-[#D5778D] cursor-pointer">
         +
       </button>
@@ -139,17 +153,19 @@ function OrderActions({
   productID: number;
   quantity: number;
 }) {
-  const cartContext = useCartContext();
+  const removeProduct = useRemoveProduct();
+  const cartProductList = useCartProductList();
+
   const checkoutProductContext = useCheckoutProductContext();
   const navigate = useNavigate();
 
   function handleRemoveProduct() {
-    cartContext.removeProduct(productID);
+    removeProduct(productID);
   }
 
   function handleMakeOrder() {
     checkoutProductContext.setCheckoutProduct(
-      cartContext.cartProductList.find((p) => p.productID == productID),
+      cartProductList.find((p) => p.productID == productID),
     );
     navigate("/checkout");
   }

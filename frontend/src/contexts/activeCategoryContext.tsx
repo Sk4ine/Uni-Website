@@ -11,7 +11,7 @@ export const ActiveCategoryContext: React.Context<ActiveCategoryContextType | un
 export const useActiveCategoryContext = (): ActiveCategoryContextType => {
   const context = useContext(ActiveCategoryContext);
   if (context === undefined) {
-    throw new Error("useActiveCategoryContext must be used within a CartProvider");
+    throw new Error("useActiveCategoryContext must be used within a provider");
   }
   return context;
 };

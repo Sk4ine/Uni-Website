@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Sk4ine/Uni-Website/config"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/mux"
 )
@@ -13,7 +14,7 @@ type contextKey string
 
 const UserID = contextKey("userID")
 
-func AuthMiddleware(adminOnly bool) mux.MiddlewareFunc {
+func AuthMiddleware(adminOnly bool, cfg config.JWTConfig) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			tokenString := r.Header.Get("Authorization")
@@ -22,7 +23,7 @@ func AuthMiddleware(adminOnly bool) mux.MiddlewareFunc {
 				return
 			}
 
-			claims, err := ValidateAccessToken(tokenString, adminOnly)
+			claims, err := ValidateAccessToken(tokenString, adminOnly, cfg.Secret)
 			if err != nil {
 				switch(err) {
 				case jwt.ErrSignatureInvalid:

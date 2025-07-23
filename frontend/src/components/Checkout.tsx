@@ -5,10 +5,11 @@ import { InputField, LoadingMessage } from "./Common";
 import { Link } from "react-router";
 import type { CartProduct } from "../classes/cartProduct";
 import { useCheckoutProductDataContext } from "../contexts/checkoutProductDataContext";
-import { useCartContext } from "../contexts/cartContext";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
 import { addOrder } from "../api/requests/orders";
-import { useUserInfoContext } from "../contexts/userInfoContext";
+import { useUserInfo, useUserLoading } from "../stores/userInfoStore";
+import type { User } from "../classes/user";
+import { useCartProductList, useRemoveProduct } from "../stores/cartStore";
 
 export function CheckoutSection() {
   const checkoutProductDataContext = useCheckoutProductDataContext();
@@ -33,7 +34,8 @@ export function CheckoutSection() {
 }
 
 function OrderInfo({ product }: { product: Product }) {
-  const cartContext = useCartContext();
+  const removeProduct = useRemoveProduct();
+
   const checkoutProductContext = useCheckoutProductContext();
 
   function makeOrder(formData: FormData) {
@@ -57,7 +59,7 @@ function OrderInfo({ product }: { product: Product }) {
 
     addNewOrder(cartProduct);
 
-    cartContext.removeProduct(cartProduct.productID);
+    removeProduct(cartProduct.productID);
 
     checkoutProductContext.setCheckoutProduct(undefined);
   }
@@ -79,8 +81,8 @@ function OrderInfo({ product }: { product: Product }) {
 }
 
 function CustomerInfo() {
-  const { userLoading, useUserInfo } = useUserInfoContext();
-  const userInfo = useUserInfo();
+  const userInfo: User = useUserInfo();
+  const userLoading: boolean = useUserLoading();
 
   if (userLoading) {
     return <LoadingMessage text="Загрузка данных пользователя..." heightVH={50}></LoadingMessage>;
@@ -122,9 +124,9 @@ function CustomerInfo() {
 }
 
 function ProductInfo({ product }: { product: Product }) {
-  const cartContext = useCartContext();
+  const cartProductList = useCartProductList();
 
-  const quantity = cartContext.cartProductList.find((p) => p.productID == product.id)?.quantity;
+  const quantity = cartProductList.find((p) => p.productID == product.id)?.quantity;
 
   if (!quantity) return;
 

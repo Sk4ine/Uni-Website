@@ -4,7 +4,7 @@ import type { Review } from "../classes/review";
 import ratingStarImage from "../assets/ratingStarIcon.png";
 import ratingStarLargeImage from "../assets/ratingStarIconLarge.png";
 import { Link } from "react-router";
-import { useCartContext } from "../contexts/cartContext";
+import { useAddProduct, useCartProductList } from "../stores/cartStore";
 
 const reviewDateMonths: string[] = [
   "января",
@@ -74,10 +74,11 @@ function ImageButton({ imagePath }: { imagePath: string }) {
 }
 
 function ProductDescription({ product }: { product: Product }) {
-  const cartContext = useCartContext();
+  const addProduct = useAddProduct();
+  const cartProductList = useCartProductList();
 
   function handleClick() {
-    cartContext.addProduct(product.id);
+    addProduct(product.id);
   }
 
   return (
@@ -86,7 +87,7 @@ function ProductDescription({ product }: { product: Product }) {
         <p>{product.name}</p>
         <p>{product.price} руб.</p>
       </div>
-      {cartContext.cartProductList.find((p) => p.productID == product.id) ? (
+      {cartProductList.find((p) => p.productID == product.id) ? (
         <Link
           to="/cart"
           className="w-fit px-16 py-2.5 mt-8 font-default text-[#D5778D] text-3xl bg-[#F5D4D5] hover:bg-[#E6C8C9] rounded-3xl cursor-pointer"

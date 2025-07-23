@@ -1,6 +1,9 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+)
 
 type ProductCategory struct {
 	ID   int    `json:"id"`
@@ -13,12 +16,16 @@ func GetCategoryList(db *sql.DB) ([]ProductCategory, error) {
 		return nil, err
 	}
 
+	defer rows.Close()
+
 	var categoryList []ProductCategory
 
 	for rows.Next() {
 		var category ProductCategory
 
 		if err := rows.Scan(&category.ID, &category.Name); err != nil {
+			fmt.Print("ERROR")
+			fmt.Println(err)
 			return nil, err
 		}
 

@@ -1,13 +1,13 @@
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLocation, useNavigate } from "react-router";
-import { useCartContext } from "../contexts/cartContext";
 
 import defaultUserLogo from "../assets/defaultUserLogo.png";
 import artezaLogo from "../assets/Arteza.png";
 import shoppingCartIcon from "../assets/shoppingCartIcon.png";
 import { useEffect, useRef, useState } from "react";
-import { useAuthContext } from "../contexts/authContext";
+import { useIsAdmin, useLoadingAuth, useSignedIn, useSignOut } from "../stores/authStore";
+import { useCartProductList } from "../stores/cartStore";
 
 export function NavigationBar() {
   const border: string =
@@ -44,10 +44,12 @@ function NavigationBarButton({ text, url }: { text: string; url: string }) {
 }
 
 function UserLogoButton() {
+  const signOut = useSignOut();
+  const isAdmin: boolean = useIsAdmin();
+
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const authContext = useAuthContext();
 
   const colors: { [index: string]: string } = {
     pink: "bg-[#D5778D] group-hover:bg-[#B36476]",
@@ -59,7 +61,7 @@ function UserLogoButton() {
   const activeColor: string = curLocation == "/user-profile" ? colors["pink"] : colors["gray"];
 
   function handleSignOut() {
-    authContext.signOut();
+    signOut();
     if (curLocation == "/user-profile") {
       navigate("/home");
       return;
@@ -83,6 +85,7 @@ function UserLogoButton() {
       <button
         onClick={() => setIsOpen(true)}
         className={`flex justify-center items-center group cursor-pointer`}
+        data-testid="userlogo-button"
       >
         <div
           style={{ maskImage: `url(${defaultUserLogo})` }}
@@ -100,7 +103,7 @@ function UserLogoButton() {
               Профиль
             </Link>
 
-            {authContext.isAdmin && (
+            {isAdmin && (
               <Link
                 to="/admin-panel"
                 className="text-nowrap pl-4 pr-10 py-2 text-[#555555] hover:bg-gray-100"
@@ -123,13 +126,17 @@ function UserLogoButton() {
 }
 
 export function AccountButton() {
-  const { signedIn, loadingAuth } = useAuthContext();
+  const loadingAuth: boolean = useLoadingAuth();
+  const signedIn: boolean = useSignedIn();
 
   let content: React.ReactNode = <NavigationBarButton text="Вход" url="/auth/login" />;
 
   if (loadingAuth) {
     content = (
-      <div className="size-[50px] animate-spin rounded-full border-t-[#D5778D] border-x-[#B5ABA1]/50 border-b-[#B5ABA1]/50 border-5" />
+      <div
+        className="size-[50px] animate-spin rounded-full border-t-[#D5778D] border-x-[#B5ABA1]/50 border-b-[#B5ABA1]/50 border-5"
+        data-testid="loading-circle"
+      />
     );
   } else if (signedIn) {
     content = <UserLogoButton />;
@@ -158,7 +165,7 @@ function SearchBar() {
 }
 
 function CartIcon() {
-  const cartContext = useCartContext();
+  const cartProductList = useCartProductList();
 
   const colors: { [index: string]: string } = {
     pink: "bg-[#D5778D] group-hover:bg-[#B36476]",
@@ -168,7 +175,11 @@ function CartIcon() {
   const activeColor: string = useLocation().pathname == "/cart" ? colors["pink"] : colors["gray"];
 
   return (
-    <Link to={"/cart"} className={`flex justify-center items-center h-[65%] w-20 group`}>
+    <Link
+      to={"/cart"}
+      className={`flex justify-center items-center h-[65%] w-20 group`}
+      data-testid="cart-link"
+    >
       <div className="relative size-[50px]">
         <div
           style={{ maskImage: `url(${shoppingCartIcon})` }}
@@ -176,12 +187,15 @@ function CartIcon() {
         ></div>
         <div
           style={{
-            visibility: cartContext.cartProductList.length > 0 ? "visible" : "hidden",
+            visibility: cartProductList.length > 0 ? "visible" : "hidden",
           }}
           className="size-[20px] flex justify-center items-center absolute right-[-8px] top-0 rounded-full bg-[#D5778D]"
         >
-          <p className="font-default text-[16px] text-white pt-[0.115rem]">
-            {cartContext.cartProductList.length}
+          <p
+            className="font-default text-[16px] text-white pt-[0.115rem]"
+            data-testid="cart-product-counter"
+          >
+            {cartProductList.length}
           </p>
         </div>
       </div>

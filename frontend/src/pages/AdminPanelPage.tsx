@@ -2,52 +2,61 @@ import { Navigate } from "react-router";
 import { AdminNavigationBar } from "../components/AdminNavigationBar";
 import { useEffect, useState } from "react";
 import { ContentWrapper, LoadingMessage, PageWrapper } from "../components/Common";
-import { useAuthContext } from "../contexts/authContext";
 import { DatabaseEditSection } from "../components/AdminPanel";
-import { AdminPanelProvider } from "../providers/AdminPanelProvider";
+import { useCheckIsAdmin, useIsAdmin, useLoadingAuth, useSignedIn } from "../stores/authStore";
+import { useUpdateTableRecords } from "../stores/adminPanelStore";
 
 export function AdminPanelPage() {
+  const updateTableRecords = useUpdateTableRecords();
+
+  const loadingAuth: boolean = useLoadingAuth();
+  const signedIn: boolean = useSignedIn();
+  const isAdmin: boolean = useIsAdmin();
+  const checkIsAdmin = useCheckIsAdmin();
+
   const [checkedAdmin, setCheckedAdmin] = useState<boolean>(false);
-  const authContext = useAuthContext();
 
   useEffect(() => {
-    if (authContext.loadingAuth || !authContext.signedIn) {
+    if (loadingAuth || !signedIn) {
       return;
     }
 
     async function performAdminCheck() {
-      await authContext.checkIsAdmin();
+      await checkIsAdmin();
       setCheckedAdmin(true);
     }
 
     if (!checkedAdmin) {
       performAdminCheck();
+      return;
     }
-  }, [authContext.loadingAuth, authContext, checkedAdmin]);
 
-  if (authContext.loadingAuth) {
+    if (isAdmin) {
+      updateTableRecords();
+    }
+  }, [loadingAuth, checkedAdmin, checkIsAdmin, signedIn, isAdmin, updateTableRecords]);
+
+  if (loadingAuth) {
     return <LoadingMessage text={"Загрузка прав доступа..."} heightVH={100}></LoadingMessage>;
   }
 
-  if (!authContext.signedIn) {
+  if (!signedIn) {
     return <Navigate to="/home" replace></Navigate>;
   }
 
-  if (checkedAdmin && !authContext.isAdmin) {
+  if (checkedAdmin && !isAdmin) {
     return <Navigate to="/home" replace></Navigate>;
   }
 
   return (
     <PageWrapper>
-      {authContext.loadingAuth ? (
+      {loadingAuth ? (
         <LoadingMessage text={"Загрузка прав доступа..."} heightVH={100}></LoadingMessage>
       ) : (
-        <AdminPanelProvider>
-          <ContentWrapper>
-            <AdminNavigationBar></AdminNavigationBar>
-            <DatabaseEditSection></DatabaseEditSection>
-          </ContentWrapper>
-        </AdminPanelProvider>
+        <ContentWrapper>
+          <AdminNavigationBar></AdminNavigationBar>
+          <DatabaseEditSection></DatabaseEditSection>
+        </ContentWrapper>
       )}
     </PageWrapper>
   );

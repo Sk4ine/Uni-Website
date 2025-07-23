@@ -45,7 +45,7 @@ func addOrder(db *sql.DB, clientID int, productID int, productQuantity int, date
 	return result.LastInsertId()
 }
 
-func HandleCheckout(db *sql.DB, clientID int, dateMade time.Time, shippingAddress string, productID int, productQuantity int) (int64, error) {
+var HandleCheckout = func(db *sql.DB, clientID int, dateMade time.Time, shippingAddress string, productID int, productQuantity int) (int64, error) {
 	transaction, err := db.Begin()
 	if err != nil {
 		return 0, err

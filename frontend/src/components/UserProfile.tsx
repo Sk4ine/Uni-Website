@@ -5,10 +5,10 @@ import { InputField } from "./Common";
 import { OrderListContext, ProductListContext } from "../contexts/otherContexts";
 import type { Product } from "../classes/product";
 import defaultUserLogo from "../assets/defaultUserLogo.png";
-import { useUserInfoContext } from "../contexts/userInfoContext";
+import { useUpdateUser, useUserInfo, useUserLoading } from "../stores/userInfoStore";
 
 export function UserProfileSection({ ordersLoading }: { ordersLoading: boolean }) {
-  const { userLoading } = useUserInfoContext();
+  const userLoading: boolean = useUserLoading();
 
   return (
     <div className="flex flex-col items-center mb-48">
@@ -19,12 +19,12 @@ export function UserProfileSection({ ordersLoading }: { ordersLoading: boolean }
 }
 
 function UserInfo() {
-  const { useUserInfo } = useUserInfoContext();
+  const userInfo: User = useUserInfo();
 
   return (
     <div className="flex justify-between w-[1100px] mt-12 animate-fade-in">
-      <UserLogo user={useUserInfo()}></UserLogo>
-      <UserInfoForm user={useUserInfo()}></UserInfoForm>
+      <UserLogo user={userInfo}></UserLogo>
+      <UserInfoForm user={userInfo}></UserInfoForm>
     </div>
   );
 }
@@ -94,7 +94,7 @@ function UserLogo({ user }: { user: User }) {
 }
 
 function UserInfoForm({ user }: { user: User }) {
-  const { updateUser } = useUserInfoContext();
+  const updateUser = useUpdateUser();
 
   function saveUserInfo(formData: FormData) {
     updateUser(

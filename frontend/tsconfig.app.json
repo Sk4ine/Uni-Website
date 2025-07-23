@@ -6,6 +6,12 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "types": [
+      "vitest/globals",
+      "@testing-library/react",
+      "@testing-library/jest-dom",
+      "@testing-library/user-event"
+    ],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -23,5 +29,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "stores"]
 }

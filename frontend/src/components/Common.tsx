@@ -5,14 +5,15 @@ import type { Product } from "../classes/product";
 import { Link } from "react-router";
 import { useContext } from "react";
 import { IsLoadingContext, ProductListContext } from "../contexts/otherContexts";
-import { useCartContext } from "../contexts/cartContext";
 import { useActiveCategoryContext } from "../contexts/activeCategoryContext";
+import { useAddProduct, useCartProductList } from "../stores/cartStore";
 
 export function ProductCard({ product }: { product: Product }) {
-  const cartContext = useCartContext();
+  const addProduct = useAddProduct();
+  const cartProductList = useCartProductList();
 
   function handleClick() {
-    cartContext.addProduct(product.id);
+    addProduct(product.id);
   }
 
   return (
@@ -28,10 +29,11 @@ export function ProductCard({ product }: { product: Product }) {
         </p>
         <p className="font-default text-3xl text-[#B4A1A6] mb-2">{product.price} руб.</p>
       </Link>
-      {cartContext.cartProductList.find((p) => p.productID == product.id) ? (
+      {cartProductList.find((p) => p.productID == product.id) ? (
         <Link
           to="/cart"
           className="w-[90%] flex justify-center gap-2 items-center bg-[#F5D4D5] mb-[8%] rounded-3xl hover:bg-[#E6C8C9] cursor-pointer"
+          data-testid="cart-link"
         >
           <p className="font-default text-2xl text-[#D5778D] py-2">В корзине</p>
           <FontAwesomeIcon
@@ -95,7 +97,10 @@ export function ProductList({ sortByCategory = false }: { sortByCategory?: boole
 
 function LoadingProductCard() {
   return (
-    <div className="w-80 h-[26.5rem] from-[#D9D9D9]/75 via-[#D9D9D9]/50 to-[#D9D9D9]/75 animate-pulse bg-linear-to-tr rounded-2xl" />
+    <div
+      className="w-80 h-[26.5rem] from-[#D9D9D9]/75 via-[#D9D9D9]/50 to-[#D9D9D9]/75 animate-pulse bg-linear-to-tr rounded-2xl"
+      data-testid="loading-card"
+    />
   );
 }
 
@@ -121,6 +126,7 @@ export function InputField({
       </label>
       <input
         type={fieldType ? fieldType : "text"}
+        id={fieldID}
         name={fieldID}
         defaultValue={value}
         required={required}
@@ -135,14 +141,6 @@ export function LoadingMessage({ text, heightVH }: { text: string; heightVH: num
   return (
     <div style={{ height: `${heightVH}vh` }} className="flex justify-center items-center">
       <div className="mr-5 size-12 animate-spin rounded-full border-t-[#D5778D] border-x-[#B5ABA1]/50 border-b-[#B5ABA1]/50 border-5"></div>
-      <p className="font-default text-[#B4A1A6] text-4xl">{text}</p>
-    </div>
-  );
-}
-
-export function ErrorMessage({ text, heightVH }: { text: string; heightVH: number }) {
-  return (
-    <div style={{ height: `${heightVH}vh` }} className="flex justify-center items-center">
       <p className="font-default text-[#B4A1A6] text-4xl">{text}</p>
     </div>
   );

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/Sk4ine/Uni-Website/config"
 	"github.com/Sk4ine/Uni-Website/handlers"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
@@ -14,6 +15,8 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/gorilla/mux"
 )
+
+var jwtConfig config.JWTConfig
 
 func main() {
 	dbUser := os.Getenv("DB_USER")
@@ -32,6 +35,14 @@ func main() {
 	if dbPort == "" {
 		dbPort = "3306"
 	}
+
+	var err error
+
+	jwtConfig, err = config.LoadJWTConfig()
+	if err != nil {
+		log.Fatalf("Failed to load JWT configuration: %v", err)
+	}
+	log.Println("JWT secrets loaded successfully.")
 
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(localhost:%s)/%s?multiStatements=true", dbUser, dbPassword, dbPort, dbName))
 	if err != nil {
@@ -65,7 +76,7 @@ func main() {
 	apiRouter := r.PathPrefix("/api").Subrouter()
 
 	userRouter := apiRouter.PathPrefix("/users").Subrouter()
-	userRouter.Use(handlers.AuthMiddleware(false))
+	userRouter.Use(handlers.AuthMiddleware(false, jwtConfig))
 
 	userRouter.HandleFunc("/me", handlers.GetUser(db)).Methods("GET")
 	userRouter.HandleFunc("/me", handlers.UpdateUser(db)).Methods("PUT", "OPTIONS")
@@ -75,10 +86,10 @@ func main() {
 
 	authRouter := apiRouter.PathPrefix("/auth").Subrouter()
 
-	authRouter.HandleFunc("/login", handlers.HandleLogin(db)).Methods("POST", "OPTIONS")
+	authRouter.HandleFunc("/login", handlers.HandleLogin(db, jwtConfig)).Methods("POST", "OPTIONS")
 	authRouter.HandleFunc("/register", handlers.HandleRegistraion(db)).Methods("POST", "OPTIONS")
-	authRouter.HandleFunc("/logout", handlers.HandleLogout(db)).Methods("DELETE", "OPTIONS")
-	authRouter.HandleFunc("/refresh-token", handlers.RefreshAccessToken(db)).Methods("GET")
+	authRouter.HandleFunc("/logout", handlers.HandleLogout(db, jwtConfig)).Methods("DELETE", "OPTIONS")
+	authRouter.HandleFunc("/refresh-token", handlers.RefreshAccessToken(db, jwtConfig)).Methods("GET")
 
 	productsRouter := apiRouter.PathPrefix("/products").Subrouter()
 
@@ -94,13 +105,13 @@ func main() {
 	productImagesRouter.HandleFunc("/{product-id}", handlers.ServeProductImage()).Methods("GET")
 
 	staticAdminRouter := staticRouter.PathPrefix("/admin").Subrouter()
-	staticAdminRouter.Use(handlers.AuthMiddleware(true))
+	staticAdminRouter.Use(handlers.AuthMiddleware(true, jwtConfig))
 
 	staticAdminRouter.HandleFunc("/productImages/{product-id}", handlers.UploadProductImage()).Methods("POST", "OPTIONS")
 	staticAdminRouter.HandleFunc("/productImages/{product-id}", handlers.DeleteProductImage()).Methods("DELETE", "OPTIONS")
 
 	adminRouter := apiRouter.PathPrefix("/admin").Subrouter()
-	adminRouter.Use(handlers.AuthMiddleware(true))
+	adminRouter.Use(handlers.AuthMiddleware(true, jwtConfig))
 
 	adminCategoriesRouter := adminRouter.PathPrefix("/categories").Subrouter()
 

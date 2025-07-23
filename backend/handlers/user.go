@@ -9,36 +9,13 @@ import (
 	"os"
 	"time"
 
+	"github.com/Sk4ine/Uni-Website/config"
 	"github.com/Sk4ine/Uni-Website/models"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var jwtKey []byte
-var jwtRefreshKey []byte
-
-func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Print("No .env file found, using system env variables")
-	}
-
-	jwtSecret := os.Getenv("JWT_SECRET")
-
-	if jwtSecret == "" {
-		log.Fatal("JWT_SECRET environment variable not set")
-	}
-
-	jwtKey = []byte(jwtSecret)
-
-	jwtRefreshSecret := os.Getenv("JWT_REFRESH_SECRET")
-
-	if jwtRefreshSecret == "" {
-		log.Fatal("JWT_REFRESH_SECRET environment variable not set")
-	}
-
-	jwtRefreshKey = []byte(jwtRefreshSecret)
-}
+var jwtConfig config.JWTConfig
 
 type RegistrationData struct {
 	Email    string `json:"email"`
@@ -70,7 +47,7 @@ type RefreshClaims struct {
 }
 
 
-func GenerateAccessToken(userAuth models.UserAuth) (string, error) {
+func GenerateAccessToken(userAuth models.UserAuth, accessSecret []byte) (string, error) {
 	expirationTime := time.Now().Add(15 * time.Minute)
 	claims := &AccessClaims{
 		UserID:  userAuth.ID,
@@ -83,7 +60,7 @@ func GenerateAccessToken(userAuth models.UserAuth) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtKey)
+	tokenString, err := token.SignedString(accessSecret)
 	if err != nil {
 		return "", err
 	}
@@ -91,7 +68,7 @@ func GenerateAccessToken(userAuth models.UserAuth) (string, error) {
 	return tokenString, nil
 }
 
-func GenerateRefreshToken(db *sql.DB, userID int) (string, error) {
+func GenerateRefreshToken(db *sql.DB, userID int, refreshSecret []byte) (string, error) {
 	expirationTime := time.Now().Add(7 * 24 * time.Hour)
 	jti := fmt.Sprintf("%x", time.Now().UnixNano())  
 	claims := &RefreshClaims{
@@ -105,7 +82,7 @@ func GenerateRefreshToken(db *sql.DB, userID int) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtRefreshKey)
+	tokenString, err := token.SignedString(refreshSecret)
 	if err != nil {
 		return "", err
 	}
@@ -123,7 +100,7 @@ func GenerateRefreshToken(db *sql.DB, userID int) (string, error) {
 	return tokenString, nil
 }
 
-func HandleLogin(db *sql.DB) http.HandlerFunc {
+func HandleLogin(db *sql.DB, cfg config.JWTConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var loginForm LoginFormData
 
@@ -140,13 +117,13 @@ func HandleLogin(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		tokenString, err := GenerateAccessToken(userAuth)
+		tokenString, err := GenerateAccessToken(userAuth, cfg.Secret)
 		if err != nil {
 			http.Error(w, "Could not generate access token", http.StatusInternalServerError)
 			return
 		}
 
-		refreshTokenString, err := GenerateRefreshToken(db, userAuth.ID)
+		refreshTokenString, err := GenerateRefreshToken(db, userAuth.ID, cfg.RefreshSecret)
 		if err != nil {
 			http.Error(w, "Could not generate refresh token", http.StatusInternalServerError)
 			return
@@ -168,7 +145,7 @@ func HandleLogin(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func HandleLogout(db *sql.DB) http.HandlerFunc {
+func HandleLogout(db *sql.DB, cfg config.JWTConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
 			Name:     "jwtRefresh",
@@ -185,7 +162,7 @@ func HandleLogout(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		claims, err := ValidateRefreshToken(cookie.Value)
+		claims, err := ValidateRefreshToken(cookie.Value, cfg.RefreshSecret)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -319,7 +296,7 @@ func HandleRegistraion(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
+func RefreshAccessToken(db *sql.DB, cfg config.JWTConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("jwtRefresh")
 		if err != nil {
@@ -334,7 +311,7 @@ func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
 
 		refreshTokenString := cookie.Value
 
-		claims, err := ValidateRefreshToken(refreshTokenString)
+		claims, err := ValidateRefreshToken(refreshTokenString, cfg.RefreshSecret)
 		if err != nil {
 			switch(err) {
 			case jwt.ErrSignatureInvalid:
@@ -367,7 +344,7 @@ func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
 
 		var userAuth models.UserAuth = models.UserAuth{ID: claims.UserID, IsAdmin: isAdmin}
 
-		newTokenString, err := GenerateAccessToken(userAuth)
+		newTokenString, err := GenerateAccessToken(userAuth, cfg.Secret)
 		if err != nil {
 			http.Error(w, "Could not generate refresh token", http.StatusInternalServerError)
 			return
@@ -379,7 +356,7 @@ func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func ValidateAccessToken(tokenString string, adminOnly bool) (*AccessClaims, error) {
+func ValidateAccessToken(tokenString string, adminOnly bool, accessSecret []byte) (*AccessClaims, error) {
 	if len(tokenString) < 7 || tokenString[:7] != "Bearer " {
 		return nil, fmt.Errorf("invalid token format")
 	}
@@ -393,7 +370,7 @@ func ValidateAccessToken(tokenString string, adminOnly bool) (*AccessClaims, err
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		
-		return jwtKey, nil
+		return accessSecret, nil
 	})
 
 	if err != nil {
@@ -411,7 +388,7 @@ func ValidateAccessToken(tokenString string, adminOnly bool) (*AccessClaims, err
 	return claims, nil
 }
 
-func ValidateRefreshToken(tokenString string) (*RefreshClaims, error) {
+func ValidateRefreshToken(tokenString string, refreshSecret []byte) (*RefreshClaims, error) {
 	claims := &RefreshClaims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
@@ -419,7 +396,7 @@ func ValidateRefreshToken(tokenString string) (*RefreshClaims, error) {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		
-		return jwtRefreshKey, nil
+		return refreshSecret, nil
 	})
 
 	if err != nil {

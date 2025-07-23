@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useAdminPanelContext } from "../contexts/adminPanelContext";
 import { LoadingMessage } from "./Common";
 import { ProductCategory } from "../classes/productCategory";
 import { Product } from "../classes/product";
@@ -14,6 +13,20 @@ import {
   updateProduct,
 } from "../api/requests/admin";
 import { getCategoryList } from "../api/requests/categories";
+import {
+  useActiveTable,
+  useDeleteIsOpen,
+  useEditIsOpen,
+  useLoadingRecords,
+  useSelectedRecord,
+  useSetDeleteIsOpen,
+  useSetEditIsOpen,
+  useSetSelectedRecord,
+  useSwitchActiveTable,
+  useTableData,
+  useTableRecords,
+  useUpdateTableRecords,
+} from "../stores/adminPanelStore";
 
 export function DatabaseEditSection() {
   return (
@@ -34,7 +47,8 @@ function TableSelector() {
 }
 
 function TableSelectButton({ buttonText, tableName }: { buttonText: string; tableName: string }) {
-  const { activeTable, switchActiveTable } = useAdminPanelContext();
+  const activeTable = useActiveTable();
+  const switchActiveTable = useSwitchActiveTable();
 
   const backgroundColor: string = activeTable == tableName ? "bg-[#F5D4D5]" : "bg-[#E2E2E2]";
   const textColor: string = activeTable == tableName ? "text-[#EF829A]" : "text-[#979797]";
@@ -56,7 +70,11 @@ function TableSelectButton({ buttonText, tableName }: { buttonText: string; tabl
 }
 
 function TableEditor() {
-  const { activeTable, tableData, tableRecords, loadingRecords } = useAdminPanelContext();
+  const activeTable = useActiveTable();
+  const tableData = useTableData();
+  const tableRecords = useTableRecords();
+  const loadingRecords = useLoadingRecords();
+
   const [categoryList, setCategoryList] = useState<ProductCategory[]>([]);
   const [loadingCategories, setLoadingCategories] = useState<boolean>(true);
 
@@ -196,7 +214,10 @@ function CellBase({ children }: { children: React.ReactNode }) {
 }
 
 function EditButtons({ recordID }: { recordID: number }) {
-  const { activeTable, setEditIsOpen, setSelectedRecord, setDeleteIsOpen } = useAdminPanelContext();
+  const activeTable = useActiveTable();
+  const setEditIsOpen = useSetEditIsOpen();
+  const setSelectedRecord = useSetSelectedRecord();
+  const setDeleteIsOpen = useSetDeleteIsOpen();
 
   function handleEdit() {
     setSelectedRecord(recordID);
@@ -231,14 +252,12 @@ function EditButtons({ recordID }: { recordID: number }) {
 }
 
 function CategoryEditForm() {
-  const {
-    editIsOpen,
-    tableRecords,
-    setEditIsOpen,
-    selectedRecord,
-    setSelectedRecord,
-    updateTableRecords,
-  } = useAdminPanelContext();
+  const editIsOpen = useEditIsOpen();
+  const tableRecords = useTableRecords();
+  const setEditIsOpen = useSetEditIsOpen();
+  const selectedRecord = useSelectedRecord();
+  const setSelectedRecord = useSetSelectedRecord();
+  const updateTableRecords = useUpdateTableRecords();
 
   function handleClose() {
     setSelectedRecord(0);
@@ -304,14 +323,13 @@ function CategoryEditForm() {
 }
 
 function ProductEditForm() {
-  const {
-    editIsOpen,
-    tableRecords,
-    setEditIsOpen,
-    selectedRecord,
-    setSelectedRecord,
-    updateTableRecords,
-  } = useAdminPanelContext();
+  const editIsOpen = useEditIsOpen();
+  const tableRecords = useTableRecords();
+  const setEditIsOpen = useSetEditIsOpen();
+  const selectedRecord = useSelectedRecord();
+  const setSelectedRecord = useSetSelectedRecord();
+  const updateTableRecords = useUpdateTableRecords();
+
   const [loadingCategories, setLoadingCategories] = useState<boolean>(true);
   const [categoryList, setCategoryList] = useState<ProductCategory[]>([]);
 
@@ -457,15 +475,13 @@ function ProductEditForm() {
 }
 
 function DeleteConfirmDialog() {
-  const {
-    activeTable,
-    updateTableRecords,
-    selectedRecord,
-    setSelectedRecord,
-    setDeleteIsOpen,
-    tableRecords,
-    deleteIsOpen,
-  } = useAdminPanelContext();
+  const activeTable = useActiveTable();
+  const tableRecords = useTableRecords();
+  const setDeleteIsOpen = useSetDeleteIsOpen();
+  const selectedRecord = useSelectedRecord();
+  const setSelectedRecord = useSetSelectedRecord();
+  const updateTableRecords = useUpdateTableRecords();
+  const deleteIsOpen = useDeleteIsOpen();
 
   function handleConfirm() {
     async function deleteRecord() {
@@ -606,7 +622,8 @@ function EditFileUploadField({ name, labelText }: { name: string; labelText: str
 }
 
 function AddRecordButton() {
-  const { activeTable, updateTableRecords } = useAdminPanelContext();
+  const activeTable = useActiveTable();
+  const updateTableRecords = useUpdateTableRecords();
 
   function handleAdd() {
     async function add() {

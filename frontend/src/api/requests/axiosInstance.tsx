@@ -1,6 +1,6 @@
 import type { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import axios from "axios";
-import type { JWTTokenResponse } from "../responses/apiResponses";
+import { useAuthStore } from "../../stores/authStore";
 
 interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -41,52 +41,24 @@ axiosInstanceAuth.interceptors.response.use(
       }
 
       try {
-        const response: AxiosResponse<JWTTokenResponse> = await refreshAccessToken();
+        const refreshToken: () => Promise<void> = useAuthStore.getState().refreshToken;
+        const accessToken: string | null = localStorage.getItem("jwtToken");
 
-        if (response) {
-          localStorage.setItem("jwtToken", response.data.token);
+        await refreshToken();
 
-          originalRequest.headers["Authorization"] = `Bearer ${response.data}`;
+        originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
 
-          return axiosInstanceAuth(originalRequest);
-        }
+        return axiosInstanceAuth(originalRequest);
       } catch (error) {
+        const signOut: () => Promise<void> = useAuthStore.getState().signOut;
+
         console.log(error);
-        logout();
+        signOut();
       }
     }
 
     return Promise.reject(error);
   },
 );
-
-function logout() {
-  if (logoutCallback) {
-    logoutCallback();
-  } else {
-    console.warn("No logout callback is set for axiosInstance");
-  }
-}
-
-let logoutCallback: (() => void) | null = null;
-
-export const setLogoutCallback = (callback: () => void) => {
-  logoutCallback = callback;
-};
-
-export const refreshAccessToken = async (): Promise<AxiosResponse<JWTTokenResponse>> => {
-  try {
-    const response: AxiosResponse<JWTTokenResponse> = await axios.get<JWTTokenResponse>(
-      `${API_BASE_URL}/api/auth/refresh-token`,
-      {
-        withCredentials: true,
-      },
-    );
-
-    return response;
-  } catch (error) {
-    throw error as AxiosError;
-  }
-};
 
 export default axiosInstanceAuth;

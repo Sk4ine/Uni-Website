@@ -4,11 +4,15 @@ import { InputField } from "./Common";
 import { useState } from "react";
 import axios from "axios";
 import { handleLogin } from "../api/requests/user";
-import { useAuthContext } from "../contexts/authContext";
+import { useSignIn } from "../stores/authStore";
 
 export function HomePageButton() {
   return (
-    <Link to={"/home"} className="h-[80%] flex justify-center items-center">
+    <Link
+      to={"/home"}
+      className="h-[80%] flex justify-center items-center"
+      data-testid="home-button"
+    >
       <img src={artezaLogo} alt="toHomePage" className="h-full object-none"></img>
     </Link>
   );
@@ -32,8 +36,8 @@ export function LoginSection() {
 }
 
 function LoginForm() {
+  const signIn = useSignIn();
   const [loginFailMessage, setLoginFailMessage] = useState<string>("");
-  const authContext = useAuthContext();
 
   function login(formData: FormData) {
     async function tryLogin(): Promise<void> {
@@ -42,7 +46,7 @@ function LoginForm() {
           formData.get("email") as string,
           formData.get("password") as string,
         );
-        authContext.signIn(token);
+        signIn(token);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           switch (error.response?.status) {
@@ -93,21 +97,20 @@ function PasswordInputField({ fieldName, fieldID }: { fieldName: string; fieldID
   return (
     <div className="flex flex-col items-start">
       <div className="w-full flex justify-between items-end mb-1">
-        <p className="font-default text-[#555555] text-2xl">{fieldName}</p>
+        <label htmlFor={fieldID} className="font-default text-[#555555] text-2xl">
+          {fieldName}
+        </label>
         <Link to={"/home"} className="font-default text-[#D5778D] text-xl">
           Забыли пароль?
         </Link>
       </div>
       <input
         type="password"
+        id={fieldID}
         name={fieldID}
         required
         className="w-80 text-[#555555] text-xl px-4 py-1.5 rounded-2xl outline-none shadow-[-2px_0px_4px_rgb(0,0,0,0.25),2px_4px_4px_rgb(0,0,0,0.25)]"
       ></input>
     </div>
   );
-}
-
-export function EmptySpace() {
-  return <div className="h-48"></div>;
 }

@@ -7,18 +7,22 @@ import type { CartProduct } from "../classes/cartProduct";
 import { getProductByID } from "../api/requests/products";
 import { useCheckoutProductContext } from "../contexts/checkoutProductContext";
 import { CheckoutProductDataContext } from "../contexts/checkoutProductDataContext";
-import { useAuthContext } from "../contexts/authContext";
-import { UserInfoProvider } from "../providers/UserInfoProvider";
+import { useLoadingAuth, useSignedIn } from "../stores/authStore";
+import { useIntializeUserInfo } from "../stores/userInfoStore";
 
 export function CheckoutPage() {
+  const initializeUserInfo = useIntializeUserInfo();
+
+  const loadingAuth: boolean = useLoadingAuth();
+  const signedIn: boolean = useSignedIn();
+
   const checkoutProductContext = useCheckoutProductContext();
-  const authContext = useAuthContext();
 
   const [checkoutProductData, setCheckoutProductData] = useState<Product>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (authContext.loadingAuth || !authContext.signedIn) {
+    if (loadingAuth || !signedIn) {
       return;
     }
 
@@ -39,14 +43,15 @@ export function CheckoutPage() {
       }
     }
 
+    initializeUserInfo();
     getProduct();
-  }, [authContext.loadingAuth, authContext.signedIn, checkoutProductContext.checkoutProduct]);
+  }, [loadingAuth, signedIn, checkoutProductContext.checkoutProduct, initializeUserInfo]);
 
-  if (authContext.loadingAuth) {
+  if (loadingAuth) {
     return <LoadingMessage text="Загрузка данных пользователя..." heightVH={100}></LoadingMessage>;
   }
 
-  if (!authContext.signedIn) {
+  if (!signedIn) {
     return <Navigate to="/auth/login" replace></Navigate>;
   }
 
@@ -56,13 +61,11 @@ export function CheckoutPage() {
 
   return (
     <CheckoutProductDataContext.Provider value={checkoutProductData}>
-      <UserInfoProvider>
-        {isLoading || authContext.loadingAuth ? (
-          <LoadingMessage text="Загрузка заказа..." heightVH={50}></LoadingMessage>
-        ) : (
-          <CheckoutSection></CheckoutSection>
-        )}
-      </UserInfoProvider>
+      {isLoading || loadingAuth ? (
+        <LoadingMessage text="Загрузка заказа..." heightVH={50}></LoadingMessage>
+      ) : (
+        <CheckoutSection></CheckoutSection>
+      )}
     </CheckoutProductDataContext.Provider>
   );
 }
